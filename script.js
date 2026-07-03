@@ -114,10 +114,33 @@ function renderTable() {
 
     const total = document.createElement("td");
     total.className = "total";
-    total.textContent = `${calculateWeeklyHours(person).toFixed(1).replace(".0", "")} h`;
+    total.textContent = `${formatHours(calculateWeeklyHours(person))} h`;
     row.appendChild(total);
 
     scheduleBody.appendChild(row);
+  });
+}
+
+function updateTotalsAndColors() {
+  staff.forEach((person, personIndex) => {
+    const row = scheduleBody.children[personIndex];
+    if (!row) return;
+
+    days.forEach((day, dayIndex) => {
+      const td = row.children[dayIndex + 2];
+      const slots = person.turni[day.key] || ["Riposo", "Riposo"];
+      const slotElements = td.querySelectorAll(".shift-slot");
+
+      td.classList.toggle("day-spezzato", isWorking(slots[0]) && isWorking(slots[1]));
+
+      slotElements.forEach((slotElement, slotIndex) => {
+        slotElement.classList.remove("pranzo", "cena", "riposo");
+        slotElement.classList.add(slotClass(slots[slotIndex], slotIndex));
+      });
+    });
+
+    const total = row.querySelector(".total");
+    total.textContent = `${formatHours(calculateWeeklyHours(person))} h`;
   });
 }
 
@@ -153,6 +176,10 @@ function calculateSlotHours(value) {
   return (end - start) / 60;
 }
 
+function formatHours(hours) {
+  return hours.toFixed(1).replace(".0", "");
+}
+
 scheduleBody.addEventListener("input", (event) => {
   const target = event.target;
   const personIndex = Number(target.dataset.person);
@@ -170,6 +197,10 @@ scheduleBody.addEventListener("input", (event) => {
   }
 
   saveStaff();
+  updateTotalsAndColors();
+});
+
+scheduleBody.addEventListener("focusout", () => {
   renderTable();
 });
 
