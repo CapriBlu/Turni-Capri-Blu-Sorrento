@@ -1,127 +1,125 @@
 :root {
+  --blue-dark: #061b3a;
   --blue: #0b3d91;
-  --navy: #061b3a;
+  --blue-light: #1f8fd6;
+  --white: #ffffff;
   --cream: #fffaf0;
-  --tile: #e7f2ff;
   --gold: #f5c542;
-  --line: rgba(11, 61, 145, 0.18);
-  --shadow: 0 18px 50px rgba(6, 27, 58, 0.16);
+  --line: rgba(255, 255, 255, 0.18);
+  --table-line: rgba(6, 27, 58, 0.13);
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.26);
 }
 
 * {
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
   min-height: 100vh;
+}
+
+body {
   font-family: Arial, Helvetica, sans-serif;
-  color: var(--navy);
+  color: var(--white);
   background:
-    radial-gradient(circle at top left, rgba(11, 61, 145, 0.14), transparent 32%),
-    linear-gradient(135deg, #fffaf0 0%, #f5fbff 45%, #edf6ff 100%);
+    radial-gradient(circle at 15% 10%, rgba(80, 180, 255, 0.42), transparent 28%),
+    radial-gradient(circle at 85% 5%, rgba(255, 255, 255, 0.18), transparent 24%),
+    linear-gradient(135deg, #03122c 0%, #063778 38%, #0b63b6 72%, #16a1d9 100%);
+  background-attachment: fixed;
 }
 
-.app {
-  width: min(1500px, 100%);
+.page {
+  width: min(1540px, 100%);
   margin: 0 auto;
-  padding: 24px;
+  padding: 28px;
 }
 
-.hero {
-  text-align: center;
-  padding: 26px 18px 22px;
-  border: 2px solid rgba(11, 61, 145, 0.18);
-  border-radius: 28px;
-  background: rgba(255, 255, 255, 0.72);
+.top-card {
+  min-height: 170px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.12);
   box-shadow: var(--shadow);
-  position: relative;
-  overflow: hidden;
+  backdrop-filter: blur(12px);
 }
-
-.hero::before,
-.hero::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 13px;
-  background: repeating-linear-gradient(90deg, var(--blue) 0 28px, #ffffff 28px 42px, #1d72c9 42px 70px, #ffffff 70px 84px);
-  opacity: 0.9;
-}
-
-.hero::before { top: 0; }
-.hero::after { bottom: 0; }
 
 .eyebrow {
-  margin: 0 0 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--blue);
-  font-weight: 700;
+  margin: 0 0 8px;
   font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #d7efff;
 }
 
 h1 {
   margin: 0;
-  font-size: clamp(2rem, 5vw, 4rem);
-  color: var(--blue);
+  font-size: clamp(2.4rem, 7vw, 5.5rem);
+  line-height: 0.95;
+  color: white;
+  text-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
 }
 
 .subtitle {
-  margin: 8px auto 0;
-  max-width: 720px;
+  margin: 12px 0 0;
+  max-width: 680px;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 1.05rem;
   line-height: 1.45;
 }
 
-.toolbar,
-.legend {
-  margin-top: 18px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  padding: 14px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.76);
-  border: 1px solid var(--line);
-}
-
-.toolbar {
-  justify-content: space-between;
-}
-
-.toolbar div {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1 1 320px;
+.week-box {
+  width: min(420px, 100%);
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--blue-dark);
 }
 
 label {
-  font-weight: 700;
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 900;
   color: var(--blue);
 }
 
 input {
-  width: min(420px, 100%);
-  border: 1px solid rgba(11, 61, 145, 0.25);
+  width: 100%;
+  border: 1px solid rgba(6, 27, 58, 0.18);
   border-radius: 14px;
   padding: 12px 14px;
   font-size: 1rem;
-  color: var(--navy);
-  background: #fff;
+  font-weight: 700;
+  color: var(--blue-dark);
+  background: white;
+}
+
+.toolbar,
+.legend {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 
 button {
-  border: 0;
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 999px;
-  padding: 12px 18px;
-  background: var(--blue);
-  color: white;
-  font-weight: 700;
+  padding: 12px 22px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--blue);
+  font-weight: 900;
   cursor: pointer;
-  box-shadow: 0 8px 20px rgba(11, 61, 145, 0.18);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.16);
 }
 
 button:hover {
@@ -129,14 +127,18 @@ button:hover {
 }
 
 .legend {
-  justify-content: center;
-  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 800;
 }
 
 .legend span {
   display: inline-flex;
   align-items: center;
   gap: 7px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .dot {
@@ -151,26 +153,33 @@ button:hover {
 .dot.spezzato { background: #fff1bc; border: 1px solid #e0b52e; }
 .dot.riposo { background: #f2f2f2; border: 1px solid #cccccc; }
 
-.table-wrap {
+.table-card {
   margin-top: 18px;
-  overflow-x: auto;
-  border-radius: 24px;
+  padding: 14px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.92);
   box-shadow: var(--shadow);
-  border: 1px solid var(--line);
-  background: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.36);
+}
+
+.table-scroll {
+  overflow-x: auto;
+  border-radius: 22px;
+  background: white;
 }
 
 .shift-table {
   width: 100%;
+  min-width: 1180px;
   border-collapse: separate;
   border-spacing: 0;
-  min-width: 1180px;
+  color: var(--blue-dark);
 }
 
 .shift-table th,
 .shift-table td {
-  border-right: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--table-line);
+  border-bottom: 1px solid var(--table-line);
   padding: 10px;
   vertical-align: middle;
 }
@@ -179,10 +188,10 @@ button:hover {
   position: sticky;
   top: 0;
   z-index: 2;
-  background: var(--blue);
+  background: linear-gradient(180deg, #0b4ca2, #062e72);
   color: white;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   letter-spacing: 0.03em;
 }
 
@@ -194,8 +203,8 @@ button:hover {
 }
 
 .shift-table td:first-child {
-  background: #fffdf8;
-  font-weight: 800;
+  background: #f7fbff;
+  font-weight: 900;
   color: var(--blue);
 }
 
@@ -204,7 +213,7 @@ button:hover {
 }
 
 .role {
-  font-weight: 700;
+  font-weight: 800;
   color: #46536b;
   text-align: center;
 }
@@ -213,7 +222,7 @@ button:hover {
   min-width: 130px;
   border-radius: 14px;
   overflow: hidden;
-  border: 1px solid rgba(6, 27, 58, 0.1);
+  border: 1px solid rgba(6, 27, 58, 0.11);
   background: #f8fbff;
 }
 
@@ -224,13 +233,13 @@ button:hover {
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.2;
   outline: none;
 }
 
 .shift-slot + .shift-slot {
-  border-top: 1px dashed rgba(6, 27, 58, 0.2);
+  border-top: 1px dashed rgba(6, 27, 58, 0.22);
 }
 
 .shift-slot.pranzo {
@@ -253,7 +262,7 @@ button:hover {
 
 .day-spezzato .shift-cell {
   border-color: #e0b52e;
-  box-shadow: inset 0 0 0 2px rgba(245, 197, 66, 0.25);
+  box-shadow: inset 0 0 0 2px rgba(245, 197, 66, 0.28);
 }
 
 .total {
@@ -265,23 +274,26 @@ button:hover {
 }
 
 .note {
-  text-align: center;
-  color: #4d5b73;
   margin: 18px 0 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 700;
 }
 
 @media (max-width: 760px) {
-  .app {
+  .page {
     padding: 14px;
+  }
+
+  .top-card {
+    min-height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 22px;
   }
 
   .toolbar {
     align-items: stretch;
-  }
-
-  .toolbar div {
-    flex-direction: column;
-    align-items: flex-start;
   }
 
   button {
@@ -292,10 +304,26 @@ button:hover {
 @media print {
   body {
     background: white;
+    color: black;
   }
 
-  .app {
+  .page {
     padding: 0;
+  }
+
+  .top-card {
+    color: black;
+    box-shadow: none;
+    border-radius: 0;
+    background: white;
+  }
+
+  h1,
+  .eyebrow,
+  .subtitle,
+  .note {
+    color: black;
+    text-shadow: none;
   }
 
   .toolbar,
@@ -304,15 +332,17 @@ button:hover {
     display: none;
   }
 
-  .hero {
+  .table-card {
+    margin: 0;
+    padding: 0;
     box-shadow: none;
     border-radius: 0;
+    border: 0;
   }
 
-  .table-wrap {
-    box-shadow: none;
-    border-radius: 0;
+  .table-scroll {
     overflow: visible;
+    border-radius: 0;
   }
 
   .shift-table {
