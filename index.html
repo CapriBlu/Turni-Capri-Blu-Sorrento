@@ -7,18 +7,21 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="app">
-    <header class="hero">
-      <p class="eyebrow">Capri Blu Sorrento</p>
-      <h1>Turni Staff</h1>
-      <p class="subtitle">Tabella settimanale con due slot per ogni giorno: pranzo e cena.</p>
-    </header>
-
-    <section class="toolbar" aria-label="Strumenti tabella">
+  <main class="page">
+    <section class="top-card">
       <div>
+        <p class="eyebrow">Capri Blu Sorrento</p>
+        <h1>Turni Staff</h1>
+        <p class="subtitle">Pagina semplice per organizzare i turni settimanali del personale.</p>
+      </div>
+
+      <div class="week-box">
         <label for="weekInput">Settimana</label>
         <input id="weekInput" type="text" value="Esempio: 6 - 12 Luglio 2026" />
       </div>
+    </section>
+
+    <section class="toolbar" aria-label="Strumenti tabella">
       <button id="printBtn" type="button">Stampa</button>
       <button id="resetBtn" type="button">Ripristina esempio</button>
     </section>
@@ -30,27 +33,29 @@
       <span><i class="dot riposo"></i> Riposo / vuoto</span>
     </section>
 
-    <section class="table-wrap">
-      <table class="shift-table" id="shiftTable">
-        <thead>
-          <tr>
-            <th>Staff</th>
-            <th>Ruolo</th>
-            <th>Lunedì</th>
-            <th>Martedì</th>
-            <th>Mercoledì</th>
-            <th>Giovedì</th>
-            <th>Venerdì</th>
-            <th>Sabato</th>
-            <th>Domenica</th>
-            <th>Totale</th>
-          </tr>
-        </thead>
-        <tbody id="scheduleBody"></tbody>
-      </table>
+    <section class="table-card">
+      <div class="table-scroll">
+        <table class="shift-table" id="shiftTable">
+          <thead>
+            <tr>
+              <th>Staff</th>
+              <th>Ruolo</th>
+              <th>Lunedì</th>
+              <th>Martedì</th>
+              <th>Mercoledì</th>
+              <th>Giovedì</th>
+              <th>Venerdì</th>
+              <th>Sabato</th>
+              <th>Domenica</th>
+              <th>Totale</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleBody"></tbody>
+        </table>
+      </div>
     </section>
 
-    <p class="note">Clicca dentro ogni slot per modificare gli orari. Formato consigliato: 10:30-15:30 oppure Riposo.</p>
+    <p class="note">Clicca dentro ogni slot per modificare gli orari. Scrivi ad esempio 10:30-15:30, 18:30-23:30 oppure Riposo.</p>
   </main>
 
   <script src="script.js"></script>
