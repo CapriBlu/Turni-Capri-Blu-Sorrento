@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Turni Capri Blu Sorrento</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <p class="eyebrow">Capri Blu Sorrento</p>
+      <h1>Turni Staff</h1>
+      <p class="subtitle">Tabella settimanale con due slot per ogni giorno: pranzo e cena.</p>
+    </header>
+
+    <section class="toolbar" aria-label="Strumenti tabella">
+      <div>
+        <label for="weekInput">Settimana</label>
+        <input id="weekInput" type="text" value="Esempio: 6 - 12 Luglio 2026" />
+      </div>
+      <button id="printBtn" type="button">Stampa</button>
+      <button id="resetBtn" type="button">Ripristina esempio</button>
+    </section>
+
+    <section class="legend" aria-label="Legenda colori">
+      <span><i class="dot pranzo"></i> Pranzo</span>
+      <span><i class="dot cena"></i> Cena</span>
+      <span><i class="dot spezzato"></i> Spezzato</span>
+      <span><i class="dot riposo"></i> Riposo / vuoto</span>
+    </section>
+
+    <section class="table-wrap">
+      <table class="shift-table" id="shiftTable">
+        <thead>
+          <tr>
+            <th>Staff</th>
+            <th>Ruolo</th>
+            <th>Lunedì</th>
+            <th>Martedì</th>
+            <th>Mercoledì</th>
+            <th>Giovedì</th>
+            <th>Venerdì</th>
+            <th>Sabato</th>
+            <th>Domenica</th>
+            <th>Totale</th>
+          </tr>
+        </thead>
+        <tbody id="scheduleBody"></tbody>
+      </table>
+    </section>
+
+    <p class="note">Clicca dentro ogni slot per modificare gli orari. Formato consigliato: 10:30-15:30 oppure Riposo.</p>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
