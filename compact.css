@@ -57,9 +57,23 @@ select {
   gap: 4px;
 }
 
-button {
+button,
+.monthly-link {
   padding: 5px 10px;
   font-size: 0.82rem;
+}
+
+.monthly-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #073b7a;
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0, 46, 100, 0.12);
 }
 
 .legend span {
