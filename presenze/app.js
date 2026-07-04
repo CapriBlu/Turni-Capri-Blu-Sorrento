@@ -30,6 +30,7 @@ const monthInput = document.getElementById("monthInput");
 const table = document.getElementById("presenceTable");
 const printBtn = document.getElementById("printBtn");
 const resetBtn = document.getElementById("resetBtn");
+let activeSelect = null;
 
 function currentMonthValue() {
   const now = new Date();
@@ -149,9 +150,7 @@ function finalCellInfo(name, day, date, manualData) {
   const manualValue = getManualValue(manualRecord);
   const minutes = getManualMinutes(manualRecord);
 
-  if (manualValue) {
-    return { value: manualValue, minutes };
-  }
+  if (manualValue) return { value: manualValue, minutes };
 
   const auto = automaticValue(name, date);
   return { value: auto || "", minutes: 0 };
@@ -208,32 +207,17 @@ function renderTable() {
   table.innerHTML = html;
 }
 
-function openCellMenu(cell) {
+function closeActiveSelect() {
+  if (activeSelect) {
+    activeSelect.remove();
+    activeSelect = null;
+  }
+}
+
+function saveCellValue(cell, value) {
   const data = readData();
   const key = cell.dataset.name + "-" + cell.dataset.day;
   const oldRecord = data[key];
-  const oldValue = getManualValue(oldRecord) || cell.textContent.trim().replace(/\s+\d+m$/, "");
-
-  const choice = prompt(
-    "Scegli: P, F, Fer, MAL, P+Rit oppure vuoto per cancellare",
-    oldValue
-  );
-
-  if (choice === null) return;
-
-  const clean = String(choice).trim().toLowerCase();
-  let value = "";
-
-  if (clean === "p") value = "P";
-  else if (clean === "f") value = "F";
-  else if (clean === "fer" || clean === "ferie") value = "Fer";
-  else if (clean === "mal" || clean === "malattia") value = "MAL";
-  else if (clean === "p+rit" || clean === "prit" || clean === "rit" || clean === "ritardo") value = "P+Rit";
-  else if (clean === "" || clean === "vuoto" || clean === "cancella") value = "";
-  else {
-    alert("Valore non valido. Usa P, F, Fer, MAL o P+Rit.");
-    return;
-  }
 
   if (!value) {
     delete data[key];
@@ -246,7 +230,6 @@ function openCellMenu(cell) {
     const oldMinutes = getManualMinutes(oldRecord);
     const minutesText = prompt("Quanti minuti di ritardo?", oldMinutes ? String(oldMinutes) : "");
     if (minutesText === null) return;
-
     const minutes = Number(String(minutesText).replace(/[^0-9]/g, ""));
     data[key] = { value: "P+Rit", minutes: Number.isFinite(minutes) ? minutes : 0 };
   } else {
@@ -255,6 +238,47 @@ function openCellMenu(cell) {
 
   saveData(data);
   renderTable();
+}
+
+function openCellMenu(cell) {
+  closeActiveSelect();
+
+  const manualData = readData();
+  const key = cell.dataset.name + "-" + cell.dataset.day;
+  const currentValue = getManualValue(manualData[key]) || cell.textContent.trim().replace(/\s+\d+m$/, "");
+
+  const select = document.createElement("select");
+  select.className = "presence-select-menu";
+  select.innerHTML = `
+    <option value="">Vuoto</option>
+    <option value="P">P - Presenza</option>
+    <option value="F">F - Festa</option>
+    <option value="Fer">Fer - Ferie</option>
+    <option value="MAL">MAL - Malattia</option>
+    <option value="P+Rit">P+Rit - Ritardo</option>
+  `;
+  select.value = currentValue === "P+Rit" ? "P+Rit" : currentValue;
+
+  const rect = cell.getBoundingClientRect();
+  select.style.position = "fixed";
+  select.style.left = rect.left + "px";
+  select.style.top = rect.top + "px";
+  select.style.width = Math.max(rect.width, 150) + "px";
+  select.style.zIndex = "9999";
+
+  document.body.appendChild(select);
+  activeSelect = select;
+  select.focus();
+
+  select.addEventListener("change", () => {
+    const value = select.value;
+    closeActiveSelect();
+    saveCellValue(cell, value);
+  });
+
+  select.addEventListener("blur", () => {
+    setTimeout(closeActiveSelect, 150);
+  });
 }
 
 monthInput.value = localStorage.getItem("capriBluPresenzeMese") || currentMonthValue();
