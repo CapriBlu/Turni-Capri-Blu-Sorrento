@@ -11,7 +11,7 @@ body {
 }
 
 .page {
-  width: min(1600px, 100%);
+  width: min(1800px, 100%);
   margin: 0 auto;
   padding: 8px;
 }
@@ -107,6 +107,7 @@ input, button, .link-btn {
 .p, .cell-p { background: #d9f7df !important; color: #0a5b20; }
 .f, .cell-f { background: #e7ecff !important; color: #243b9b; }
 .fer, .cell-fer { background: #fff1bf !important; color: #745000; }
+.mal, .cell-mal { background: #ffd6e0 !important; color: #8a1230; }
 .rit, .cell-rit { background: #ffd49a !important; color: #743800; }
 
 .table-card {
@@ -123,7 +124,7 @@ input, button, .link-btn {
 
 .presence-table {
   width: 100%;
-  min-width: 1120px;
+  min-width: 1360px;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -134,7 +135,7 @@ input, button, .link-btn {
   text-align: center;
   height: 30px;
   padding: 2px;
-  font-size: .82rem;
+  font-size: .78rem;
 }
 
 .presence-table th {
@@ -168,6 +169,13 @@ input, button, .link-btn {
 
 .presence-table tr:nth-child(even) td:not(:first-child) {
   background: #f0f7ff;
+}
+
+.presence-table .total-cell {
+  cursor: default;
+  background: #eaf3ff !important;
+  color: #073b7a;
+  font-weight: 900;
 }
 
 .day-number {
