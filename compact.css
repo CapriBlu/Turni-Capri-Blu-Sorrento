@@ -1,71 +1,71 @@
-/* Versione super compatta per screenshot telefono */
+/* Versione compatta leggibile per screenshot telefono */
 .page {
   width: min(1840px, 100%);
   padding: 6px;
 }
 
 .top-card {
-  min-height: 68px;
-  padding: 8px 12px;
+  min-height: 62px;
+  padding: 7px 12px;
   border-radius: 14px;
   gap: 10px;
 }
 
 .eyebrow {
-  margin-bottom: 2px;
+  margin-bottom: 1px;
   font-size: 0.58rem;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
 }
 
 h1 {
-  font-size: clamp(1.45rem, 3.5vw, 2.7rem);
-  line-height: 0.98;
+  font-size: clamp(1.35rem, 3.2vw, 2.45rem);
+  line-height: 0.95;
 }
 
 .subtitle {
-  margin-top: 3px;
-  font-size: 0.74rem;
-  line-height: 1.05;
+  margin-top: 2px;
+  font-size: 0.72rem;
+  line-height: 1;
 }
 
 .week-box {
-  width: min(245px, 100%);
-  padding: 7px;
-  border-radius: 11px;
+  width: min(225px, 100%);
+  padding: 6px;
+  border-radius: 10px;
 }
 
 .week-range {
-  margin-top: 3px;
-  font-size: 0.66rem;
+  margin-top: 2px;
+  font-size: 0.62rem;
 }
 
 label {
-  margin-bottom: 3px;
-  font-size: 0.7rem;
+  margin-bottom: 2px;
+  font-size: 0.66rem;
 }
 
 input,
 select {
-  padding: 5px 7px;
-  border-radius: 8px;
-  font-size: 0.72rem;
+  padding: 4px 6px;
+  border-radius: 7px;
+  font-size: 0.7rem;
 }
 
 .toolbar,
 .legend {
-  margin-top: 4px;
+  margin-top: 3px;
   gap: 4px;
 }
 
 button {
-  padding: 5px 9px;
-  font-size: 0.66rem;
+  padding: 4px 8px;
+  font-size: 0.64rem;
 }
 
 .legend span {
   padding: 3px 6px;
   gap: 4px;
-  font-size: 0.64rem;
+  font-size: 0.62rem;
 }
 
 .dot {
@@ -76,13 +76,13 @@ button {
 .table-card,
 .requests-card {
   margin-top: 4px;
-  padding: 4px;
-  border-radius: 12px;
+  padding: 3px;
+  border-radius: 11px;
 }
 
 .table-scroll,
 .requests-list-wrap {
-  border-radius: 9px;
+  border-radius: 8px;
 }
 
 .shift-table {
@@ -98,20 +98,20 @@ button {
 
 .shift-table th,
 .requests-table th {
-  font-size: 0.58rem;
+  font-size: 0.62rem;
   line-height: 1;
   letter-spacing: 0;
 }
 
 .shift-table th small {
   margin-top: 1px;
-  font-size: 0.5rem;
+  font-size: 0.52rem;
 }
 
 .shift-table td:first-child {
   min-width: 70px;
   max-width: 70px;
-  font-size: 0.62rem;
+  font-size: 0.7rem;
   line-height: 1;
 }
 
@@ -133,9 +133,10 @@ button {
 }
 
 .shift-time {
-  padding: 2px;
-  font-size: 0.6rem;
+  padding: 1px;
+  font-size: 0.76rem;
   line-height: 1;
+  letter-spacing: -0.01em;
 }
 
 .shift-time + .shift-time {
@@ -146,30 +147,30 @@ button {
   margin-top: 2px;
   padding: 2px 3px;
   border-radius: 5px;
-  font-size: 0.54rem;
+  font-size: 0.62rem;
   line-height: 1;
 }
 
 .requests-head {
-  padding: 3px 4px 5px;
+  padding: 2px 4px 4px;
   gap: 6px;
 }
 
 .requests-head h2 {
-  font-size: clamp(0.9rem, 1.7vw, 1.18rem);
+  font-size: clamp(0.85rem, 1.6vw, 1.1rem);
 }
 
 .requests-head p {
-  font-size: 0.64rem;
-  line-height: 1.08;
+  font-size: 0.62rem;
+  line-height: 1;
 }
 
 .request-form {
   grid-template-columns: 1fr 0.9fr 0.85fr 1fr auto;
   gap: 4px;
-  padding: 5px;
+  padding: 4px;
   margin-bottom: 4px;
-  border-radius: 9px;
+  border-radius: 8px;
 }
 
 .requests-table {
@@ -178,7 +179,7 @@ button {
 
 .request-pill {
   padding: 3px 5px;
-  font-size: 0.6rem;
+  font-size: 0.62rem;
 }
 
 .delete-request {
@@ -226,12 +227,6 @@ button {
   gap: 4px;
 }
 
-@media print {
-  .eyebrow::before {
-    content: "";
-  }
-}
-
 @media (max-width: 760px) {
   .page {
     padding: 4px;
@@ -239,7 +234,7 @@ button {
 
   .top-card,
   .requests-head {
-    padding: 8px;
+    padding: 7px;
   }
 
   .shift-table {
@@ -249,6 +244,7 @@ button {
   .shift-table td:first-child {
     min-width: 64px;
     max-width: 64px;
+    font-size: 0.66rem;
   }
 
   .shift-cell {
@@ -256,6 +252,6 @@ button {
   }
 
   .shift-time {
-    font-size: 0.56rem;
+    font-size: 0.72rem;
   }
 }
