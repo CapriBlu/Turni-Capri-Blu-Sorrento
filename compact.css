@@ -261,9 +261,25 @@ button,
   font-size: 0.84rem;
 }
 
+.requests-card {
+  background: #d6ffd8 !important;
+  border: 2px solid #16a34a !important;
+  box-shadow: 0 8px 28px rgba(22, 163, 74, 0.25) !important;
+}
+
 .requests-head {
   padding: 2px 4px 4px;
   gap: 6px;
+  background: #22c55e;
+  color: #063b1c;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.requests-head .eyebrow.dark,
+.requests-head h2,
+.requests-head p {
+  color: #063b1c !important;
 }
 
 .requests-head h2 {
@@ -281,6 +297,8 @@ button,
   padding: 4px;
   margin-bottom: 4px;
   border-radius: 8px;
+  background: #ecfff0 !important;
+  border: 1px solid #16a34a !important;
 }
 
 .requests-table {
