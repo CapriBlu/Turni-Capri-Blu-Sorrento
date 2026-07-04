@@ -1,7 +1,6 @@
 const defaultStaff = [
   {
     nome: "Mario",
-    ruolo: "Sala",
     turni: {
       lunedi: ["10:30-15:30", "18:30-23:30"],
       martedi: ["Riposo", "18:30-23:30"],
@@ -14,7 +13,6 @@ const defaultStaff = [
   },
   {
     nome: "Anna",
-    ruolo: "Cameriera",
     turni: {
       lunedi: ["11:00-15:00", "Riposo"],
       martedi: ["Riposo", "18:30-23:30"],
@@ -27,7 +25,6 @@ const defaultStaff = [
   },
   {
     nome: "Luca",
-    ruolo: "Cucina",
     turni: {
       lunedi: ["09:30-15:30", "Riposo"],
       martedi: ["09:30-15:30", "18:00-23:00"],
@@ -40,7 +37,6 @@ const defaultStaff = [
   },
   {
     nome: "Giulia",
-    ruolo: "Bar",
     turni: {
       lunedi: ["Riposo", "18:00-23:30"],
       martedi: ["11:00-15:00", "Riposo"],
@@ -92,7 +88,6 @@ function renderTable() {
 
     row.innerHTML = `
       <td contenteditable="true" data-person="${personIndex}" data-field="nome">${person.nome}</td>
-      <td class="role" contenteditable="true" data-person="${personIndex}" data-field="ruolo">${person.ruolo}</td>
     `;
 
     days.forEach((day) => {
@@ -112,22 +107,17 @@ function renderTable() {
       row.appendChild(td);
     });
 
-    const total = document.createElement("td");
-    total.className = "total";
-    total.textContent = `${formatHours(calculateWeeklyHours(person))} h`;
-    row.appendChild(total);
-
     scheduleBody.appendChild(row);
   });
 }
 
-function updateTotalsAndColors() {
+function updateColors() {
   staff.forEach((person, personIndex) => {
     const row = scheduleBody.children[personIndex];
     if (!row) return;
 
     days.forEach((day, dayIndex) => {
-      const td = row.children[dayIndex + 2];
+      const td = row.children[dayIndex + 1];
       const slots = person.turni[day.key] || ["Riposo", "Riposo"];
       const slotElements = td.querySelectorAll(".shift-slot");
 
@@ -138,9 +128,6 @@ function updateTotalsAndColors() {
         slotElement.classList.add(slotClass(slots[slotIndex], slotIndex));
       });
     });
-
-    const total = row.querySelector(".total");
-    total.textContent = `${formatHours(calculateWeeklyHours(person))} h`;
   });
 }
 
@@ -153,31 +140,6 @@ function isWorking(value) {
   if (!value) return false;
   const clean = value.trim().toLowerCase();
   return clean !== "" && clean !== "riposo" && clean !== "-" && clean !== "—" && clean !== "vuoto";
-}
-
-function calculateWeeklyHours(person) {
-  return days.reduce((weekTotal, day) => {
-    const slots = person.turni[day.key] || [];
-    return weekTotal + slots.reduce((dayTotal, slot) => dayTotal + calculateSlotHours(slot), 0);
-  }, 0);
-}
-
-function calculateSlotHours(value) {
-  if (!isWorking(value)) return 0;
-
-  const match = value.match(/(\d{1,2})[:.](\d{2})\s*-\s*(\d{1,2})[:.](\d{2})/);
-  if (!match) return 0;
-
-  const start = Number(match[1]) * 60 + Number(match[2]);
-  let end = Number(match[3]) * 60 + Number(match[4]);
-
-  if (end < start) end += 24 * 60;
-
-  return (end - start) / 60;
-}
-
-function formatHours(hours) {
-  return hours.toFixed(1).replace(".0", "");
 }
 
 scheduleBody.addEventListener("input", (event) => {
@@ -197,7 +159,7 @@ scheduleBody.addEventListener("input", (event) => {
   }
 
   saveStaff();
-  updateTotalsAndColors();
+  updateColors();
 });
 
 scheduleBody.addEventListener("focusout", () => {
