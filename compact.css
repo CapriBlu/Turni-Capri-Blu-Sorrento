@@ -109,6 +109,10 @@ button {
   font-weight: 900;
 }
 
+.shift-table td {
+  position: relative;
+}
+
 .shift-table td:first-child {
   min-width: 78px;
   max-width: 78px;
@@ -207,14 +211,31 @@ button {
 }
 
 .request-badge {
-  margin-top: 1px;
-  padding: 2px 3px;
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  z-index: 5;
+  height: 16px;
+  min-height: 0;
+  margin: 0;
+  padding: 1px 3px;
   border-radius: 4px;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   line-height: 1;
   background: #ffb55d !important;
-  border-color: #e98218 !important;
+  border: 1px solid #e98218 !important;
   color: #6f3700 !important;
+  box-shadow: none;
+}
+
+.has-request .one-field .shift-time {
+  align-items: flex-start;
+  padding-top: 5px;
+}
+
+.has-request .two-fields .shift-time {
+  font-size: 0.84rem;
 }
 
 .requests-head {
@@ -339,5 +360,11 @@ button {
 
   .shift-time {
     font-size: 0.9rem;
+  }
+
+  .request-badge {
+    height: 15px;
+    font-size: 0.62rem;
+    bottom: 2px;
   }
 }
