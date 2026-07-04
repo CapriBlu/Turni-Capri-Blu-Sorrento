@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Presenze mensili - Capri Blu</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="page">
+    <section class="top-card">
+      <div>
+        <p class="eyebrow">Grafico mensile</p>
+        <h1>Presenze Staff</h1>
+        <p class="subtitle">P presenza · F festa · Fer ferie · P+Rit presenza con ritardo</p>
+      </div>
+      <div class="month-box">
+        <label for="monthInput">Mese</label>
+        <input id="monthInput" type="month" />
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <a class="link-btn" href="../">Torna ai turni</a>
+      <button id="printBtn" type="button">Stampa</button>
+      <button id="resetBtn" type="button">Reset mese</button>
+    </section>
+
+    <section class="legend">
+      <span class="p">P</span><b>Presenza</b>
+      <span class="f">F</span><b>Festa</b>
+      <span class="fer">Fer</span><b>Ferie</b>
+      <span class="rit">P+Rit</span><b>Ritardo</b>
+    </section>
+
+    <section class="table-card">
+      <div class="table-scroll">
+        <table id="presenceTable" class="presence-table"></table>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
