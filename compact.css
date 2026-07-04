@@ -116,10 +116,50 @@ button {
   line-height: 1;
 }
 
+.shift-table tbody tr:nth-child(odd) td:not(:first-child) {
+  background: #f7fbff;
+}
+
+.shift-table tbody tr:nth-child(even) td:not(:first-child) {
+  background: #eef6ff;
+}
+
+.shift-table tbody tr:nth-child(odd) td:first-child {
+  background: #f5f9ff;
+}
+
+.shift-table tbody tr:nth-child(even) td:first-child {
+  background: #eaf3ff;
+}
+
 .shift-cell {
   min-width: 78px;
   border-radius: 4px;
   border-width: 1px;
+}
+
+.shift-table tbody tr:nth-child(odd) .shift-time.riposo {
+  background: #d8f7dd;
+}
+
+.shift-table tbody tr:nth-child(even) .shift-time.riposo {
+  background: #c9f0d1;
+}
+
+.shift-table tbody tr:nth-child(odd) .shift-time.pranzo {
+  background: #e2f4ff;
+}
+
+.shift-table tbody tr:nth-child(even) .shift-time.pranzo {
+  background: #d3ecff;
+}
+
+.shift-table tbody tr:nth-child(odd) .shift-time.sera {
+  background: #e6eaff;
+}
+
+.shift-table tbody tr:nth-child(even) .shift-time.sera {
+  background: #d8ddff;
 }
 
 .two-fields {
@@ -145,12 +185,36 @@ button {
   border-top-width: 1px;
 }
 
+.has-request,
+.shift-table tbody tr:nth-child(odd) td.has-request,
+.shift-table tbody tr:nth-child(even) td.has-request {
+  background: #fff0d9 !important;
+}
+
+.has-request .shift-cell {
+  border-color: #e98218 !important;
+  background: #ffd49a !important;
+}
+
+.has-request .shift-time,
+.has-request .shift-time.riposo,
+.has-request .shift-time.pranzo,
+.has-request .shift-time.sera,
+.shift-table tbody tr:nth-child(odd) .has-request .shift-time,
+.shift-table tbody tr:nth-child(even) .has-request .shift-time {
+  background: #ffd49a !important;
+  color: #7a3e00 !important;
+}
+
 .request-badge {
   margin-top: 1px;
   padding: 2px 3px;
   border-radius: 4px;
   font-size: 0.72rem;
   line-height: 1;
+  background: #ffb55d !important;
+  border-color: #e98218 !important;
+  color: #6f3700 !important;
 }
 
 .requests-head {
