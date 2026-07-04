@@ -125,7 +125,9 @@ function renderTable() {
     days.forEach((day, dayIndex) => {
       const shift = person.turni[day.key] || { pranzo: "Riposo", sera: "Riposo" };
       const td = document.createElement("td");
-      const isSplit = isWorking(shift.pranzo) && isWorking(shift.sera);
+      const hasPranzo = isWorking(shift.pranzo);
+      const hasSera = isWorking(shift.sera);
+      const isSplit = hasPranzo && hasSera;
       const dateISO = getDateISOForDay(dayIndex);
       const cellRequests = getRequestsFor(person.nome, dateISO);
 
@@ -137,10 +139,22 @@ function renderTable() {
         return `<div class="request-badge ${request.type.toLowerCase()}">${escapeHtml(request.type)}${note}</div>`;
       }).join("");
 
+      let cellContent;
+
+      if (isSplit) {
+        cellContent = `
+          <span class="shift-time ${slotClass(shift.pranzo, "pranzo")}">${escapeHtml(shift.pranzo)}</span>
+          <span class="shift-time ${slotClass(shift.sera, "sera")}">${escapeHtml(shift.sera)}</span>
+        `;
+      } else {
+        const singleValue = hasPranzo ? shift.pranzo : hasSera ? shift.sera : "Riposo";
+        const singlePart = hasPranzo ? "pranzo" : hasSera ? "sera" : "riposo";
+        cellContent = `<span class="shift-time single ${slotClass(singleValue, singlePart)}">${escapeHtml(singleValue)}</span>`;
+      }
+
       td.innerHTML = `
-        <button class="shift-cell two-fields" type="button" data-person="${personIndex}" data-day="${day.key}" aria-label="Modifica turno ${person.nome} ${day.label}">
-          <span class="shift-time ${slotClass(shift.pranzo, "pranzo")}">${shift.pranzo}</span>
-          <span class="shift-time ${slotClass(shift.sera, "sera")}">${shift.sera}</span>
+        <button class="shift-cell ${isSplit ? "two-fields" : "one-field"}" type="button" data-person="${personIndex}" data-day="${day.key}" aria-label="Modifica turno ${person.nome} ${day.label}">
+          ${cellContent}
         </button>
         ${requestBadges}
       `;
@@ -150,24 +164,6 @@ function renderTable() {
 
     scheduleBody.appendChild(row);
   });
-}
-
-function updateCellColorsAndText(personIndex, dayKey) {
-  const row = scheduleBody.children[personIndex];
-  if (!row) return;
-
-  const dayIndex = days.findIndex((day) => day.key === dayKey);
-  const td = row.children[dayIndex + 1];
-  const shift = staff[personIndex].turni[dayKey];
-  const times = td.querySelectorAll(".shift-time");
-
-  td.classList.toggle("day-spezzato", isWorking(shift.pranzo) && isWorking(shift.sera));
-
-  times[0].textContent = shift.pranzo;
-  times[0].className = `shift-time ${slotClass(shift.pranzo, "pranzo")}`;
-
-  times[1].textContent = shift.sera;
-  times[1].className = `shift-time ${slotClass(shift.sera, "sera")}`;
 }
 
 function slotClass(value, part) {
@@ -287,7 +283,7 @@ function createShiftEditor() {
     };
 
     saveStaff();
-    updateCellColorsAndText(personIndex, dayKey);
+    renderTable();
     closeShiftMenu();
   });
 }
