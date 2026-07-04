@@ -30,7 +30,8 @@ const monthInput = document.getElementById("monthInput");
 const table = document.getElementById("presenceTable");
 const printBtn = document.getElementById("printBtn");
 const resetBtn = document.getElementById("resetBtn");
-let activeSelect = null;
+let activeCell = null;
+let menuBackdrop = null;
 
 function currentMonthValue() {
   const now = new Date();
@@ -207,11 +208,55 @@ function renderTable() {
   table.innerHTML = html;
 }
 
-function closeActiveSelect() {
-  if (activeSelect) {
-    activeSelect.remove();
-    activeSelect = null;
-  }
+function createMenu() {
+  menuBackdrop = document.createElement("div");
+  menuBackdrop.id = "presenceMenuBackdrop";
+  menuBackdrop.className = "presence-menu-backdrop";
+  menuBackdrop.innerHTML = `
+    <div class="presence-menu-panel" role="dialog" aria-modal="true">
+      <h2>Seleziona presenza</h2>
+      <p id="presenceMenuSubtitle">Scegli una voce per questa casella</p>
+      <div class="presence-menu-grid">
+        <button type="button" data-value="P" class="menu-p">P<br><small>Presenza</small></button>
+        <button type="button" data-value="F" class="menu-f">F<br><small>Festa</small></button>
+        <button type="button" data-value="Fer" class="menu-fer">Fer<br><small>Ferie</small></button>
+        <button type="button" data-value="MAL" class="menu-mal">MAL<br><small>Malattia</small></button>
+        <button type="button" data-value="P+Rit" class="menu-rit">P+Rit<br><small>Ritardo</small></button>
+        <button type="button" data-value="" class="menu-empty">Vuoto<br><small>Cancella</small></button>
+      </div>
+      <button type="button" id="presenceMenuClose" class="presence-menu-close">Annulla</button>
+    </div>
+  `;
+
+  document.body.appendChild(menuBackdrop);
+
+  menuBackdrop.addEventListener("click", (event) => {
+    if (event.target === menuBackdrop) closePresenceMenu();
+  });
+
+  document.getElementById("presenceMenuClose").addEventListener("click", closePresenceMenu);
+
+  menuBackdrop.querySelectorAll("[data-value]").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (!activeCell) return;
+      const value = button.dataset.value;
+      closePresenceMenu();
+      saveCellValue(activeCell, value);
+    });
+  });
+}
+
+function openPresenceMenu(cell) {
+  activeCell = cell;
+  if (!menuBackdrop) createMenu();
+  const subtitle = document.getElementById("presenceMenuSubtitle");
+  if (subtitle) subtitle.textContent = cell.dataset.name + " - giorno " + cell.dataset.day;
+  menuBackdrop.classList.add("open");
+}
+
+function closePresenceMenu() {
+  if (menuBackdrop) menuBackdrop.classList.remove("open");
+  activeCell = null;
 }
 
 function saveCellValue(cell, value) {
@@ -240,54 +285,13 @@ function saveCellValue(cell, value) {
   renderTable();
 }
 
-function openCellMenu(cell) {
-  closeActiveSelect();
-
-  const manualData = readData();
-  const key = cell.dataset.name + "-" + cell.dataset.day;
-  const currentValue = getManualValue(manualData[key]) || cell.textContent.trim().replace(/\s+\d+m$/, "");
-
-  const select = document.createElement("select");
-  select.className = "presence-select-menu";
-  select.innerHTML = `
-    <option value="">Vuoto</option>
-    <option value="P">P - Presenza</option>
-    <option value="F">F - Festa</option>
-    <option value="Fer">Fer - Ferie</option>
-    <option value="MAL">MAL - Malattia</option>
-    <option value="P+Rit">P+Rit - Ritardo</option>
-  `;
-  select.value = currentValue === "P+Rit" ? "P+Rit" : currentValue;
-
-  const rect = cell.getBoundingClientRect();
-  select.style.position = "fixed";
-  select.style.left = rect.left + "px";
-  select.style.top = rect.top + "px";
-  select.style.width = Math.max(rect.width, 150) + "px";
-  select.style.zIndex = "9999";
-
-  document.body.appendChild(select);
-  activeSelect = select;
-  select.focus();
-
-  select.addEventListener("change", () => {
-    const value = select.value;
-    closeActiveSelect();
-    saveCellValue(cell, value);
-  });
-
-  select.addEventListener("blur", () => {
-    setTimeout(closeActiveSelect, 150);
-  });
-}
-
 monthInput.value = localStorage.getItem("capriBluPresenzeMese") || currentMonthValue();
 renderTable();
 
 table.addEventListener("click", (event) => {
   const cell = event.target.closest(".presence-cell");
   if (!cell) return;
-  openCellMenu(cell);
+  openPresenceMenu(cell);
 });
 
 monthInput.addEventListener("input", () => {
