@@ -191,27 +191,31 @@ function createShiftEditor() {
   editor.id = "shiftEditorBackdrop";
   editor.className = "editor-backdrop";
   editor.innerHTML = `
-    <div class="shift-editor" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
-      <h2 id="editorTitle">Modifica turno</h2>
-
-      <div class="editor-row">
-        <div class="editor-code apertura-code">A</div>
-        <select id="pranzoStatus" aria-label="Stato apertura pranzo">
-          <option value="apertura">Apertura</option>
-          <option value="pranzo">Pranzo</option>
-          <option value="riposo">Riposo</option>
-        </select>
-        <input id="pranzoTime" type="text" placeholder="10:30-15:30" />
+    <div class="shift-editor wide-editor" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+      <div class="editor-head">
+        <h2 id="editorTitle">Modifica turno</h2>
       </div>
 
-      <div class="editor-row">
-        <div class="editor-code sera-code">S</div>
-        <select id="seraStatus" aria-label="Stato sera cena">
-          <option value="sera">Sera</option>
-          <option value="cena">Cena</option>
-          <option value="riposo">Riposo</option>
-        </select>
-        <input id="seraTime" type="text" placeholder="18:30-23:30" />
+      <div class="editor-grid">
+        <div class="editor-panel">
+          <div class="editor-code apertura-code">A</div>
+          <select id="pranzoStatus" aria-label="Stato apertura pranzo">
+            <option value="apertura">Apertura</option>
+            <option value="pranzo">Pranzo</option>
+            <option value="riposo">Riposo</option>
+          </select>
+          <input id="pranzoTime" type="text" placeholder="10:30-15:30" />
+        </div>
+
+        <div class="editor-panel">
+          <div class="editor-code sera-code">S</div>
+          <select id="seraStatus" aria-label="Stato sera cena">
+            <option value="sera">Sera</option>
+            <option value="cena">Cena</option>
+            <option value="riposo">Riposo</option>
+          </select>
+          <input id="seraTime" type="text" placeholder="18:30-23:30" />
+        </div>
       </div>
 
       <div class="editor-actions">
