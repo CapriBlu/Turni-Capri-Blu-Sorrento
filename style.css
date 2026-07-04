@@ -301,7 +301,7 @@ button:hover {
 }
 
 .shift-editor {
-  width: min(480px, 100%);
+  width: min(520px, 100%);
   padding: 22px;
   border-radius: 26px;
   color: var(--blue-dark);
@@ -316,10 +316,29 @@ button:hover {
 
 .editor-row {
   display: grid;
-  grid-template-columns: 1fr 1.3fr;
+  grid-template-columns: 42px 1fr 1.3fr;
   gap: 10px;
   align-items: center;
   margin-top: 12px;
+}
+
+.editor-code {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 900;
+}
+
+.apertura-code {
+  background: #0b8bd6;
+}
+
+.sera-code {
+  background: #3446c5;
 }
 
 .editor-actions {
@@ -369,7 +388,11 @@ button:hover {
   }
 
   .editor-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 42px 1fr;
+  }
+
+  .editor-row input {
+    grid-column: 2 / 3;
   }
 }
 
