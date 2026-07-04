@@ -34,28 +34,11 @@ function replaceInputWithTimeSelect(id) {
   element.replaceWith(select);
 }
 
-function refreshTimeSelectOptions(id) {
-  const select = document.getElementById(id);
-  if (!select || select.tagName !== "SELECT") return;
-
-  const currentValue = select.value;
-  select.innerHTML = createTimeOptions(currentValue);
-}
-
 function convertTurnInputsToTimeMenus() {
-  ["pranzoTime", "seraTime"].forEach((id) => {
-    replaceInputWithTimeSelect(id);
-    refreshTimeSelectOptions(id);
-  });
+  replaceInputWithTimeSelect("pranzoTime");
+  replaceInputWithTimeSelect("seraTime");
 }
 
-const timePickerObserver = new MutationObserver(() => {
-  convertTurnInputsToTimeMenus();
-});
-
-timePickerObserver.observe(document.body, {
-  childList: true,
-  subtree: true
-});
-
+// Il popup dei turni viene creato da script.js prima di caricare questo file.
+// Non usiamo MutationObserver: causava un loop e mandava il sito in crash.
 convertTurnInputsToTimeMenus();
