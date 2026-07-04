@@ -16,8 +16,9 @@
       </div>
 
       <div class="week-box">
-        <label for="weekInput">Settimana</label>
-        <input id="weekInput" type="text" value="Esempio: 6 - 12 Luglio 2026" />
+        <label for="weekInput">Seleziona settimana</label>
+        <input id="weekInput" type="week" />
+        <p id="weekRange" class="week-range"></p>
       </div>
     </section>
 
@@ -27,10 +28,10 @@
     </section>
 
     <section class="legend" aria-label="Legenda colori">
-      <span><i class="dot pranzo"></i> A = Apertura</span>
-      <span><i class="dot cena"></i> S = Sera</span>
+      <span><i class="dot pranzo"></i> Pranzo</span>
+      <span><i class="dot cena"></i> Sera</span>
       <span><i class="dot spezzato"></i> Spezzato</span>
-      <span><i class="dot riposo"></i> Riposo / vuoto</span>
+      <span><i class="dot riposo"></i> Riposo</span>
     </section>
 
     <section class="table-card">
@@ -39,13 +40,13 @@
           <thead>
             <tr>
               <th>Staff</th>
-              <th>Lunedì</th>
-              <th>Martedì</th>
-              <th>Mercoledì</th>
-              <th>Giovedì</th>
-              <th>Venerdì</th>
-              <th>Sabato</th>
-              <th>Domenica</th>
+              <th data-day-header="lunedi">Lunedì</th>
+              <th data-day-header="martedi">Martedì</th>
+              <th data-day-header="mercoledi">Mercoledì</th>
+              <th data-day-header="giovedi">Giovedì</th>
+              <th data-day-header="venerdi">Venerdì</th>
+              <th data-day-header="sabato">Sabato</th>
+              <th data-day-header="domenica">Domenica</th>
             </tr>
           </thead>
           <tbody id="scheduleBody"></tbody>
@@ -53,7 +54,7 @@
       </div>
     </section>
 
-    <p class="note">Clicca su una cella per aprire il menù: scegli Apertura / Sera / Riposo e inserisci l’orario manualmente.</p>
+    <p class="note">Clicca su una cella per modificare pranzo, sera o riposo.</p>
   </main>
 
   <script src="script.js"></script>
