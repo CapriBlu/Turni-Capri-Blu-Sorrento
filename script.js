@@ -111,10 +111,8 @@ function renderTable() {
       if (isSplit) td.classList.add("day-spezzato");
 
       td.innerHTML = `
-        <button class="shift-cell four-fields" type="button" data-person="${personIndex}" data-day="${day.key}" aria-label="Modifica turno ${person.nome} ${day.label}">
-          <span class="shift-code apertura-code">A</span>
+        <button class="shift-cell two-fields" type="button" data-person="${personIndex}" data-day="${day.key}" aria-label="Modifica turno ${person.nome} ${day.label}">
           <span class="shift-time ${slotClass(shift.pranzo, "pranzo")}">${shift.pranzo}</span>
-          <span class="shift-code sera-code">S</span>
           <span class="shift-time ${slotClass(shift.sera, "sera")}">${shift.sera}</span>
         </button>
       `;
