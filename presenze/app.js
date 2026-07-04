@@ -23,7 +23,7 @@ const classMap = {
   "P+Rit": "cell-rit"
 };
 
-const weekStoragePrefix = "capriBluTurniStaffWeekV1-";
+const publishedWeekStoragePrefix = "capriBluTurniStaffPublishedWeekV1-";
 const requestsKey = "capriBluRichiesteStaffV1";
 
 const monthInput = document.getElementById("monthInput");
@@ -103,7 +103,7 @@ function autoValueFromRequests(name, dateISO) {
 
 function autoValueFromShift(name, date) {
   const weekValue = getISOWeekString(date);
-  const saved = localStorage.getItem(weekStoragePrefix + weekValue);
+  const saved = localStorage.getItem(publishedWeekStoragePrefix + weekValue);
   if (!saved) return "";
 
   const staff = JSON.parse(saved);
@@ -199,7 +199,7 @@ monthInput.addEventListener("input", () => {
 printBtn.addEventListener("click", () => window.print());
 
 resetBtn.addEventListener("click", () => {
-  if (!confirm("Cancellare solo le modifiche manuali di questo mese? I dati automatici dai turni resteranno visibili.")) return;
+  if (!confirm("Cancellare solo le modifiche manuali di questo mese? I dati inviati dai turni resteranno visibili.")) return;
   localStorage.removeItem(storageKey());
   renderTable();
 });
