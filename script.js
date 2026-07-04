@@ -135,8 +135,8 @@ function renderTable() {
       if (cellRequests.length) td.classList.add("has-request");
 
       const requestBadges = cellRequests.map((request) => {
-        const note = request.note ? ` - ${escapeHtml(request.note)}` : "";
-        return `<div class="request-badge ${request.type.toLowerCase()}">${escapeHtml(request.type)}${note}</div>`;
+        const noteAttr = request.note ? ` data-note="${escapeHtml(request.note)}"` : " data-note=\"Nessuna nota\"";
+        return `<button class="request-badge ${request.type.toLowerCase()}" type="button"${noteAttr} title="${escapeHtml(request.note || "Nessuna nota")}">${escapeHtml(request.type)}</button>`;
       }).join("");
 
       let cellContent;
@@ -288,6 +288,35 @@ function createShiftEditor() {
   });
 }
 
+function createNotePopup() {
+  const popup = document.createElement("div");
+  popup.id = "notePopupBackdrop";
+  popup.className = "note-popup-backdrop";
+  popup.innerHTML = `
+    <div class="note-popup">
+      <h3>Nota richiesta</h3>
+      <p id="notePopupText"></p>
+      <button id="notePopupClose" type="button">Chiudi</button>
+    </div>
+  `;
+  document.body.appendChild(popup);
+
+  popup.addEventListener("click", (event) => {
+    if (event.target === popup) closeNotePopup();
+  });
+
+  document.getElementById("notePopupClose").addEventListener("click", closeNotePopup);
+}
+
+function openNotePopup(note) {
+  document.getElementById("notePopupText").textContent = note || "Nessuna nota";
+  document.getElementById("notePopupBackdrop").classList.add("open");
+}
+
+function closeNotePopup() {
+  document.getElementById("notePopupBackdrop").classList.remove("open");
+}
+
 function populateRequestNames() {
   requestName.innerHTML = staff.map((person) => `<option value="${escapeHtml(person.nome)}">${escapeHtml(person.nome)}</option>`).join("");
 }
@@ -309,7 +338,7 @@ function renderRequests() {
       row.innerHTML = `
         <td>${escapeHtml(request.name)}</td>
         <td>${formatDateIT(request.date)}</td>
-        <td><span class="request-pill ${request.type.toLowerCase()}">${escapeHtml(request.type)}</span></td>
+        <td><span class="request-pill ${request.type.toLowerCase()}" title="${escapeHtml(request.note || "Nessuna nota")}">${escapeHtml(request.type)}</span></td>
         <td>${escapeHtml(request.note || "")}</td>
         <td><button class="delete-request" type="button" data-index="${originalIndex}">Elimina</button></td>
       `;
@@ -429,6 +458,13 @@ scheduleBody.addEventListener("input", (event) => {
 });
 
 scheduleBody.addEventListener("click", (event) => {
+  const requestBadge = event.target.closest(".request-badge");
+  if (requestBadge) {
+    event.stopPropagation();
+    openNotePopup(requestBadge.dataset.note || "Nessuna nota");
+    return;
+  }
+
   const cell = event.target.closest(".shift-cell");
   if (!cell) return;
 
@@ -476,5 +512,6 @@ document.getElementById("resetBtn").addEventListener("click", () => {
 });
 
 createShiftEditor();
+createNotePopup();
 renderRequests();
 renderTable();
