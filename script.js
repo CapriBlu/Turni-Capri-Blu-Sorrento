@@ -32,15 +32,25 @@ const defaultStaff = names.map((nome) => ({
 const storageKey = "capriBluTurniStaffV5";
 const oldStorageKeys = ["capriBluTurniStaffV4", "capriBluTurniStaffV3", "capriBluTurniStaffV2", "capriBluTurniStaff"];
 const weekKey = "capriBluTurniSettimanaV2";
+const requestsKey = "capriBluRichiesteStaffV1";
+
 let staff = loadStaff();
+let requests = loadRequests();
 let activeEdit = null;
 
 const scheduleBody = document.getElementById("scheduleBody");
 const weekInput = document.getElementById("weekInput");
 const weekRange = document.getElementById("weekRange");
+const requestName = document.getElementById("requestName");
+const requestDate = document.getElementById("requestDate");
+const requestType = document.getElementById("requestType");
+const requestNote = document.getElementById("requestNote");
+const requestsBody = document.getElementById("requestsBody");
 
 weekInput.value = localStorage.getItem(weekKey) || getISOWeekString(new Date());
+requestDate.value = toISODate(new Date());
 updateWeekHeader();
+populateRequestNames();
 
 function createEmptyWeek() {
   const turni = {};
@@ -60,6 +70,15 @@ function loadStaff() {
   }
 
   return structuredClone(defaultStaff);
+}
+
+function loadRequests() {
+  const saved = localStorage.getItem(requestsKey);
+  return saved ? JSON.parse(saved) : [];
+}
+
+function saveRequests() {
+  localStorage.setItem(requestsKey, JSON.stringify(requests));
 }
 
 function normalizeStaff(list) {
@@ -103,18 +122,27 @@ function renderTable() {
       <td contenteditable="true" data-person="${personIndex}" data-field="nome">${person.nome}</td>
     `;
 
-    days.forEach((day) => {
+    days.forEach((day, dayIndex) => {
       const shift = person.turni[day.key] || { pranzo: "Riposo", sera: "Riposo" };
       const td = document.createElement("td");
       const isSplit = isWorking(shift.pranzo) && isWorking(shift.sera);
+      const dateISO = getDateISOForDay(dayIndex);
+      const cellRequests = getRequestsFor(person.nome, dateISO);
 
       if (isSplit) td.classList.add("day-spezzato");
+      if (cellRequests.length) td.classList.add("has-request");
+
+      const requestBadges = cellRequests.map((request) => {
+        const note = request.note ? ` - ${escapeHtml(request.note)}` : "";
+        return `<div class="request-badge ${request.type.toLowerCase()}">${escapeHtml(request.type)}${note}</div>`;
+      }).join("");
 
       td.innerHTML = `
         <button class="shift-cell two-fields" type="button" data-person="${personIndex}" data-day="${day.key}" aria-label="Modifica turno ${person.nome} ${day.label}">
           <span class="shift-time ${slotClass(shift.pranzo, "pranzo")}">${shift.pranzo}</span>
           <span class="shift-time ${slotClass(shift.sera, "sera")}">${shift.sera}</span>
         </button>
+        ${requestBadges}
       `;
 
       row.appendChild(td);
@@ -264,6 +292,68 @@ function createShiftEditor() {
   });
 }
 
+function populateRequestNames() {
+  requestName.innerHTML = staff.map((person) => `<option value="${escapeHtml(person.nome)}">${escapeHtml(person.nome)}</option>`).join("");
+}
+
+function renderRequests() {
+  requestsBody.innerHTML = "";
+
+  if (!requests.length) {
+    requestsBody.innerHTML = `<tr><td colspan="5" class="empty-requests">Nessuna richiesta inserita</td></tr>`;
+    return;
+  }
+
+  requests
+    .slice()
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .forEach((request) => {
+      const originalIndex = requests.findIndex((item) => item.id === request.id);
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${escapeHtml(request.name)}</td>
+        <td>${formatDateIT(request.date)}</td>
+        <td><span class="request-pill ${request.type.toLowerCase()}">${escapeHtml(request.type)}</span></td>
+        <td>${escapeHtml(request.note || "")}</td>
+        <td><button class="delete-request" type="button" data-index="${originalIndex}">Elimina</button></td>
+      `;
+      requestsBody.appendChild(row);
+    });
+}
+
+function addRequest() {
+  const name = requestName.value;
+  const date = requestDate.value;
+  const type = requestType.value;
+  const note = requestNote.value.trim();
+
+  if (!name || !date || !type) return;
+
+  requests.push({
+    id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+    name,
+    date,
+    type,
+    note
+  });
+
+  saveRequests();
+  requestNote.value = "";
+  renderRequests();
+  renderTable();
+}
+
+function getRequestsFor(name, dateISO) {
+  return requests.filter((request) => request.name === name && request.date === dateISO);
+}
+
+function getDateISOForDay(dayIndex) {
+  const monday = mondayFromWeekValue(weekInput.value);
+  const date = new Date(monday);
+  date.setDate(monday.getDate() + dayIndex);
+  return toISODate(date);
+}
+
 function getISOWeekString(date) {
   const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   const dayNumber = localDate.getDay() || 7;
@@ -306,6 +396,27 @@ function updateWeekHeader() {
   weekRange.textContent = `${longFormatter.format(monday)} - ${longFormatter.format(sunday)}`;
 }
 
+function toISODate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function formatDateIT(dateISO) {
+  const [year, month, day] = dateISO.split("-");
+  return `${day}/${month}/${year}`;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 scheduleBody.addEventListener("input", (event) => {
   const target = event.target;
   const personIndex = Number(target.dataset.person);
@@ -315,6 +426,9 @@ scheduleBody.addEventListener("input", (event) => {
   if (target.dataset.field) {
     staff[personIndex][target.dataset.field] = target.textContent.trim();
     saveStaff();
+    populateRequestNames();
+    renderRequests();
+    renderTable();
   }
 });
 
@@ -330,6 +444,20 @@ scheduleBody.addEventListener("click", (event) => {
 weekInput.addEventListener("input", () => {
   localStorage.setItem(weekKey, weekInput.value);
   updateWeekHeader();
+  renderTable();
+});
+
+document.getElementById("addRequestBtn").addEventListener("click", addRequest);
+
+requestsBody.addEventListener("click", (event) => {
+  const deleteButton = event.target.closest(".delete-request");
+  if (!deleteButton) return;
+
+  const index = Number(deleteButton.dataset.index);
+  requests.splice(index, 1);
+  saveRequests();
+  renderRequests();
+  renderTable();
 });
 
 document.getElementById("printBtn").addEventListener("click", () => {
@@ -340,11 +468,17 @@ document.getElementById("resetBtn").addEventListener("click", () => {
   localStorage.removeItem(storageKey);
   oldStorageKeys.forEach((key) => localStorage.removeItem(key));
   localStorage.removeItem(weekKey);
+  localStorage.removeItem(requestsKey);
   staff = structuredClone(defaultStaff);
+  requests = [];
   weekInput.value = getISOWeekString(new Date());
+  requestDate.value = toISODate(new Date());
   updateWeekHeader();
+  populateRequestNames();
+  renderRequests();
   renderTable();
 });
 
 createShiftEditor();
+renderRequests();
 renderTable();
