@@ -2,49 +2,49 @@ const defaultStaff = [
   {
     nome: "Mario",
     turni: {
-      lunedi: ["10:30-15:30", "18:30-23:30"],
-      martedi: ["Riposo", "18:30-23:30"],
-      mercoledi: ["11:00-15:00", "Riposo"],
-      giovedi: ["10:30-15:30", "18:30-23:30"],
-      venerdi: ["Riposo", "19:00-00:00"],
-      sabato: ["12:00-16:00", "19:00-00:00"],
-      domenica: ["Riposo", "Riposo"]
+      lunedi: { apertura: "10:30-15:30", sera: "18:30-23:30" },
+      martedi: { apertura: "Riposo", sera: "18:30-23:30" },
+      mercoledi: { apertura: "11:00-15:00", sera: "Riposo" },
+      giovedi: { apertura: "10:30-15:30", sera: "18:30-23:30" },
+      venerdi: { apertura: "Riposo", sera: "19:00-00:00" },
+      sabato: { apertura: "12:00-16:00", sera: "19:00-00:00" },
+      domenica: { apertura: "Riposo", sera: "Riposo" }
     }
   },
   {
     nome: "Anna",
     turni: {
-      lunedi: ["11:00-15:00", "Riposo"],
-      martedi: ["Riposo", "18:30-23:30"],
-      mercoledi: ["10:30-14:30", "20:00-23:30"],
-      giovedi: ["Riposo", "Riposo"],
-      venerdi: ["11:00-15:30", "19:00-00:00"],
-      sabato: ["12:00-16:00", "19:00-00:00"],
-      domenica: ["11:00-15:00", "Riposo"]
+      lunedi: { apertura: "11:00-15:00", sera: "Riposo" },
+      martedi: { apertura: "Riposo", sera: "18:30-23:30" },
+      mercoledi: { apertura: "10:30-14:30", sera: "20:00-23:30" },
+      giovedi: { apertura: "Riposo", sera: "Riposo" },
+      venerdi: { apertura: "11:00-15:30", sera: "19:00-00:00" },
+      sabato: { apertura: "12:00-16:00", sera: "19:00-00:00" },
+      domenica: { apertura: "11:00-15:00", sera: "Riposo" }
     }
   },
   {
     nome: "Luca",
     turni: {
-      lunedi: ["09:30-15:30", "Riposo"],
-      martedi: ["09:30-15:30", "18:00-23:00"],
-      mercoledi: ["Riposo", "Riposo"],
-      giovedi: ["09:30-15:30", "18:00-23:00"],
-      venerdi: ["09:30-15:30", "18:00-23:30"],
-      sabato: ["09:30-15:30", "18:00-23:30"],
-      domenica: ["10:00-15:00", "Riposo"]
+      lunedi: { apertura: "09:30-15:30", sera: "Riposo" },
+      martedi: { apertura: "09:30-15:30", sera: "18:00-23:00" },
+      mercoledi: { apertura: "Riposo", sera: "Riposo" },
+      giovedi: { apertura: "09:30-15:30", sera: "18:00-23:00" },
+      venerdi: { apertura: "09:30-15:30", sera: "18:00-23:30" },
+      sabato: { apertura: "09:30-15:30", sera: "18:00-23:30" },
+      domenica: { apertura: "10:00-15:00", sera: "Riposo" }
     }
   },
   {
     nome: "Giulia",
     turni: {
-      lunedi: ["Riposo", "18:00-23:30"],
-      martedi: ["11:00-15:00", "Riposo"],
-      mercoledi: ["11:00-15:00", "18:30-23:30"],
-      giovedi: ["Riposo", "18:30-23:30"],
-      venerdi: ["11:00-15:00", "19:00-00:00"],
-      sabato: ["12:00-16:00", "19:00-00:00"],
-      domenica: ["Riposo", "Riposo"]
+      lunedi: { apertura: "Riposo", sera: "18:00-23:30" },
+      martedi: { apertura: "11:00-15:00", sera: "Riposo" },
+      mercoledi: { apertura: "11:00-15:00", sera: "18:30-23:30" },
+      giovedi: { apertura: "Riposo", sera: "18:30-23:30" },
+      venerdi: { apertura: "11:00-15:00", sera: "19:00-00:00" },
+      sabato: { apertura: "12:00-16:00", sera: "19:00-00:00" },
+      domenica: { apertura: "Riposo", sera: "Riposo" }
     }
   }
 ];
@@ -59,7 +59,8 @@ const days = [
   { key: "domenica", label: "Domenica" }
 ];
 
-const storageKey = "capriBluTurniStaff";
+const storageKey = "capriBluTurniStaffV2";
+const oldStorageKey = "capriBluTurniStaff";
 const weekKey = "capriBluTurniSettimana";
 let staff = loadStaff();
 
@@ -73,7 +74,39 @@ if (savedWeek) {
 
 function loadStaff() {
   const saved = localStorage.getItem(storageKey);
-  return saved ? JSON.parse(saved) : structuredClone(defaultStaff);
+  if (saved) return normalizeStaff(JSON.parse(saved));
+
+  const oldSaved = localStorage.getItem(oldStorageKey);
+  if (oldSaved) return normalizeStaff(JSON.parse(oldSaved));
+
+  return structuredClone(defaultStaff);
+}
+
+function normalizeStaff(list) {
+  return list.map((person) => {
+    const normalized = {
+      nome: person.nome || "Staff",
+      turni: {}
+    };
+
+    days.forEach((day) => {
+      const value = person.turni?.[day.key];
+
+      if (Array.isArray(value)) {
+        normalized.turni[day.key] = {
+          apertura: value[0] || "Riposo",
+          sera: value[1] || "Riposo"
+        };
+      } else {
+        normalized.turni[day.key] = {
+          apertura: value?.apertura || "Riposo",
+          sera: value?.sera || "Riposo"
+        };
+      }
+    });
+
+    return normalized;
+  });
 }
 
 function saveStaff() {
@@ -91,16 +124,18 @@ function renderTable() {
     `;
 
     days.forEach((day) => {
-      const slots = person.turni[day.key] || ["Riposo", "Riposo"];
+      const shift = person.turni[day.key] || { apertura: "Riposo", sera: "Riposo" };
       const td = document.createElement("td");
-      const isSplit = isWorking(slots[0]) && isWorking(slots[1]);
+      const isSplit = isWorking(shift.apertura) && isWorking(shift.sera);
 
       if (isSplit) td.classList.add("day-spezzato");
 
       td.innerHTML = `
-        <div class="shift-cell">
-          <div class="shift-slot ${slotClass(slots[0], 0)}" contenteditable="true" data-person="${personIndex}" data-day="${day.key}" data-slot="0">${slots[0]}</div>
-          <div class="shift-slot ${slotClass(slots[1], 1)}" contenteditable="true" data-person="${personIndex}" data-day="${day.key}" data-slot="1">${slots[1]}</div>
+        <div class="shift-cell four-fields">
+          <div class="shift-code apertura-code">A</div>
+          <div class="shift-time ${slotClass(shift.apertura, "apertura")}" contenteditable="true" data-person="${personIndex}" data-day="${day.key}" data-part="apertura">${shift.apertura}</div>
+          <div class="shift-code sera-code">S</div>
+          <div class="shift-time ${slotClass(shift.sera, "sera")}" contenteditable="true" data-person="${personIndex}" data-day="${day.key}" data-part="sera">${shift.sera}</div>
         </div>
       `;
 
@@ -118,22 +153,28 @@ function updateColors() {
 
     days.forEach((day, dayIndex) => {
       const td = row.children[dayIndex + 1];
-      const slots = person.turni[day.key] || ["Riposo", "Riposo"];
-      const slotElements = td.querySelectorAll(".shift-slot");
+      const shift = person.turni[day.key] || { apertura: "Riposo", sera: "Riposo" };
+      const apertura = td.querySelector('[data-part="apertura"]');
+      const sera = td.querySelector('[data-part="sera"]');
 
-      td.classList.toggle("day-spezzato", isWorking(slots[0]) && isWorking(slots[1]));
+      td.classList.toggle("day-spezzato", isWorking(shift.apertura) && isWorking(shift.sera));
 
-      slotElements.forEach((slotElement, slotIndex) => {
-        slotElement.classList.remove("pranzo", "cena", "riposo");
-        slotElement.classList.add(slotClass(slots[slotIndex], slotIndex));
-      });
+      if (apertura) {
+        apertura.classList.remove("apertura", "sera", "riposo");
+        apertura.classList.add(slotClass(shift.apertura, "apertura"));
+      }
+
+      if (sera) {
+        sera.classList.remove("apertura", "sera", "riposo");
+        sera.classList.add(slotClass(shift.sera, "sera"));
+      }
     });
   });
 }
 
-function slotClass(value, slotIndex) {
+function slotClass(value, part) {
   if (!isWorking(value)) return "riposo";
-  return slotIndex === 0 ? "pranzo" : "cena";
+  return part === "apertura" ? "apertura" : "sera";
 }
 
 function isWorking(value) {
@@ -154,8 +195,8 @@ scheduleBody.addEventListener("input", (event) => {
 
   if (target.dataset.day) {
     const day = target.dataset.day;
-    const slot = Number(target.dataset.slot);
-    staff[personIndex].turni[day][slot] = target.textContent.trim() || "Riposo";
+    const part = target.dataset.part;
+    staff[personIndex].turni[day][part] = target.textContent.trim() || "Riposo";
   }
 
   saveStaff();
@@ -176,6 +217,7 @@ document.getElementById("printBtn").addEventListener("click", () => {
 
 document.getElementById("resetBtn").addEventListener("click", () => {
   localStorage.removeItem(storageKey);
+  localStorage.removeItem(oldStorageKey);
   localStorage.removeItem(weekKey);
   staff = structuredClone(defaultStaff);
   weekInput.value = "Esempio: 6 - 12 Luglio 2026";
