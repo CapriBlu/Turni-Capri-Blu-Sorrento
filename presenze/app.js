@@ -15,7 +15,7 @@ const staffNames = [
 ];
 
 const dayKeys = ["lunedi", "martedi", "mercoledi", "giovedi", "venerdi", "sabato", "domenica"];
-const values = ["", "P", "F", "Fer", "P+Rit"];
+const allowedValues = ["P", "F", "Fer", "P+Rit", ""];
 const classMap = {
   "P": "cell-p",
   "F": "cell-f",
@@ -131,12 +131,12 @@ function finalCellValue(name, day, date, manualData) {
   const cellKey = name + "-" + day;
   const manualValue = manualData[cellKey] || "";
 
-  if (manualValue === "P+Rit") return manualValue;
+  if (manualValue) return manualValue;
 
   const auto = automaticValue(name, date);
   if (auto) return auto;
 
-  return manualValue;
+  return "";
 }
 
 function renderTable() {
@@ -167,10 +167,14 @@ function renderTable() {
   table.innerHTML = html;
 }
 
-function nextValue(current) {
-  const index = values.indexOf(current);
-  if (index < 0) return "P";
-  return values[(index + 1) % values.length];
+function normalizeManualValue(value) {
+  const clean = String(value || "").trim().toLowerCase();
+  if (clean === "p") return "P";
+  if (clean === "f") return "F";
+  if (clean === "fer" || clean === "ferie") return "Fer";
+  if (clean === "p+rit" || clean === "prit" || clean === "rit" || clean === "ritardo") return "P+Rit";
+  if (clean === "" || clean === "vuoto" || clean === "cancella") return "";
+  return null;
 }
 
 monthInput.value = localStorage.getItem("capriBluPresenzeMese") || currentMonthValue();
@@ -182,7 +186,16 @@ table.addEventListener("click", (event) => {
 
   const data = readData();
   const key = cell.dataset.name + "-" + cell.dataset.day;
-  const newValue = nextValue(cell.textContent.trim());
+  const current = cell.textContent.trim();
+  const answer = prompt("Inserisci valore: P, F, Fer, P+Rit oppure lascia vuoto per cancellare", current);
+
+  if (answer === null) return;
+
+  const newValue = normalizeManualValue(answer);
+  if (newValue === null || !allowedValues.includes(newValue)) {
+    alert("Valore non valido. Usa P, F, Fer o P+Rit.");
+    return;
+  }
 
   if (newValue) data[key] = newValue;
   else delete data[key];
