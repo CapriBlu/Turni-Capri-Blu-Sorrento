@@ -1,52 +1,17 @@
-const defaultStaff = [
-  {
-    nome: "Mario",
-    turni: {
-      lunedi: { apertura: "10:30-15:30", sera: "18:30-23:30" },
-      martedi: { apertura: "Riposo", sera: "18:30-23:30" },
-      mercoledi: { apertura: "11:00-15:00", sera: "Riposo" },
-      giovedi: { apertura: "10:30-15:30", sera: "18:30-23:30" },
-      venerdi: { apertura: "Riposo", sera: "19:00-00:00" },
-      sabato: { apertura: "12:00-16:00", sera: "19:00-00:00" },
-      domenica: { apertura: "Riposo", sera: "Riposo" }
-    }
-  },
-  {
-    nome: "Anna",
-    turni: {
-      lunedi: { apertura: "11:00-15:00", sera: "Riposo" },
-      martedi: { apertura: "Riposo", sera: "18:30-23:30" },
-      mercoledi: { apertura: "10:30-14:30", sera: "20:00-23:30" },
-      giovedi: { apertura: "Riposo", sera: "Riposo" },
-      venerdi: { apertura: "11:00-15:30", sera: "19:00-00:00" },
-      sabato: { apertura: "12:00-16:00", sera: "19:00-00:00" },
-      domenica: { apertura: "11:00-15:00", sera: "Riposo" }
-    }
-  },
-  {
-    nome: "Luca",
-    turni: {
-      lunedi: { apertura: "09:30-15:30", sera: "Riposo" },
-      martedi: { apertura: "09:30-15:30", sera: "18:00-23:00" },
-      mercoledi: { apertura: "Riposo", sera: "Riposo" },
-      giovedi: { apertura: "09:30-15:30", sera: "18:00-23:00" },
-      venerdi: { apertura: "09:30-15:30", sera: "18:00-23:30" },
-      sabato: { apertura: "09:30-15:30", sera: "18:00-23:30" },
-      domenica: { apertura: "10:00-15:00", sera: "Riposo" }
-    }
-  },
-  {
-    nome: "Giulia",
-    turni: {
-      lunedi: { apertura: "Riposo", sera: "18:00-23:30" },
-      martedi: { apertura: "11:00-15:00", sera: "Riposo" },
-      mercoledi: { apertura: "11:00-15:00", sera: "18:30-23:30" },
-      giovedi: { apertura: "Riposo", sera: "18:30-23:30" },
-      venerdi: { apertura: "11:00-15:00", sera: "19:00-00:00" },
-      sabato: { apertura: "12:00-16:00", sera: "19:00-00:00" },
-      domenica: { apertura: "Riposo", sera: "Riposo" }
-    }
-  }
+const names = [
+  "Pawel",
+  "Rafaele",
+  "Gaetano",
+  "Rosè",
+  "Shan",
+  "Brendon",
+  "Vittorio",
+  "Dylan",
+  "Lorenzo",
+  "Sabbit",
+  "Annachiara",
+  "Natalia",
+  "Carmine"
 ];
 
 const days = [
@@ -59,29 +24,35 @@ const days = [
   { key: "domenica", label: "Domenica" }
 ];
 
-const storageKey = "capriBluTurniStaffV3";
-const oldStorageKeys = ["capriBluTurniStaffV2", "capriBluTurniStaff"];
-const weekKey = "capriBluTurniSettimana";
+const defaultStaff = names.map((nome) => ({
+  nome,
+  turni: createEmptyWeek()
+}));
+
+const storageKey = "capriBluTurniStaffV4";
+const oldStorageKeys = ["capriBluTurniStaffV3", "capriBluTurniStaffV2", "capriBluTurniStaff"];
+const weekKey = "capriBluTurniSettimanaV2";
 let staff = loadStaff();
 let activeEdit = null;
 
 const scheduleBody = document.getElementById("scheduleBody");
 const weekInput = document.getElementById("weekInput");
-const savedWeek = localStorage.getItem(weekKey);
+const weekRange = document.getElementById("weekRange");
 
-if (savedWeek) {
-  weekInput.value = savedWeek;
+weekInput.value = localStorage.getItem(weekKey) || getISOWeekString(new Date());
+updateWeekHeader();
+
+function createEmptyWeek() {
+  const turni = {};
+  days.forEach((day) => {
+    turni[day.key] = { pranzo: "Riposo", sera: "Riposo" };
+  });
+  return turni;
 }
 
 function loadStaff() {
   const saved = localStorage.getItem(storageKey);
   if (saved) return normalizeStaff(JSON.parse(saved));
-
-  for (const key of oldStorageKeys) {
-    const oldSaved = localStorage.getItem(key);
-    if (oldSaved) return normalizeStaff(JSON.parse(oldSaved));
-  }
-
   return structuredClone(defaultStaff);
 }
 
@@ -97,12 +68,12 @@ function normalizeStaff(list) {
 
       if (Array.isArray(value)) {
         normalized.turni[day.key] = {
-          apertura: value[0] || "Riposo",
+          pranzo: value[0] || "Riposo",
           sera: value[1] || "Riposo"
         };
       } else {
         normalized.turni[day.key] = {
-          apertura: value?.apertura || "Riposo",
+          pranzo: value?.pranzo || value?.apertura || "Riposo",
           sera: value?.sera || "Riposo"
         };
       }
@@ -127,17 +98,15 @@ function renderTable() {
     `;
 
     days.forEach((day) => {
-      const shift = person.turni[day.key] || { apertura: "Riposo", sera: "Riposo" };
+      const shift = person.turni[day.key] || { pranzo: "Riposo", sera: "Riposo" };
       const td = document.createElement("td");
-      const isSplit = isWorking(shift.apertura) && isWorking(shift.sera);
+      const isSplit = isWorking(shift.pranzo) && isWorking(shift.sera);
 
       if (isSplit) td.classList.add("day-spezzato");
 
       td.innerHTML = `
-        <button class="shift-cell four-fields" type="button" data-person="${personIndex}" data-day="${day.key}" aria-label="Modifica turno ${person.nome} ${day.label}">
-          <span class="shift-code apertura-code">A</span>
-          <span class="shift-time ${slotClass(shift.apertura, "apertura")}">${shift.apertura}</span>
-          <span class="shift-code sera-code">S</span>
+        <button class="shift-cell two-fields" type="button" data-person="${personIndex}" data-day="${day.key}" aria-label="Modifica turno ${person.nome} ${day.label}">
+          <span class="shift-time ${slotClass(shift.pranzo, "pranzo")}">${shift.pranzo}</span>
           <span class="shift-time ${slotClass(shift.sera, "sera")}">${shift.sera}</span>
         </button>
       `;
@@ -158,10 +127,10 @@ function updateCellColorsAndText(personIndex, dayKey) {
   const shift = staff[personIndex].turni[dayKey];
   const times = td.querySelectorAll(".shift-time");
 
-  td.classList.toggle("day-spezzato", isWorking(shift.apertura) && isWorking(shift.sera));
+  td.classList.toggle("day-spezzato", isWorking(shift.pranzo) && isWorking(shift.sera));
 
-  times[0].textContent = shift.apertura;
-  times[0].className = `shift-time ${slotClass(shift.apertura, "apertura")}`;
+  times[0].textContent = shift.pranzo;
+  times[0].className = `shift-time ${slotClass(shift.pranzo, "pranzo")}`;
 
   times[1].textContent = shift.sera;
   times[1].className = `shift-time ${slotClass(shift.sera, "sera")}`;
@@ -169,13 +138,13 @@ function updateCellColorsAndText(personIndex, dayKey) {
 
 function slotClass(value, part) {
   if (!isWorking(value)) return "riposo";
-  return part === "apertura" ? "apertura" : "sera";
+  return part === "pranzo" ? "pranzo" : "sera";
 }
 
 function isWorking(value) {
   if (!value) return false;
   const clean = value.trim().toLowerCase();
-  return clean !== "" && clean !== "riposo" && clean !== "-" && clean !== "—" && clean !== "vuoto";
+  return clean !== "" && clean !== "riposo" && clean !== "riposto" && clean !== "-" && clean !== "—" && clean !== "vuoto";
 }
 
 function openShiftMenu(personIndex, dayKey) {
@@ -185,8 +154,8 @@ function openShiftMenu(personIndex, dayKey) {
   const shift = person.turni[dayKey];
 
   document.getElementById("editorTitle").textContent = `${person.nome} - ${dayLabel}`;
-  document.getElementById("aperturaStatus").value = isWorking(shift.apertura) ? "apertura" : "riposo";
-  document.getElementById("aperturaTime").value = isWorking(shift.apertura) ? shift.apertura : "";
+  document.getElementById("pranzoStatus").value = isWorking(shift.pranzo) ? "pranzo" : "riposo";
+  document.getElementById("pranzoTime").value = isWorking(shift.pranzo) ? shift.pranzo : "";
   document.getElementById("seraStatus").value = isWorking(shift.sera) ? "sera" : "riposo";
   document.getElementById("seraTime").value = isWorking(shift.sera) ? shift.sera : "";
   document.getElementById("shiftEditorBackdrop").classList.add("open");
@@ -205,18 +174,16 @@ function createShiftEditor() {
     <div class="shift-editor" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
       <h2 id="editorTitle">Modifica turno</h2>
 
-      <div class="editor-row">
-        <div class="editor-code apertura-code">A</div>
-        <select id="aperturaStatus">
-          <option value="apertura">Apertura</option>
+      <div class="editor-row no-code">
+        <select id="pranzoStatus" aria-label="Stato pranzo">
+          <option value="pranzo">Pranzo</option>
           <option value="riposo">Riposo</option>
         </select>
-        <input id="aperturaTime" type="text" placeholder="10:30-15:30" />
+        <input id="pranzoTime" type="text" placeholder="10:30-15:30" />
       </div>
 
-      <div class="editor-row">
-        <div class="editor-code sera-code">S</div>
-        <select id="seraStatus">
+      <div class="editor-row no-code">
+        <select id="seraStatus" aria-label="Stato sera">
           <option value="sera">Sera</option>
           <option value="riposo">Riposo</option>
         </select>
@@ -240,8 +207,8 @@ function createShiftEditor() {
   document.getElementById("cancelShiftBtn").addEventListener("click", closeShiftMenu);
 
   document.getElementById("clearShiftBtn").addEventListener("click", () => {
-    document.getElementById("aperturaStatus").value = "riposo";
-    document.getElementById("aperturaTime").value = "";
+    document.getElementById("pranzoStatus").value = "riposo";
+    document.getElementById("pranzoTime").value = "";
     document.getElementById("seraStatus").value = "riposo";
     document.getElementById("seraTime").value = "";
   });
@@ -250,20 +217,62 @@ function createShiftEditor() {
     if (!activeEdit) return;
 
     const { personIndex, dayKey } = activeEdit;
-    const aperturaStatus = document.getElementById("aperturaStatus").value;
-    const aperturaTime = document.getElementById("aperturaTime").value.trim();
+    const pranzoStatus = document.getElementById("pranzoStatus").value;
+    const pranzoTime = document.getElementById("pranzoTime").value.trim();
     const seraStatus = document.getElementById("seraStatus").value;
     const seraTime = document.getElementById("seraTime").value.trim();
 
     staff[personIndex].turni[dayKey] = {
-      apertura: aperturaStatus === "riposo" ? "Riposo" : aperturaTime || "A",
-      sera: seraStatus === "riposo" ? "Riposo" : seraTime || "S"
+      pranzo: pranzoStatus === "riposo" ? "Riposo" : pranzoTime || "Pranzo",
+      sera: seraStatus === "riposo" ? "Riposo" : seraTime || "Sera"
     };
 
     saveStaff();
     updateCellColorsAndText(personIndex, dayKey);
     closeShiftMenu();
   });
+}
+
+function getISOWeekString(date) {
+  const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const dayNumber = localDate.getDay() || 7;
+  localDate.setDate(localDate.getDate() + 4 - dayNumber);
+  const yearStart = new Date(localDate.getFullYear(), 0, 1);
+  const weekNumber = Math.ceil((((localDate - yearStart) / 86400000) + 1) / 7);
+  return `${localDate.getFullYear()}-W${String(weekNumber).padStart(2, "0")}`;
+}
+
+function mondayFromWeekValue(value) {
+  const [yearText, weekText] = value.split("-W");
+  const year = Number(yearText);
+  const week = Number(weekText);
+  const simple = new Date(year, 0, 1 + (week - 1) * 7);
+  const dayOfWeek = simple.getDay() || 7;
+
+  if (dayOfWeek <= 4) {
+    simple.setDate(simple.getDate() - dayOfWeek + 1);
+  } else {
+    simple.setDate(simple.getDate() + 8 - dayOfWeek);
+  }
+
+  return simple;
+}
+
+function updateWeekHeader() {
+  const monday = mondayFromWeekValue(weekInput.value);
+  const formatter = new Intl.DateTimeFormat("it-IT", { day: "2-digit", month: "2-digit" });
+  const longFormatter = new Intl.DateTimeFormat("it-IT", { day: "2-digit", month: "long", year: "numeric" });
+
+  days.forEach((day, index) => {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + index);
+    const th = document.querySelector(`[data-day-header="${day.key}"]`);
+    if (th) th.innerHTML = `${day.label}<br><small>${formatter.format(date)}</small>`;
+  });
+
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  weekRange.textContent = `${longFormatter.format(monday)} - ${longFormatter.format(sunday)}`;
 }
 
 scheduleBody.addEventListener("input", (event) => {
@@ -289,6 +298,7 @@ scheduleBody.addEventListener("click", (event) => {
 
 weekInput.addEventListener("input", () => {
   localStorage.setItem(weekKey, weekInput.value);
+  updateWeekHeader();
 });
 
 document.getElementById("printBtn").addEventListener("click", () => {
@@ -300,7 +310,8 @@ document.getElementById("resetBtn").addEventListener("click", () => {
   oldStorageKeys.forEach((key) => localStorage.removeItem(key));
   localStorage.removeItem(weekKey);
   staff = structuredClone(defaultStaff);
-  weekInput.value = "Esempio: 6 - 12 Luglio 2026";
+  weekInput.value = getISOWeekString(new Date());
+  updateWeekHeader();
   renderTable();
 });
 
