@@ -30,13 +30,10 @@ const defaultStaff = names.map((nome) => ({
 }));
 
 const storageKey = "capriBluTurniStaffV5";
+const weekStoragePrefix = "capriBluTurniStaffWeekV1-";
 const oldStorageKeys = ["capriBluTurniStaffV4", "capriBluTurniStaffV3", "capriBluTurniStaffV2", "capriBluTurniStaff"];
 const weekKey = "capriBluTurniSettimanaV2";
 const requestsKey = "capriBluRichiesteStaffV1";
-
-let staff = loadStaff();
-let requests = loadRequests();
-let activeEdit = null;
 
 const scheduleBody = document.getElementById("scheduleBody");
 const weekInput = document.getElementById("weekInput");
@@ -49,6 +46,11 @@ const requestsBody = document.getElementById("requestsBody");
 
 weekInput.value = localStorage.getItem(weekKey) || getISOWeekString(new Date());
 requestDate.value = toISODate(new Date());
+
+let staff = loadStaff();
+let requests = loadRequests();
+let activeEdit = null;
+
 updateWeekHeader();
 populateRequestNames();
 
@@ -60,13 +62,28 @@ function createEmptyWeek() {
   return turni;
 }
 
+function currentWeekStaffKey() {
+  return weekStoragePrefix + weekInput.value;
+}
+
 function loadStaff() {
+  const weeklySaved = localStorage.getItem(currentWeekStaffKey());
+  if (weeklySaved) return normalizeStaff(JSON.parse(weeklySaved));
+
   const saved = localStorage.getItem(storageKey);
-  if (saved) return normalizeStaff(JSON.parse(saved));
+  if (saved) {
+    const migrated = normalizeStaff(JSON.parse(saved));
+    localStorage.setItem(currentWeekStaffKey(), JSON.stringify(migrated));
+    return migrated;
+  }
 
   for (const key of oldStorageKeys) {
     const oldSaved = localStorage.getItem(key);
-    if (oldSaved) return normalizeStaff(JSON.parse(oldSaved));
+    if (oldSaved) {
+      const migrated = normalizeStaff(JSON.parse(oldSaved));
+      localStorage.setItem(currentWeekStaffKey(), JSON.stringify(migrated));
+      return migrated;
+    }
   }
 
   return structuredClone(defaultStaff);
@@ -109,6 +126,7 @@ function normalizeStaff(list) {
 }
 
 function saveStaff() {
+  localStorage.setItem(currentWeekStaffKey(), JSON.stringify(staff));
   localStorage.setItem(storageKey, JSON.stringify(staff));
 }
 
@@ -474,8 +492,12 @@ scheduleBody.addEventListener("click", (event) => {
 });
 
 weekInput.addEventListener("input", () => {
+  saveStaff();
   localStorage.setItem(weekKey, weekInput.value);
+  staff = loadStaff();
   updateWeekHeader();
+  populateRequestNames();
+  renderRequests();
   renderTable();
 });
 
@@ -497,14 +519,10 @@ document.getElementById("printBtn").addEventListener("click", () => {
 });
 
 document.getElementById("resetBtn").addEventListener("click", () => {
+  localStorage.removeItem(currentWeekStaffKey());
   localStorage.removeItem(storageKey);
-  oldStorageKeys.forEach((key) => localStorage.removeItem(key));
-  localStorage.removeItem(weekKey);
-  localStorage.removeItem(requestsKey);
   staff = structuredClone(defaultStaff);
-  requests = [];
-  weekInput.value = getISOWeekString(new Date());
-  requestDate.value = toISODate(new Date());
+  saveStaff();
   updateWeekHeader();
   populateRequestNames();
   renderRequests();
@@ -515,3 +533,4 @@ createShiftEditor();
 createNotePopup();
 renderRequests();
 renderTable();
+saveStaff();
