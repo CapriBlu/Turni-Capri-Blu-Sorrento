@@ -60,6 +60,10 @@ body {
   color: #d7efff;
 }
 
+.eyebrow.dark {
+  color: var(--blue);
+}
+
 h1 {
   margin: 0;
   font-size: clamp(2.4rem, 7vw, 5.5rem);
@@ -162,7 +166,8 @@ button:hover {
 .dot.spezzato { background: #fff1bc; border: 1px solid #e0b52e; }
 .dot.riposo { background: var(--green); border: 1px solid var(--green-border); }
 
-.table-card {
+.table-card,
+.requests-card {
   margin-top: 18px;
   padding: 14px;
   border-radius: 30px;
@@ -171,7 +176,8 @@ button:hover {
   border: 1px solid rgba(255, 255, 255, 0.36);
 }
 
-.table-scroll {
+.table-scroll,
+.requests-list-wrap {
   overflow-x: auto;
   border-radius: 22px;
   background: white;
@@ -186,14 +192,17 @@ button:hover {
 }
 
 .shift-table th,
-.shift-table td {
+.shift-table td,
+.requests-table th,
+.requests-table td {
   border-right: 1px solid var(--table-line);
   border-bottom: 1px solid var(--table-line);
   padding: 10px;
   vertical-align: middle;
 }
 
-.shift-table th {
+.shift-table th,
+.requests-table th {
   position: sticky;
   top: 0;
   z-index: 2;
@@ -283,6 +292,117 @@ button:hover {
 .day-spezzato .shift-cell {
   border-color: #e0b52e;
   box-shadow: inset 0 0 0 2px rgba(245, 197, 66, 0.28);
+}
+
+.has-request .shift-cell {
+  border-color: #d85b5b;
+}
+
+.request-badge {
+  margin-top: 7px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 0.76rem;
+  font-weight: 900;
+  color: #691c1c;
+  background: #ffe0e0;
+  border: 1px solid #f3a4a4;
+}
+
+.request-badge.ferie,
+.request-pill.ferie {
+  color: #9a5c00;
+  background: #fff0c7;
+  border-color: #f3c45d;
+}
+
+.request-badge.festa,
+.request-pill.festa {
+  color: #7c2581;
+  background: #f7ddff;
+  border-color: #d696e0;
+}
+
+.request-badge.permesso,
+.request-pill.permesso {
+  color: #115c85;
+  background: #dff1ff;
+  border-color: #74bff0;
+}
+
+.request-badge.altro,
+.request-pill.altro {
+  color: #4c5967;
+  background: #eef2f6;
+  border-color: #c5ccd6;
+}
+
+.requests-card {
+  color: var(--blue-dark);
+}
+
+.requests-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 8px 8px 16px;
+}
+
+.requests-head h2 {
+  margin: 0;
+  color: var(--blue);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.requests-head p {
+  margin: 0;
+  max-width: 520px;
+  color: #4d5b73;
+  font-weight: 700;
+}
+
+.request-form {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr 1.4fr auto;
+  gap: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 20px;
+  background: #f7fbff;
+  border: 1px solid rgba(6, 27, 58, 0.1);
+}
+
+.requests-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: var(--blue-dark);
+}
+
+.request-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 900;
+  border: 1px solid transparent;
+}
+
+.delete-request {
+  padding: 8px 12px;
+  color: #9d1d1d;
+  background: #ffe8e8;
+  border-color: #ffc2c2;
+}
+
+.empty-requests {
+  text-align: center;
+  color: #68768a;
+  font-weight: 800;
 }
 
 .editor-backdrop {
@@ -389,12 +509,23 @@ button:hover {
   font-weight: 700;
 }
 
+@media (max-width: 900px) {
+  .request-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .request-form button {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (max-width: 760px) {
   .page {
     padding: 14px;
   }
 
-  .top-card {
+  .top-card,
+  .requests-head {
     min-height: auto;
     flex-direction: column;
     align-items: stretch;
@@ -413,7 +544,8 @@ button:hover {
     width: min(520px, 96vw);
   }
 
-  .editor-grid {
+  .editor-grid,
+  .request-form {
     grid-template-columns: 1fr;
   }
 }
@@ -446,7 +578,8 @@ button:hover {
   .toolbar,
   .legend,
   .note,
-  .editor-backdrop {
+  .editor-backdrop,
+  .requests-card {
     display: none !important;
   }
 
