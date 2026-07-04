@@ -301,7 +301,7 @@ button:hover {
 }
 
 .shift-editor {
-  width: min(520px, 100%);
+  width: min(760px, 96vw);
   padding: 22px;
   border-radius: 26px;
   color: var(--blue-dark);
@@ -310,27 +310,49 @@ button:hover {
 }
 
 .shift-editor h2 {
-  margin: 0 0 16px;
+  margin: 0;
   color: var(--blue);
 }
 
-.editor-row {
+.editor-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.editor-grid {
   display: grid;
-  grid-template-columns: 42px 1fr 1.3fr;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.editor-panel {
+  display: grid;
+  grid-template-columns: 46px 1fr;
   gap: 10px;
   align-items: center;
-  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid rgba(6, 27, 58, 0.12);
+  border-radius: 18px;
+  background: #f7fbff;
+}
+
+.editor-panel input {
+  grid-column: 2 / 3;
 }
 
 .editor-code {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
+  width: 46px;
+  height: 88px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: 900;
+  font-size: 1.1rem;
+  grid-row: 1 / 3;
 }
 
 .apertura-code {
@@ -387,12 +409,12 @@ button:hover {
     width: 100%;
   }
 
-  .editor-row {
-    grid-template-columns: 42px 1fr;
+  .shift-editor {
+    width: min(520px, 96vw);
   }
 
-  .editor-row input {
-    grid-column: 2 / 3;
+  .editor-grid {
+    grid-template-columns: 1fr;
   }
 }
 
