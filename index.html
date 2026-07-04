@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Turni Capri Blu Sorrento</title>
+  <title>Sala Capri Blu Sorrento</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="compact.css" />
 </head>
@@ -11,13 +11,13 @@
   <main class="page">
     <section class="top-card">
       <div>
-        <p class="eyebrow">Capri Blu Sorrento</p>
-        <h1>Turni Staff</h1>
-        <p class="subtitle">I turni potrebbero subire delle variazioni.</p>
+        <p class="eyebrow">Turni Staff</p>
+        <h1>Sala Capri Blu Sorrento</h1>
+        <p class="subtitle">Possibili variazioni.</p>
       </div>
 
       <div class="week-box">
-        <label for="weekInput">Seleziona settimana</label>
+        <label for="weekInput">Settimana</label>
         <input id="weekInput" type="week" />
         <p id="weekRange" class="week-range"></p>
       </div>
@@ -25,7 +25,7 @@
 
     <section class="toolbar" aria-label="Strumenti tabella">
       <button id="printBtn" type="button">Stampa</button>
-      <button id="resetBtn" type="button">Ripristina esempio</button>
+      <button id="resetBtn" type="button">Reset</button>
     </section>
 
     <section class="legend" aria-label="Legenda colori">
@@ -59,10 +59,10 @@
     <section class="requests-card">
       <div class="requests-head">
         <div>
-          <p class="eyebrow dark">Richieste staff</p>
-          <h2>Permessi, ferie e feste</h2>
+          <p class="eyebrow dark">Richieste</p>
+          <h2>Ferie / Feste / Permessi</h2>
         </div>
-        <p>Quando una richiesta rientra nella settimana selezionata, appare anche nella tabella turni.</p>
+        <p>Le richieste compaiono nella settimana selezionata.</p>
       </div>
 
       <div class="request-form">
@@ -74,8 +74,8 @@
           <option value="Permesso">Permesso</option>
           <option value="Altro">Altro</option>
         </select>
-        <input id="requestNote" type="text" placeholder="Nota facoltativa" aria-label="Nota richiesta" />
-        <button id="addRequestBtn" type="button">Aggiungi richiesta</button>
+        <input id="requestNote" type="text" placeholder="Nota" aria-label="Nota richiesta" />
+        <button id="addRequestBtn" type="button">Aggiungi</button>
       </div>
 
       <div class="requests-list-wrap">
@@ -84,7 +84,7 @@
             <tr>
               <th>Nome</th>
               <th>Data</th>
-              <th>Richiesta</th>
+              <th>Tipo</th>
               <th>Nota</th>
               <th></th>
             </tr>
@@ -93,8 +93,6 @@
         </table>
       </div>
     </section>
-
-    <p class="note">Clicca su una cella per modificare pranzo, sera o riposo.</p>
   </main>
 
   <script src="script.js"></script>
