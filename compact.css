@@ -96,7 +96,14 @@ button {
   padding: 1px;
 }
 
-.shift-table th,
+.shift-table th {
+  height: 30px;
+  padding: 3px 2px !important;
+  font-size: 0.95rem;
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
 .requests-table th {
   font-size: 0.78rem;
   line-height: 1;
@@ -104,9 +111,11 @@ button {
 }
 
 .shift-table th small {
-  margin-top: 1px;
-  font-size: 0.68rem;
+  display: block;
+  margin-top: 2px;
+  font-size: 0.82rem;
   font-weight: 900;
+  line-height: 1;
 }
 
 .shift-table td {
@@ -329,11 +338,12 @@ button {
   }
 
   .shift-table th {
-    font-size: 0.76rem;
+    height: 32px;
+    font-size: 0.92rem;
   }
 
   .shift-table th small {
-    font-size: 0.66rem;
+    font-size: 0.78rem;
   }
 
   .shift-table td:first-child {
