@@ -59,10 +59,11 @@ const days = [
   { key: "domenica", label: "Domenica" }
 ];
 
-const storageKey = "capriBluTurniStaffV2";
-const oldStorageKey = "capriBluTurniStaff";
+const storageKey = "capriBluTurniStaffV3";
+const oldStorageKeys = ["capriBluTurniStaffV2", "capriBluTurniStaff"];
 const weekKey = "capriBluTurniSettimana";
 let staff = loadStaff();
+let activeEdit = null;
 
 const scheduleBody = document.getElementById("scheduleBody");
 const weekInput = document.getElementById("weekInput");
@@ -76,8 +77,10 @@ function loadStaff() {
   const saved = localStorage.getItem(storageKey);
   if (saved) return normalizeStaff(JSON.parse(saved));
 
-  const oldSaved = localStorage.getItem(oldStorageKey);
-  if (oldSaved) return normalizeStaff(JSON.parse(oldSaved));
+  for (const key of oldStorageKeys) {
+    const oldSaved = localStorage.getItem(key);
+    if (oldSaved) return normalizeStaff(JSON.parse(oldSaved));
+  }
 
   return structuredClone(defaultStaff);
 }
@@ -131,12 +134,12 @@ function renderTable() {
       if (isSplit) td.classList.add("day-spezzato");
 
       td.innerHTML = `
-        <div class="shift-cell four-fields">
-          <div class="shift-code apertura-code">A</div>
-          <div class="shift-time ${slotClass(shift.apertura, "apertura")}" contenteditable="true" data-person="${personIndex}" data-day="${day.key}" data-part="apertura">${shift.apertura}</div>
-          <div class="shift-code sera-code">S</div>
-          <div class="shift-time ${slotClass(shift.sera, "sera")}" contenteditable="true" data-person="${personIndex}" data-day="${day.key}" data-part="sera">${shift.sera}</div>
-        </div>
+        <button class="shift-cell four-fields" type="button" data-person="${personIndex}" data-day="${day.key}" aria-label="Modifica turno ${person.nome} ${day.label}">
+          <span class="shift-code apertura-code">A</span>
+          <span class="shift-time ${slotClass(shift.apertura, "apertura")}">${shift.apertura}</span>
+          <span class="shift-code sera-code">S</span>
+          <span class="shift-time ${slotClass(shift.sera, "sera")}">${shift.sera}</span>
+        </button>
       `;
 
       row.appendChild(td);
@@ -146,30 +149,22 @@ function renderTable() {
   });
 }
 
-function updateColors() {
-  staff.forEach((person, personIndex) => {
-    const row = scheduleBody.children[personIndex];
-    if (!row) return;
+function updateCellColorsAndText(personIndex, dayKey) {
+  const row = scheduleBody.children[personIndex];
+  if (!row) return;
 
-    days.forEach((day, dayIndex) => {
-      const td = row.children[dayIndex + 1];
-      const shift = person.turni[day.key] || { apertura: "Riposo", sera: "Riposo" };
-      const apertura = td.querySelector('[data-part="apertura"]');
-      const sera = td.querySelector('[data-part="sera"]');
+  const dayIndex = days.findIndex((day) => day.key === dayKey);
+  const td = row.children[dayIndex + 1];
+  const shift = staff[personIndex].turni[dayKey];
+  const times = td.querySelectorAll(".shift-time");
 
-      td.classList.toggle("day-spezzato", isWorking(shift.apertura) && isWorking(shift.sera));
+  td.classList.toggle("day-spezzato", isWorking(shift.apertura) && isWorking(shift.sera));
 
-      if (apertura) {
-        apertura.classList.remove("apertura", "sera", "riposo");
-        apertura.classList.add(slotClass(shift.apertura, "apertura"));
-      }
+  times[0].textContent = shift.apertura;
+  times[0].className = `shift-time ${slotClass(shift.apertura, "apertura")}`;
 
-      if (sera) {
-        sera.classList.remove("apertura", "sera", "riposo");
-        sera.classList.add(slotClass(shift.sera, "sera"));
-      }
-    });
-  });
+  times[1].textContent = shift.sera;
+  times[1].className = `shift-time ${slotClass(shift.sera, "sera")}`;
 }
 
 function slotClass(value, part) {
@@ -183,6 +178,94 @@ function isWorking(value) {
   return clean !== "" && clean !== "riposo" && clean !== "-" && clean !== "—" && clean !== "vuoto";
 }
 
+function openShiftMenu(personIndex, dayKey) {
+  activeEdit = { personIndex, dayKey };
+  const person = staff[personIndex];
+  const dayLabel = days.find((day) => day.key === dayKey)?.label || dayKey;
+  const shift = person.turni[dayKey];
+
+  document.getElementById("editorTitle").textContent = `${person.nome} - ${dayLabel}`;
+  document.getElementById("aperturaStatus").value = isWorking(shift.apertura) ? "apertura" : "riposo";
+  document.getElementById("aperturaTime").value = isWorking(shift.apertura) ? shift.apertura : "";
+  document.getElementById("seraStatus").value = isWorking(shift.sera) ? "sera" : "riposo";
+  document.getElementById("seraTime").value = isWorking(shift.sera) ? shift.sera : "";
+  document.getElementById("shiftEditorBackdrop").classList.add("open");
+}
+
+function closeShiftMenu() {
+  activeEdit = null;
+  document.getElementById("shiftEditorBackdrop").classList.remove("open");
+}
+
+function createShiftEditor() {
+  const editor = document.createElement("div");
+  editor.id = "shiftEditorBackdrop";
+  editor.className = "editor-backdrop";
+  editor.innerHTML = `
+    <div class="shift-editor" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+      <h2 id="editorTitle">Modifica turno</h2>
+
+      <div class="editor-row">
+        <div class="editor-code apertura-code">A</div>
+        <select id="aperturaStatus">
+          <option value="apertura">Apertura</option>
+          <option value="riposo">Riposo</option>
+        </select>
+        <input id="aperturaTime" type="text" placeholder="10:30-15:30" />
+      </div>
+
+      <div class="editor-row">
+        <div class="editor-code sera-code">S</div>
+        <select id="seraStatus">
+          <option value="sera">Sera</option>
+          <option value="riposo">Riposo</option>
+        </select>
+        <input id="seraTime" type="text" placeholder="18:30-23:30" />
+      </div>
+
+      <div class="editor-actions">
+        <button id="clearShiftBtn" type="button" class="secondary-btn">Tutto riposo</button>
+        <button id="cancelShiftBtn" type="button" class="secondary-btn">Annulla</button>
+        <button id="saveShiftBtn" type="button" class="primary-btn">Salva</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(editor);
+
+  editor.addEventListener("click", (event) => {
+    if (event.target === editor) closeShiftMenu();
+  });
+
+  document.getElementById("cancelShiftBtn").addEventListener("click", closeShiftMenu);
+
+  document.getElementById("clearShiftBtn").addEventListener("click", () => {
+    document.getElementById("aperturaStatus").value = "riposo";
+    document.getElementById("aperturaTime").value = "";
+    document.getElementById("seraStatus").value = "riposo";
+    document.getElementById("seraTime").value = "";
+  });
+
+  document.getElementById("saveShiftBtn").addEventListener("click", () => {
+    if (!activeEdit) return;
+
+    const { personIndex, dayKey } = activeEdit;
+    const aperturaStatus = document.getElementById("aperturaStatus").value;
+    const aperturaTime = document.getElementById("aperturaTime").value.trim();
+    const seraStatus = document.getElementById("seraStatus").value;
+    const seraTime = document.getElementById("seraTime").value.trim();
+
+    staff[personIndex].turni[dayKey] = {
+      apertura: aperturaStatus === "riposo" ? "Riposo" : aperturaTime || "A",
+      sera: seraStatus === "riposo" ? "Riposo" : seraTime || "S"
+    };
+
+    saveStaff();
+    updateCellColorsAndText(personIndex, dayKey);
+    closeShiftMenu();
+  });
+}
+
 scheduleBody.addEventListener("input", (event) => {
   const target = event.target;
   const personIndex = Number(target.dataset.person);
@@ -191,20 +274,17 @@ scheduleBody.addEventListener("input", (event) => {
 
   if (target.dataset.field) {
     staff[personIndex][target.dataset.field] = target.textContent.trim();
+    saveStaff();
   }
-
-  if (target.dataset.day) {
-    const day = target.dataset.day;
-    const part = target.dataset.part;
-    staff[personIndex].turni[day][part] = target.textContent.trim() || "Riposo";
-  }
-
-  saveStaff();
-  updateColors();
 });
 
-scheduleBody.addEventListener("focusout", () => {
-  renderTable();
+scheduleBody.addEventListener("click", (event) => {
+  const cell = event.target.closest(".shift-cell");
+  if (!cell) return;
+
+  const personIndex = Number(cell.dataset.person);
+  const dayKey = cell.dataset.day;
+  openShiftMenu(personIndex, dayKey);
 });
 
 weekInput.addEventListener("input", () => {
@@ -217,11 +297,12 @@ document.getElementById("printBtn").addEventListener("click", () => {
 
 document.getElementById("resetBtn").addEventListener("click", () => {
   localStorage.removeItem(storageKey);
-  localStorage.removeItem(oldStorageKey);
+  oldStorageKeys.forEach((key) => localStorage.removeItem(key));
   localStorage.removeItem(weekKey);
   staff = structuredClone(defaultStaff);
   weekInput.value = "Esempio: 6 - 12 Luglio 2026";
   renderTable();
 });
 
+createShiftEditor();
 renderTable();
