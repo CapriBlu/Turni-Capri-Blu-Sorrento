@@ -29,8 +29,8 @@ const defaultStaff = names.map((nome) => ({
   turni: createEmptyWeek()
 }));
 
-const storageKey = "capriBluTurniStaffV4";
-const oldStorageKeys = ["capriBluTurniStaffV3", "capriBluTurniStaffV2", "capriBluTurniStaff"];
+const storageKey = "capriBluTurniStaffV5";
+const oldStorageKeys = ["capriBluTurniStaffV4", "capriBluTurniStaffV3", "capriBluTurniStaffV2", "capriBluTurniStaff"];
 const weekKey = "capriBluTurniSettimanaV2";
 let staff = loadStaff();
 let activeEdit = null;
@@ -53,6 +53,12 @@ function createEmptyWeek() {
 function loadStaff() {
   const saved = localStorage.getItem(storageKey);
   if (saved) return normalizeStaff(JSON.parse(saved));
+
+  for (const key of oldStorageKeys) {
+    const oldSaved = localStorage.getItem(key);
+    if (oldSaved) return normalizeStaff(JSON.parse(oldSaved));
+  }
+
   return structuredClone(defaultStaff);
 }
 
@@ -105,8 +111,10 @@ function renderTable() {
       if (isSplit) td.classList.add("day-spezzato");
 
       td.innerHTML = `
-        <button class="shift-cell two-fields" type="button" data-person="${personIndex}" data-day="${day.key}" aria-label="Modifica turno ${person.nome} ${day.label}">
+        <button class="shift-cell four-fields" type="button" data-person="${personIndex}" data-day="${day.key}" aria-label="Modifica turno ${person.nome} ${day.label}">
+          <span class="shift-code apertura-code">A</span>
           <span class="shift-time ${slotClass(shift.pranzo, "pranzo")}">${shift.pranzo}</span>
+          <span class="shift-code sera-code">S</span>
           <span class="shift-time ${slotClass(shift.sera, "sera")}">${shift.sera}</span>
         </button>
       `;
@@ -147,6 +155,20 @@ function isWorking(value) {
   return clean !== "" && clean !== "riposo" && clean !== "riposto" && clean !== "-" && clean !== "—" && clean !== "vuoto";
 }
 
+function detectPranzoStatus(value) {
+  const clean = (value || "").trim().toLowerCase();
+  if (!isWorking(value)) return "riposo";
+  if (clean === "apertura" || clean === "a") return "apertura";
+  return "pranzo";
+}
+
+function detectSeraStatus(value) {
+  const clean = (value || "").trim().toLowerCase();
+  if (!isWorking(value)) return "riposo";
+  if (clean === "cena") return "cena";
+  return "sera";
+}
+
 function openShiftMenu(personIndex, dayKey) {
   activeEdit = { personIndex, dayKey };
   const person = staff[personIndex];
@@ -154,10 +176,10 @@ function openShiftMenu(personIndex, dayKey) {
   const shift = person.turni[dayKey];
 
   document.getElementById("editorTitle").textContent = `${person.nome} - ${dayLabel}`;
-  document.getElementById("pranzoStatus").value = isWorking(shift.pranzo) ? "pranzo" : "riposo";
-  document.getElementById("pranzoTime").value = isWorking(shift.pranzo) ? shift.pranzo : "";
-  document.getElementById("seraStatus").value = isWorking(shift.sera) ? "sera" : "riposo";
-  document.getElementById("seraTime").value = isWorking(shift.sera) ? shift.sera : "";
+  document.getElementById("pranzoStatus").value = detectPranzoStatus(shift.pranzo);
+  document.getElementById("pranzoTime").value = isWorking(shift.pranzo) && !["Apertura", "Pranzo", "A"].includes(shift.pranzo) ? shift.pranzo : "";
+  document.getElementById("seraStatus").value = detectSeraStatus(shift.sera);
+  document.getElementById("seraTime").value = isWorking(shift.sera) && !["Sera", "Cena", "S"].includes(shift.sera) ? shift.sera : "";
   document.getElementById("shiftEditorBackdrop").classList.add("open");
 }
 
@@ -174,17 +196,21 @@ function createShiftEditor() {
     <div class="shift-editor" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
       <h2 id="editorTitle">Modifica turno</h2>
 
-      <div class="editor-row no-code">
-        <select id="pranzoStatus" aria-label="Stato pranzo">
+      <div class="editor-row">
+        <div class="editor-code apertura-code">A</div>
+        <select id="pranzoStatus" aria-label="Stato apertura pranzo">
+          <option value="apertura">Apertura</option>
           <option value="pranzo">Pranzo</option>
           <option value="riposo">Riposo</option>
         </select>
         <input id="pranzoTime" type="text" placeholder="10:30-15:30" />
       </div>
 
-      <div class="editor-row no-code">
-        <select id="seraStatus" aria-label="Stato sera">
+      <div class="editor-row">
+        <div class="editor-code sera-code">S</div>
+        <select id="seraStatus" aria-label="Stato sera cena">
           <option value="sera">Sera</option>
+          <option value="cena">Cena</option>
           <option value="riposo">Riposo</option>
         </select>
         <input id="seraTime" type="text" placeholder="18:30-23:30" />
@@ -222,9 +248,12 @@ function createShiftEditor() {
     const seraStatus = document.getElementById("seraStatus").value;
     const seraTime = document.getElementById("seraTime").value.trim();
 
+    const pranzoLabel = pranzoStatus === "apertura" ? "Apertura" : "Pranzo";
+    const seraLabel = seraStatus === "cena" ? "Cena" : "Sera";
+
     staff[personIndex].turni[dayKey] = {
-      pranzo: pranzoStatus === "riposo" ? "Riposo" : pranzoTime || "Pranzo",
-      sera: seraStatus === "riposo" ? "Riposo" : seraTime || "Sera"
+      pranzo: pranzoStatus === "riposo" ? "Riposo" : pranzoTime || pranzoLabel,
+      sera: seraStatus === "riposo" ? "Riposo" : seraTime || seraLabel
     };
 
     saveStaff();
