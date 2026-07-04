@@ -54,6 +54,44 @@
       </div>
     </section>
 
+    <section class="requests-card">
+      <div class="requests-head">
+        <div>
+          <p class="eyebrow dark">Richieste staff</p>
+          <h2>Permessi, ferie e feste</h2>
+        </div>
+        <p>Quando una richiesta rientra nella settimana selezionata, appare anche nella tabella turni.</p>
+      </div>
+
+      <div class="request-form">
+        <select id="requestName" aria-label="Nome dipendente"></select>
+        <input id="requestDate" type="date" aria-label="Data richiesta" />
+        <select id="requestType" aria-label="Tipo richiesta">
+          <option value="Ferie">Ferie</option>
+          <option value="Festa">Festa</option>
+          <option value="Permesso">Permesso</option>
+          <option value="Altro">Altro</option>
+        </select>
+        <input id="requestNote" type="text" placeholder="Nota facoltativa" aria-label="Nota richiesta" />
+        <button id="addRequestBtn" type="button">Aggiungi richiesta</button>
+      </div>
+
+      <div class="requests-list-wrap">
+        <table class="requests-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Data</th>
+              <th>Richiesta</th>
+              <th>Nota</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="requestsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
     <p class="note">Clicca su una cella per modificare pranzo, sera o riposo.</p>
   </main>
 
