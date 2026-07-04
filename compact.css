@@ -1,235 +1,255 @@
-/* Versione compatta */
+/* Versione super compatta per screenshot telefono */
 .page {
-  width: min(1760px, 100%);
-  padding: 10px;
+  width: min(1840px, 100%);
+  padding: 6px;
 }
 
 .top-card {
-  min-height: 92px;
-  padding: 14px 18px;
-  border-radius: 18px;
-  gap: 14px;
+  min-height: 76px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  gap: 10px;
 }
 
 .eyebrow {
-  margin-bottom: 4px;
-  font-size: 0.62rem;
-  letter-spacing: 0.16em;
+  margin-bottom: 3px;
+  font-size: 0.54rem;
+  letter-spacing: 0.13em;
 }
 
 h1 {
-  font-size: clamp(1.8rem, 4.5vw, 3.8rem);
+  font-size: clamp(1.55rem, 4vw, 3.2rem);
 }
 
 .subtitle {
-  margin-top: 6px;
-  font-size: 0.9rem;
-  line-height: 1.2;
+  margin-top: 4px;
+  font-size: 0.76rem;
+  line-height: 1.12;
 }
 
 .week-box {
-  width: min(330px, 100%);
-  padding: 10px;
-  border-radius: 14px;
+  width: min(270px, 100%);
+  padding: 7px;
+  border-radius: 11px;
 }
 
 .week-range {
-  margin-top: 6px;
-  font-size: 0.78rem;
+  margin-top: 4px;
+  font-size: 0.66rem;
 }
 
 label {
-  margin-bottom: 5px;
-  font-size: 0.82rem;
+  margin-bottom: 3px;
+  font-size: 0.68rem;
 }
 
 input,
 select {
-  padding: 7px 9px;
-  border-radius: 10px;
-  font-size: 0.82rem;
+  padding: 5px 7px;
+  border-radius: 8px;
+  font-size: 0.7rem;
 }
 
 .toolbar,
 .legend {
-  margin-top: 8px;
-  gap: 6px;
+  margin-top: 5px;
+  gap: 4px;
 }
 
 button {
-  padding: 7px 13px;
-  font-size: 0.78rem;
+  padding: 5px 9px;
+  font-size: 0.64rem;
 }
 
 .legend span {
-  padding: 5px 8px;
-  gap: 5px;
-  font-size: 0.74rem;
+  padding: 3px 6px;
+  gap: 4px;
+  font-size: 0.62rem;
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 .table-card,
 .requests-card {
-  margin-top: 8px;
-  padding: 6px;
-  border-radius: 16px;
+  margin-top: 5px;
+  padding: 4px;
+  border-radius: 12px;
 }
 
 .table-scroll,
 .requests-list-wrap {
-  border-radius: 12px;
+  border-radius: 9px;
 }
 
 .shift-table {
-  min-width: 840px;
+  min-width: 700px;
 }
 
 .shift-table th,
 .shift-table td,
 .requests-table th,
 .requests-table td {
-  padding: 4px;
+  padding: 2px;
 }
 
 .shift-table th,
 .requests-table th {
-  font-size: 0.68rem;
-  line-height: 1.05;
+  font-size: 0.54rem;
+  line-height: 1;
+  letter-spacing: 0;
 }
 
 .shift-table th small {
   margin-top: 1px;
-  font-size: 0.58rem;
+  font-size: 0.48rem;
 }
 
 .shift-table td:first-child {
-  min-width: 92px;
-  max-width: 92px;
-  font-size: 0.72rem;
+  min-width: 70px;
+  max-width: 70px;
+  font-size: 0.58rem;
+  line-height: 1;
 }
 
 .shift-cell {
-  min-width: 88px;
-  border-radius: 9px;
+  min-width: 70px;
+  border-radius: 7px;
 }
 
 .two-fields {
-  grid-template-rows: 26px 26px;
+  grid-template-rows: 21px 21px;
 }
 
 .one-field {
-  min-height: 52px;
+  min-height: 42px;
 }
 
 .one-field .shift-time {
-  min-height: 52px;
+  min-height: 42px;
 }
 
 .shift-time {
-  padding: 3px;
-  font-size: 0.67rem;
-  line-height: 1.05;
+  padding: 2px;
+  font-size: 0.54rem;
+  line-height: 1;
+}
+
+.shift-time + .shift-time {
+  border-top-width: 1px;
 }
 
 .request-badge {
-  margin-top: 3px;
-  padding: 3px 4px;
-  border-radius: 7px;
-  font-size: 0.58rem;
+  margin-top: 2px;
+  padding: 2px 3px;
+  border-radius: 5px;
+  font-size: 0.49rem;
+  line-height: 1;
 }
 
 .requests-head {
-  padding: 4px 6px 8px;
-  gap: 10px;
+  padding: 3px 4px 5px;
+  gap: 6px;
 }
 
 .requests-head h2 {
-  font-size: clamp(1.1rem, 2vw, 1.55rem);
+  font-size: clamp(0.95rem, 1.8vw, 1.25rem);
 }
 
 .requests-head p {
-  font-size: 0.78rem;
-  line-height: 1.2;
+  font-size: 0.64rem;
+  line-height: 1.12;
 }
 
 .request-form {
-  grid-template-columns: 1fr 0.9fr 0.9fr 1.2fr auto;
-  gap: 6px;
-  padding: 7px;
-  margin-bottom: 6px;
-  border-radius: 12px;
+  grid-template-columns: 1fr 0.9fr 0.85fr 1fr auto;
+  gap: 4px;
+  padding: 5px;
+  margin-bottom: 4px;
+  border-radius: 9px;
 }
 
 .requests-table {
-  min-width: 690px;
+  min-width: 610px;
 }
 
 .request-pill {
-  padding: 4px 7px;
-  font-size: 0.72rem;
+  padding: 3px 5px;
+  font-size: 0.58rem;
 }
 
 .delete-request {
-  padding: 5px 8px;
+  padding: 4px 6px;
 }
 
 .note {
-  margin-top: 8px;
-  font-size: 0.76rem;
+  margin-top: 5px;
+  font-size: 0.62rem;
 }
 
 .shift-editor {
-  width: min(680px, 96vw);
-  padding: 14px;
-  border-radius: 18px;
+  width: min(620px, 96vw);
+  padding: 10px;
+  border-radius: 14px;
 }
 
 .shift-editor h2 {
-  font-size: 1.15rem;
+  font-size: 1rem;
 }
 
 .editor-head {
-  margin-bottom: 10px;
+  margin-bottom: 7px;
 }
 
 .editor-grid {
-  gap: 8px;
+  gap: 6px;
 }
 
 .editor-panel {
-  grid-template-columns: 36px 1fr;
-  gap: 7px;
-  padding: 9px;
-  border-radius: 12px;
+  grid-template-columns: 30px 1fr;
+  gap: 5px;
+  padding: 7px;
+  border-radius: 10px;
 }
 
 .editor-code {
-  width: 36px;
-  height: 70px;
-  border-radius: 10px;
-  font-size: 0.9rem;
+  width: 30px;
+  height: 58px;
+  border-radius: 8px;
+  font-size: 0.78rem;
 }
 
 .editor-actions {
-  margin-top: 10px;
-  gap: 6px;
+  margin-top: 7px;
+  gap: 4px;
 }
 
 @media (max-width: 760px) {
   .page {
-    padding: 8px;
+    padding: 4px;
   }
 
   .top-card,
   .requests-head {
-    padding: 12px;
+    padding: 8px;
   }
 
   .shift-table {
-    min-width: 800px;
+    min-width: 660px;
+  }
+
+  .shift-table td:first-child {
+    min-width: 64px;
+    max-width: 64px;
+  }
+
+  .shift-cell {
+    min-width: 64px;
+  }
+
+  .shift-time {
+    font-size: 0.5rem;
   }
 }
