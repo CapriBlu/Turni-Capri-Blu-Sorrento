@@ -4,6 +4,8 @@
   --blue-light: #1f8fd6;
   --white: #ffffff;
   --gold: #f5c542;
+  --green: #d9f7df;
+  --green-border: #48b96a;
   --line: rgba(255, 255, 255, 0.18);
   --table-line: rgba(6, 27, 58, 0.13);
   --shadow: 0 24px 70px rgba(0, 0, 0, 0.26);
@@ -78,8 +80,15 @@ h1 {
   width: min(420px, 100%);
   padding: 18px;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   color: var(--blue-dark);
+}
+
+.week-range {
+  margin: 10px 0 0;
+  color: var(--blue);
+  font-weight: 900;
+  font-size: 0.92rem;
 }
 
 label {
@@ -151,7 +160,7 @@ button:hover {
 .dot.pranzo { background: #dff1ff; border: 1px solid #74bff0; }
 .dot.cena { background: #dfe6ff; border: 1px solid #758fe8; }
 .dot.spezzato { background: #fff1bc; border: 1px solid #e0b52e; }
-.dot.riposo { background: #f2f2f2; border: 1px solid #cccccc; }
+.dot.riposo { background: var(--green); border: 1px solid var(--green-border); }
 
 .table-card {
   margin-top: 18px;
@@ -193,6 +202,14 @@ button:hover {
   text-align: center;
   font-size: 0.88rem;
   letter-spacing: 0.03em;
+  line-height: 1.25;
+}
+
+.shift-table th small {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.74rem;
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .shift-table th:first-child,
@@ -229,13 +246,12 @@ button:hover {
   box-shadow: 0 0 0 3px rgba(245, 197, 66, 0.26);
 }
 
-.four-fields {
+.two-fields {
   display: grid;
-  grid-template-columns: 34px minmax(86px, 1fr);
+  grid-template-columns: 1fr;
   grid-template-rows: 42px 42px;
 }
 
-.shift-code,
 .shift-time {
   display: flex;
   align-items: center;
@@ -243,35 +259,15 @@ button:hover {
   text-align: center;
   font-weight: 900;
   line-height: 1.15;
-}
-
-.shift-code {
-  color: white;
-  letter-spacing: 0.05em;
-  border-right: 1px solid rgba(6, 27, 58, 0.14);
-}
-
-.apertura-code {
-  background: #0b8bd6;
-}
-
-.sera-code {
-  background: #3446c5;
-  border-top: 1px solid rgba(255, 255, 255, 0.28);
-}
-
-.shift-time {
   padding: 7px 6px;
   font-size: 0.88rem;
-  border-left: 0;
 }
 
-.shift-code:nth-child(3),
-.shift-time:nth-child(4) {
+.shift-time + .shift-time {
   border-top: 1px dashed rgba(6, 27, 58, 0.22);
 }
 
-.shift-time.apertura {
+.shift-time.pranzo {
   background: #dff1ff;
 }
 
@@ -280,8 +276,8 @@ button:hover {
 }
 
 .shift-time.riposo {
-  background: #f2f2f2;
-  color: #777;
+  background: var(--green);
+  color: #13722f;
 }
 
 .day-spezzato .shift-cell {
@@ -320,21 +316,10 @@ button:hover {
 
 .editor-row {
   display: grid;
-  grid-template-columns: 42px 1fr 1.3fr;
+  grid-template-columns: 1fr 1.3fr;
   gap: 10px;
   align-items: center;
   margin-top: 12px;
-}
-
-.editor-code {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 900;
 }
 
 .editor-actions {
@@ -384,11 +369,7 @@ button:hover {
   }
 
   .editor-row {
-    grid-template-columns: 42px 1fr;
-  }
-
-  .editor-row input {
-    grid-column: 2 / 3;
+    grid-template-columns: 1fr;
   }
 }
 
@@ -447,7 +428,8 @@ button:hover {
     padding: 5px;
   }
 
-  .four-fields {
-    grid-template-rows: 28px 28px;
+  .shift-time {
+    min-height: 24px;
+    padding: 4px;
   }
 }
