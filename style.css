@@ -267,6 +267,13 @@ button:hover {
   grid-template-rows: 36px 36px;
 }
 
+.one-field {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 72px;
+}
+
 .shift-time {
   display: flex;
   align-items: center;
@@ -276,6 +283,11 @@ button:hover {
   line-height: 1.1;
   padding: 5px;
   font-size: 0.8rem;
+}
+
+.one-field .shift-time {
+  width: 100%;
+  min-height: 72px;
 }
 
 .shift-time + .shift-time {
