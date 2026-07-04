@@ -6,6 +6,8 @@
   --gold: #f5c542;
   --green: #d9f7df;
   --green-border: #48b96a;
+  --orange: #ffd8a8;
+  --orange-border: #f19a38;
   --line: rgba(255, 255, 255, 0.18);
   --table-line: rgba(6, 27, 58, 0.13);
   --shadow: 0 24px 70px rgba(0, 0, 0, 0.26);
@@ -32,20 +34,20 @@ body {
 }
 
 .page {
-  width: min(1540px, 100%);
+  width: min(1680px, 100%);
   margin: 0 auto;
-  padding: 28px;
+  padding: 20px;
 }
 
 .top-card {
-  min-height: 170px;
+  min-height: 145px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 24px;
-  padding: 28px;
+  gap: 20px;
+  padding: 22px;
   border: 1px solid var(--line);
-  border-radius: 30px;
+  border-radius: 26px;
   background: rgba(255, 255, 255, 0.12);
   box-shadow: var(--shadow);
   backdrop-filter: blur(12px);
@@ -66,7 +68,7 @@ body {
 
 h1 {
   margin: 0;
-  font-size: clamp(2.4rem, 7vw, 5.5rem);
+  font-size: clamp(2.2rem, 6vw, 5rem);
   line-height: 0.95;
   color: white;
   text-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
@@ -75,15 +77,16 @@ h1 {
 .subtitle {
   margin: 12px 0 0;
   max-width: 680px;
-  color: rgba(255, 255, 255, 0.86);
-  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.08rem;
+  font-weight: 800;
   line-height: 1.45;
 }
 
 .week-box {
-  width: min(420px, 100%);
-  padding: 18px;
-  border-radius: 22px;
+  width: min(390px, 100%);
+  padding: 16px;
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.92);
   color: var(--blue-dark);
 }
@@ -92,7 +95,7 @@ h1 {
   margin: 10px 0 0;
   color: var(--blue);
   font-weight: 900;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
 }
 
 label {
@@ -106,9 +109,9 @@ input,
 select {
   width: 100%;
   border: 1px solid rgba(6, 27, 58, 0.18);
-  border-radius: 14px;
-  padding: 12px 14px;
-  font-size: 1rem;
+  border-radius: 13px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--blue-dark);
   background: white;
@@ -116,23 +119,23 @@ select {
 
 .toolbar,
 .legend {
-  margin-top: 16px;
+  margin-top: 12px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 button {
   border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 999px;
-  padding: 12px 22px;
+  padding: 10px 18px;
   background: rgba(255, 255, 255, 0.92);
   color: var(--blue);
   font-weight: 900;
   cursor: pointer;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14);
 }
 
 button:hover {
@@ -148,7 +151,7 @@ button:hover {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 8px 12px;
+  padding: 7px 11px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.16);
@@ -165,12 +168,13 @@ button:hover {
 .dot.cena { background: #dfe6ff; border: 1px solid #758fe8; }
 .dot.spezzato { background: #fff1bc; border: 1px solid #e0b52e; }
 .dot.riposo { background: var(--green); border: 1px solid var(--green-border); }
+.dot.richiesta { background: var(--orange); border: 1px solid var(--orange-border); }
 
 .table-card,
 .requests-card {
-  margin-top: 18px;
-  padding: 14px;
-  border-radius: 30px;
+  margin-top: 14px;
+  padding: 10px;
+  border-radius: 24px;
   background: rgba(255, 255, 255, 0.92);
   box-shadow: var(--shadow);
   border: 1px solid rgba(255, 255, 255, 0.36);
@@ -179,13 +183,13 @@ button:hover {
 .table-scroll,
 .requests-list-wrap {
   overflow-x: auto;
-  border-radius: 22px;
+  border-radius: 18px;
   background: white;
 }
 
 .shift-table {
   width: 100%;
-  min-width: 1060px;
+  min-width: 940px;
   border-collapse: separate;
   border-spacing: 0;
   color: var(--blue-dark);
@@ -197,7 +201,7 @@ button:hover {
 .requests-table td {
   border-right: 1px solid var(--table-line);
   border-bottom: 1px solid var(--table-line);
-  padding: 10px;
+  padding: 7px;
   vertical-align: middle;
 }
 
@@ -209,15 +213,15 @@ button:hover {
   background: linear-gradient(180deg, #0b4ca2, #062e72);
   color: white;
   text-align: center;
-  font-size: 0.88rem;
-  letter-spacing: 0.03em;
-  line-height: 1.25;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
 }
 
 .shift-table th small {
   display: block;
-  margin-top: 3px;
-  font-size: 0.74rem;
+  margin-top: 2px;
+  font-size: 0.68rem;
   color: rgba(255, 255, 255, 0.82);
 }
 
@@ -229,10 +233,12 @@ button:hover {
 }
 
 .shift-table td:first-child {
-  min-width: 150px;
+  min-width: 115px;
+  max-width: 115px;
   background: #f7fbff;
   font-weight: 900;
   color: var(--blue);
+  font-size: 0.88rem;
 }
 
 .shift-table th:first-child {
@@ -240,10 +246,10 @@ button:hover {
 }
 
 .shift-cell {
-  min-width: 126px;
+  min-width: 104px;
   width: 100%;
   border: 1px solid rgba(6, 27, 58, 0.12);
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
   background: #f8fbff;
   padding: 0;
@@ -258,7 +264,7 @@ button:hover {
 .two-fields {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 42px 42px;
+  grid-template-rows: 36px 36px;
 }
 
 .shift-time {
@@ -267,9 +273,9 @@ button:hover {
   justify-content: center;
   text-align: center;
   font-weight: 900;
-  line-height: 1.15;
-  padding: 7px 6px;
-  font-size: 0.88rem;
+  line-height: 1.1;
+  padding: 5px;
+  font-size: 0.8rem;
 }
 
 .shift-time + .shift-time {
@@ -294,48 +300,43 @@ button:hover {
   box-shadow: inset 0 0 0 2px rgba(245, 197, 66, 0.28);
 }
 
+.has-request {
+  background: #fff4e6;
+}
+
 .has-request .shift-cell {
-  border-color: #d85b5b;
+  border-color: var(--orange-border);
+  background: var(--orange);
 }
 
 .request-badge {
-  margin-top: 7px;
-  padding: 6px 8px;
-  border-radius: 999px;
+  margin-top: 5px;
+  padding: 5px 6px;
+  border-radius: 10px;
   text-align: center;
-  font-size: 0.76rem;
+  font-size: 0.68rem;
   font-weight: 900;
-  color: #691c1c;
-  background: #ffe0e0;
-  border: 1px solid #f3a4a4;
+  color: #814200;
+  background: var(--orange);
+  border: 1px solid var(--orange-border);
 }
 
 .request-badge.ferie,
-.request-pill.ferie {
-  color: #9a5c00;
-  background: #fff0c7;
-  border-color: #f3c45d;
-}
-
 .request-badge.festa,
-.request-pill.festa {
-  color: #7c2581;
-  background: #f7ddff;
-  border-color: #d696e0;
-}
-
 .request-badge.permesso,
-.request-pill.permesso {
-  color: #115c85;
-  background: #dff1ff;
-  border-color: #74bff0;
+.request-badge.altro {
+  color: #814200;
+  background: var(--orange);
+  border-color: var(--orange-border);
 }
 
-.request-badge.altro,
+.request-pill.ferie,
+.request-pill.festa,
+.request-pill.permesso,
 .request-pill.altro {
-  color: #4c5967;
-  background: #eef2f6;
-  border-color: #c5ccd6;
+  color: #814200;
+  background: var(--orange);
+  border-color: var(--orange-border);
 }
 
 .requests-card {
@@ -347,13 +348,13 @@ button:hover {
   align-items: flex-end;
   justify-content: space-between;
   gap: 18px;
-  padding: 8px 8px 16px;
+  padding: 8px 8px 14px;
 }
 
 .requests-head h2 {
   margin: 0;
   color: var(--blue);
-  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-size: clamp(1.4rem, 3vw, 2rem);
 }
 
 .requests-head p {
@@ -367,9 +368,9 @@ button:hover {
   display: grid;
   grid-template-columns: 1.1fr 1fr 1fr 1.4fr auto;
   gap: 10px;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 20px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 18px;
   background: #f7fbff;
   border: 1px solid rgba(6, 27, 58, 0.1);
 }
@@ -598,16 +599,16 @@ button:hover {
 
   .shift-table {
     min-width: 100%;
-    font-size: 10px;
+    font-size: 9px;
   }
 
   .shift-table th,
   .shift-table td {
-    padding: 5px;
+    padding: 4px;
   }
 
   .shift-time {
-    min-height: 24px;
-    padding: 4px;
+    min-height: 22px;
+    padding: 3px;
   }
 }
