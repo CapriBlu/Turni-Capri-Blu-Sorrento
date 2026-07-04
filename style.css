@@ -170,7 +170,7 @@ button:hover {
 
 .shift-table {
   width: 100%;
-  min-width: 1180px;
+  min-width: 980px;
   border-collapse: separate;
   border-spacing: 0;
   color: var(--blue-dark);
@@ -203,6 +203,7 @@ button:hover {
 }
 
 .shift-table td:first-child {
+  min-width: 150px;
   background: #f7fbff;
   font-weight: 900;
   color: var(--blue);
@@ -212,14 +213,8 @@ button:hover {
   z-index: 4;
 }
 
-.role {
-  font-weight: 800;
-  color: #46536b;
-  text-align: center;
-}
-
 .shift-cell {
-  min-width: 130px;
+  min-width: 112px;
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid rgba(6, 27, 58, 0.11);
@@ -263,14 +258,6 @@ button:hover {
 .day-spezzato .shift-cell {
   border-color: #e0b52e;
   box-shadow: inset 0 0 0 2px rgba(245, 197, 66, 0.28);
-}
-
-.total {
-  text-align: center;
-  font-weight: 900;
-  color: var(--blue);
-  background: #fff8d9;
-  white-space: nowrap;
 }
 
 .note {
