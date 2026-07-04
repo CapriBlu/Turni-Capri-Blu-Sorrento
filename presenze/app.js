@@ -15,11 +15,11 @@ const staffNames = [
 ];
 
 const dayKeys = ["lunedi", "martedi", "mercoledi", "giovedi", "venerdi", "sabato", "domenica"];
-const allowedValues = ["P", "F", "Fer", "P+Rit", ""];
 const classMap = {
   "P": "cell-p",
   "F": "cell-f",
   "Fer": "cell-fer",
+  "MAL": "cell-mal",
   "P+Rit": "cell-rit"
 };
 
@@ -127,16 +127,46 @@ function automaticValue(name, date) {
   return autoValueFromShift(name, date);
 }
 
-function finalCellValue(name, day, date, manualData) {
-  const cellKey = name + "-" + day;
-  const manualValue = manualData[cellKey] || "";
+function getManualValue(record) {
+  if (!record) return "";
+  if (typeof record === "string") return record;
+  return record.value || "";
+}
 
-  if (manualValue) return manualValue;
+function getManualMinutes(record) {
+  if (!record || typeof record === "string") return 0;
+  return Number(record.minutes || 0);
+}
+
+function displayValue(value, minutes) {
+  if (value === "P+Rit" && minutes > 0) return "P+Rit " + minutes + "m";
+  return value;
+}
+
+function finalCellInfo(name, day, date, manualData) {
+  const cellKey = name + "-" + day;
+  const manualRecord = manualData[cellKey];
+  const manualValue = getManualValue(manualRecord);
+  const minutes = getManualMinutes(manualRecord);
+
+  if (manualValue) {
+    return { value: manualValue, minutes };
+  }
 
   const auto = automaticValue(name, date);
-  if (auto) return auto;
+  return { value: auto || "", minutes: 0 };
+}
 
-  return "";
+function addCount(counts, value, minutes) {
+  if (value === "P") counts.presenze += 1;
+  if (value === "F") counts.feste += 1;
+  if (value === "Fer") counts.ferie += 1;
+  if (value === "MAL") counts.malattia += 1;
+  if (value === "P+Rit") {
+    counts.presenze += 1;
+    counts.ritardi += 1;
+    counts.minuti += Number(minutes || 0);
+  }
 }
 
 function renderTable() {
@@ -150,16 +180,27 @@ function renderTable() {
   for (let day = 1; day <= totalDays; day++) {
     html += "<th><span class='day-number'>" + day + "</span><span class='day-name'>" + dayLabel(year, month, day) + "</span></th>";
   }
+  html += "<th>P</th><th>F</th><th>Fer</th><th>MAL</th><th>Rit</th><th>Min</th>";
   html += "</tr></thead><tbody>";
 
   staffNames.forEach((name) => {
+    const counts = { presenze: 0, feste: 0, ferie: 0, malattia: 0, ritardi: 0, minuti: 0 };
     html += "<tr><td>" + name + "</td>";
+
     for (let day = 1; day <= totalDays; day++) {
       const date = new Date(year, month - 1, day);
-      const value = finalCellValue(name, day, date, manualData);
-      const cls = classMap[value] || "";
-      html += "<td class='presence-cell " + cls + "' data-name='" + name + "' data-day='" + day + "'>" + value + "</td>";
+      const info = finalCellInfo(name, day, date, manualData);
+      addCount(counts, info.value, info.minutes);
+      const cls = classMap[info.value] || "";
+      html += "<td class='presence-cell " + cls + "' data-name='" + name + "' data-day='" + day + "'>" + displayValue(info.value, info.minutes) + "</td>";
     }
+
+    html += "<td class='total-cell'>" + counts.presenze + "</td>";
+    html += "<td class='total-cell'>" + counts.feste + "</td>";
+    html += "<td class='total-cell'>" + counts.ferie + "</td>";
+    html += "<td class='total-cell'>" + counts.malattia + "</td>";
+    html += "<td class='total-cell'>" + counts.ritardi + "</td>";
+    html += "<td class='total-cell'>" + counts.minuti + "</td>";
     html += "</tr>";
   });
 
@@ -167,14 +208,53 @@ function renderTable() {
   table.innerHTML = html;
 }
 
-function normalizeManualValue(value) {
-  const clean = String(value || "").trim().toLowerCase();
-  if (clean === "p") return "P";
-  if (clean === "f") return "F";
-  if (clean === "fer" || clean === "ferie") return "Fer";
-  if (clean === "p+rit" || clean === "prit" || clean === "rit" || clean === "ritardo") return "P+Rit";
-  if (clean === "" || clean === "vuoto" || clean === "cancella") return "";
-  return null;
+function openCellMenu(cell) {
+  const data = readData();
+  const key = cell.dataset.name + "-" + cell.dataset.day;
+  const oldRecord = data[key];
+  const oldValue = getManualValue(oldRecord) || cell.textContent.trim().replace(/\s+\d+m$/, "");
+
+  const choice = prompt(
+    "Scegli: P, F, Fer, MAL, P+Rit oppure vuoto per cancellare",
+    oldValue
+  );
+
+  if (choice === null) return;
+
+  const clean = String(choice).trim().toLowerCase();
+  let value = "";
+
+  if (clean === "p") value = "P";
+  else if (clean === "f") value = "F";
+  else if (clean === "fer" || clean === "ferie") value = "Fer";
+  else if (clean === "mal" || clean === "malattia") value = "MAL";
+  else if (clean === "p+rit" || clean === "prit" || clean === "rit" || clean === "ritardo") value = "P+Rit";
+  else if (clean === "" || clean === "vuoto" || clean === "cancella") value = "";
+  else {
+    alert("Valore non valido. Usa P, F, Fer, MAL o P+Rit.");
+    return;
+  }
+
+  if (!value) {
+    delete data[key];
+    saveData(data);
+    renderTable();
+    return;
+  }
+
+  if (value === "P+Rit") {
+    const oldMinutes = getManualMinutes(oldRecord);
+    const minutesText = prompt("Quanti minuti di ritardo?", oldMinutes ? String(oldMinutes) : "");
+    if (minutesText === null) return;
+
+    const minutes = Number(String(minutesText).replace(/[^0-9]/g, ""));
+    data[key] = { value: "P+Rit", minutes: Number.isFinite(minutes) ? minutes : 0 };
+  } else {
+    data[key] = { value, minutes: 0 };
+  }
+
+  saveData(data);
+  renderTable();
 }
 
 monthInput.value = localStorage.getItem("capriBluPresenzeMese") || currentMonthValue();
@@ -183,25 +263,7 @@ renderTable();
 table.addEventListener("click", (event) => {
   const cell = event.target.closest(".presence-cell");
   if (!cell) return;
-
-  const data = readData();
-  const key = cell.dataset.name + "-" + cell.dataset.day;
-  const current = cell.textContent.trim();
-  const answer = prompt("Inserisci valore: P, F, Fer, P+Rit oppure lascia vuoto per cancellare", current);
-
-  if (answer === null) return;
-
-  const newValue = normalizeManualValue(answer);
-  if (newValue === null || !allowedValues.includes(newValue)) {
-    alert("Valore non valido. Usa P, F, Fer o P+Rit.");
-    return;
-  }
-
-  if (newValue) data[key] = newValue;
-  else delete data[key];
-
-  saveData(data);
-  renderTable();
+  openCellMenu(cell);
 });
 
 monthInput.addEventListener("input", () => {
