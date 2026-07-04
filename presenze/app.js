@@ -238,10 +238,11 @@ function createMenu() {
 
   menuBackdrop.querySelectorAll("[data-value]").forEach((button) => {
     button.addEventListener("click", () => {
-      if (!activeCell) return;
+      const cellToSave = activeCell;
+      if (!cellToSave) return;
       const value = button.dataset.value;
       closePresenceMenu();
-      saveCellValue(activeCell, value);
+      saveCellValue(cellToSave, value);
     });
   });
 }
