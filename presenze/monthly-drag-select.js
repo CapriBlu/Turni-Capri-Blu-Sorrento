@@ -1,282 +1,193 @@
-const monthlySelection = new Set();
-let monthlyMouseDown = false;
-let monthlyStartCell = null;
-let monthlySuppressNextClick = false;
-let monthlyContextMenu = null;
-const monthlyCopiedKey = "capriBluPresenzeCopiaV1";
+const mSel = new Set();
+const mClipKey = "capriBluMensileClipboardV1";
+let mStart = null;
+let mDown = false;
+let mBlockClick = false;
+let mMenu = null;
 
-function monthlyCellKey(cell) {
+function mKey(cell) {
   return cell.dataset.name + "-" + cell.dataset.day;
 }
 
-function monthlyStorageKey() {
+function mDataKey() {
   return "capriBluPresenzeMensili-" + monthInput.value;
 }
 
-function monthlyReadData() {
+function mRead() {
   try {
-    return JSON.parse(localStorage.getItem(monthlyStorageKey()) || "{}");
-  } catch (error) {
+    return JSON.parse(localStorage.getItem(mDataKey()) || "{}");
+  } catch (e) {
     return {};
   }
 }
 
-function monthlySaveData(data, message = "Salvato") {
-  localStorage.setItem(monthlyStorageKey(), JSON.stringify(data));
-  if (typeof setAutosaveStatus === "function") {
-    setAutosaveStatus(message + " " + new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }));
-  }
+function mSave(data, msg) {
+  localStorage.setItem(mDataKey(), JSON.stringify(data));
+  if (typeof setAutosaveStatus === "function") setAutosaveStatus(msg || "Salvato");
 }
 
-function monthlyGetRecord(cell) {
-  const data = monthlyReadData();
-  const saved = data[monthlyCellKey(cell)];
+function mRecord(cell) {
+  const data = mRead();
+  const saved = data[mKey(cell)];
   if (saved) return typeof saved === "string" ? { value: saved, minutes: 0 } : saved;
-  return {
-    value: cell.dataset.value || "",
-    minutes: Number(cell.dataset.minutes || 0)
-  };
+  return { value: cell.dataset.value || "", minutes: Number(cell.dataset.minutes || 0) };
 }
 
-function monthlySelectedCells() {
+function mCells() {
   return Array.from(document.querySelectorAll(".presence-cell.multi-selected"));
 }
 
-function monthlyClearVisualSelection() {
-  document.querySelectorAll(".presence-cell.multi-selected").forEach((cell) => {
-    cell.classList.remove("multi-selected");
-  });
-  monthlySelection.clear();
+function mClear() {
+  document.querySelectorAll(".presence-cell.multi-selected").forEach((c) => c.classList.remove("multi-selected"));
+  mSel.clear();
 }
 
-function monthlyAddCell(cell) {
+function mAdd(cell) {
   if (!cell) return;
-  monthlySelection.add(monthlyCellKey(cell));
+  mSel.add(mKey(cell));
   cell.classList.add("multi-selected");
 }
 
-function monthlyRestoreVisualSelection() {
-  document.querySelectorAll(".presence-cell").forEach((cell) => {
-    cell.classList.toggle("multi-selected", monthlySelection.has(monthlyCellKey(cell)));
-  });
+function mSingle(cell) {
+  mClear();
+  mAdd(cell);
 }
 
-function monthlyRerenderKeepSelection() {
-  if (typeof renderTable === "function") renderTable();
-  monthlyRestoreVisualSelection();
-}
-
-function monthlyCopySelection() {
-  const cells = monthlySelectedCells();
-  if (!cells.length) return;
-  const records = cells.map((cell) => monthlyGetRecord(cell));
-  localStorage.setItem(monthlyCopiedKey, JSON.stringify(records));
-  if (typeof setAutosaveStatus === "function") {
-    setAutosaveStatus(cells.length === 1 ? "Cella copiata" : `${cells.length} celle copiate`);
-  }
-}
-
-function monthlyReadCopiedRecords() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(monthlyCopiedKey) || "null");
-    if (!saved) return [];
-    return Array.isArray(saved) ? saved : [saved];
-  } catch (error) {
-    return [];
-  }
-}
-
-function monthlyPasteSelection() {
-  const cells = monthlySelectedCells();
-  const records = monthlyReadCopiedRecords();
-  if (!cells.length || !records.length) return;
-
-  const data = monthlyReadData();
-  cells.forEach((cell, index) => {
-    const source = records.length === cells.length ? records[index] : records[index % records.length];
-    data[monthlyCellKey(cell)] = {
-      value: source?.value || "",
-      minutes: Number(source?.minutes || 0)
-    };
-  });
-
-  monthlySaveData(data, cells.length === 1 ? "Incollato" : `${cells.length} celle incollate`);
-  monthlyRerenderKeepSelection();
-}
-
-function monthlyClearSelectionValues() {
-  const cells = monthlySelectedCells();
-  if (!cells.length) return;
-  const data = monthlyReadData();
-  cells.forEach((cell) => delete data[monthlyCellKey(cell)]);
-  monthlySaveData(data, cells.length === 1 ? "Cella svuotata" : `${cells.length} celle svuotate`);
-  monthlyRerenderKeepSelection();
-}
-
-function monthlySelectCellOnly(cell) {
-  monthlyClearVisualSelection();
-  monthlyAddCell(cell);
-}
-
-function monthlySelectRange(fromCell, toCell) {
-  if (!fromCell || !toCell) return;
-
-  const fromRow = fromCell.parentElement.rowIndex;
-  const toRow = toCell.parentElement.rowIndex;
-  const fromCol = fromCell.cellIndex;
-  const toCol = toCell.cellIndex;
-  const minRow = Math.min(fromRow, toRow);
-  const maxRow = Math.max(fromRow, toRow);
-  const minCol = Math.min(fromCol, toCol);
-  const maxCol = Math.max(fromCol, toCol);
-
-  monthlyClearVisualSelection();
-
+function mRange(a, b) {
+  if (!a || !b) return;
+  const r1 = Math.min(a.parentElement.rowIndex, b.parentElement.rowIndex);
+  const r2 = Math.max(a.parentElement.rowIndex, b.parentElement.rowIndex);
+  const c1 = Math.min(a.cellIndex, b.cellIndex);
+  const c2 = Math.max(a.cellIndex, b.cellIndex);
+  mClear();
   Array.from(table.rows).forEach((row) => {
-    if (row.rowIndex < minRow || row.rowIndex > maxRow) return;
+    if (row.rowIndex < r1 || row.rowIndex > r2) return;
     Array.from(row.cells).forEach((cell) => {
-      if (cell.cellIndex < minCol || cell.cellIndex > maxCol) return;
-      if (!cell.classList.contains("presence-cell")) return;
-      monthlyAddCell(cell);
+      if (cell.cellIndex < c1 || cell.cellIndex > c2) return;
+      if (cell.classList.contains("presence-cell")) mAdd(cell);
     });
   });
 }
 
-function monthlyCellFromEvent(event) {
-  return event.target.closest(".presence-cell");
+function mCopy() {
+  const cells = mCells();
+  if (!cells.length) return;
+  localStorage.setItem(mClipKey, JSON.stringify(cells.map((cell) => mRecord(cell))));
+  if (typeof setAutosaveStatus === "function") setAutosaveStatus(cells.length + " celle copiate");
 }
 
-function monthlyHideContextMenu() {
-  if (monthlyContextMenu) monthlyContextMenu.classList.remove("open");
+function mClip() {
+  try {
+    const value = JSON.parse(localStorage.getItem(mClipKey) || "[]");
+    return Array.isArray(value) ? value : [value];
+  } catch (e) {
+    return [];
+  }
 }
 
-function monthlyCreateContextMenu() {
-  monthlyContextMenu = document.createElement("div");
-  monthlyContextMenu.className = "monthly-context-menu";
-  monthlyContextMenu.innerHTML = `
-    <button type="button" data-action="copy">Copia</button>
-    <button type="button" data-action="paste">Incolla</button>
-    <button type="button" data-action="clear">Svuota</button>
-  `;
-  document.body.appendChild(monthlyContextMenu);
-
-  monthlyContextMenu.addEventListener("click", (event) => {
-    const button = event.target.closest("button[data-action]");
-    if (!button) return;
-    const action = button.dataset.action;
-    monthlyHideContextMenu();
-    if (action === "copy") monthlyCopySelection();
-    if (action === "paste") monthlyPasteSelection();
-    if (action === "clear") monthlyClearSelectionValues();
+function mPaste() {
+  const cells = mCells();
+  const clip = mClip();
+  if (!cells.length || !clip.length) return;
+  const data = mRead();
+  cells.forEach((cell, i) => {
+    const source = clip.length === cells.length ? clip[i] : clip[i % clip.length];
+    data[mKey(cell)] = { value: source.value || "", minutes: Number(source.minutes || 0) };
   });
+  mSave(data, cells.length + " celle incollate");
+  renderTable();
 }
 
-function monthlyShowContextMenu(x, y) {
-  if (!monthlyContextMenu) monthlyCreateContextMenu();
-  monthlyContextMenu.style.left = `${x}px`;
-  monthlyContextMenu.style.top = `${y}px`;
-  monthlyContextMenu.classList.add("open");
+function mEmpty() {
+  const cells = mCells();
+  if (!cells.length) return;
+  const data = mRead();
+  cells.forEach((cell) => delete data[mKey(cell)]);
+  mSave(data, cells.length + " celle svuotate");
+  renderTable();
 }
 
-// Trascina con il tasto sinistro: selezione rettangolare stile Excel.
-table.addEventListener("pointerdown", (event) => {
-  if (event.button !== 0) return;
-  const cell = monthlyCellFromEvent(event);
+function mHideMenu() {
+  if (mMenu) mMenu.classList.remove("open");
+}
+
+function mShowMenu(x, y) {
+  if (!mMenu) {
+    mMenu = document.createElement("div");
+    mMenu.className = "monthly-context-menu";
+    mMenu.innerHTML = '<button data-a="copy">Copia</button><button data-a="paste">Incolla</button><button data-a="clear">Svuota</button>';
+    document.body.appendChild(mMenu);
+    mMenu.addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-a]");
+      if (!b) return;
+      e.preventDefault();
+      e.stopPropagation();
+      mHideMenu();
+      if (b.dataset.a === "copy") mCopy();
+      if (b.dataset.a === "paste") mPaste();
+      if (b.dataset.a === "clear") mEmpty();
+    });
+  }
+  mMenu.style.left = x + "px";
+  mMenu.style.top = y + "px";
+  mMenu.classList.add("open");
+}
+
+table.addEventListener("pointerdown", (e) => {
+  if (e.button !== 0) return;
+  const cell = e.target.closest(".presence-cell");
   if (!cell) return;
-
-  monthlyHideContextMenu();
-  monthlyMouseDown = true;
-  monthlyStartCell = cell;
-  monthlySuppressNextClick = false;
-  monthlySelectCellOnly(cell);
-  event.preventDefault();
+  mHideMenu();
+  mDown = true;
+  mStart = cell;
+  mBlockClick = false;
+  mSingle(cell);
+  e.preventDefault();
 });
 
-table.addEventListener("pointermove", (event) => {
-  if (!monthlyMouseDown || !monthlyStartCell) return;
-  const element = document.elementFromPoint(event.clientX, event.clientY);
-  const cell = element?.closest?.(".presence-cell");
+table.addEventListener("pointermove", (e) => {
+  if (!mDown || !mStart) return;
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  const cell = el && el.closest ? el.closest(".presence-cell") : null;
   if (!cell) return;
-
-  if (cell !== monthlyStartCell) monthlySuppressNextClick = true;
-  monthlySelectRange(monthlyStartCell, cell);
-  event.preventDefault();
+  if (cell !== mStart) mBlockClick = true;
+  mRange(mStart, cell);
+  e.preventDefault();
 });
 
 document.addEventListener("pointerup", () => {
-  monthlyMouseDown = false;
-  monthlyStartCell = null;
+  mDown = false;
+  mStart = null;
 });
 
-// Se hai trascinato, blocca il menu della singola cella.
-table.addEventListener("click", (event) => {
-  if (!monthlySuppressNextClick) return;
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  monthlySuppressNextClick = false;
+table.addEventListener("click", (e) => {
+  if (!mBlockClick) return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  mBlockClick = false;
 }, true);
 
-// Tasto destro: menu copia/incolla/svuota sulla selezione.
-table.addEventListener("contextmenu", (event) => {
-  const cell = monthlyCellFromEvent(event);
+table.addEventListener("contextmenu", (e) => {
+  const cell = e.target.closest(".presence-cell");
   if (!cell) return;
-  event.preventDefault();
-  event.stopImmediatePropagation();
-
-  if (!cell.classList.contains("multi-selected")) {
-    monthlySelectCellOnly(cell);
-  }
-
-  monthlyShowContextMenu(event.clientX, event.clientY);
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  if (!cell.classList.contains("multi-selected")) mSingle(cell);
+  mShowMenu(e.clientX, e.clientY);
 });
 
-document.addEventListener("click", (event) => {
-  if (monthlyContextMenu && !event.target.closest(".monthly-context-menu")) {
-    monthlyHideContextMenu();
-  }
+document.addEventListener("click", (e) => {
+  if (mMenu && !e.target.closest(".monthly-context-menu")) mHideMenu();
 });
 
-copyBtn?.addEventListener("click", (event) => {
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  monthlyCopySelection();
-}, true);
+copyBtn?.addEventListener("click", (e) => { e.preventDefault(); e.stopImmediatePropagation(); mCopy(); }, true);
+pasteBtn?.addEventListener("click", (e) => { e.preventDefault(); e.stopImmediatePropagation(); mPaste(); }, true);
+clearBtn?.addEventListener("click", (e) => { e.preventDefault(); e.stopImmediatePropagation(); mEmpty(); }, true);
 
-pasteBtn?.addEventListener("click", (event) => {
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  monthlyPasteSelection();
-}, true);
-
-clearBtn?.addEventListener("click", (event) => {
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  monthlyClearSelectionValues();
-}, true);
-
-document.addEventListener("keydown", (event) => {
-  if (!monthlySelectedCells().length) return;
-
-  if (event.key === "Escape") {
-    monthlyHideContextMenu();
-    monthlyClearVisualSelection();
-  }
-
-  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "c") {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    monthlyCopySelection();
-  }
-
-  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "v") {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    monthlyPasteSelection();
-  }
-
-  if (event.key === "Delete" || event.key === "Backspace") {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    monthlyClearSelectionValues();
-  }
+document.addEventListener("keydown", (e) => {
+  if (!mCells().length) return;
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c") { e.preventDefault(); e.stopImmediatePropagation(); mCopy(); }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "v") { e.preventDefault(); e.stopImmediatePropagation(); mPaste(); }
+  if (e.key === "Delete" || e.key === "Backspace") { e.preventDefault(); e.stopImmediatePropagation(); mEmpty(); }
+  if (e.key === "Escape") { mHideMenu(); mClear(); }
 }, true);
