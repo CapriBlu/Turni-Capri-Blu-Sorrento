@@ -66,22 +66,36 @@ function currentWeekStaffKey() {
   return weekStoragePrefix + weekInput.value;
 }
 
+function safeJsonParse(value, fallback, keyToRemove = "") {
+  try {
+    return value ? JSON.parse(value) : fallback;
+  } catch (error) {
+    console.warn("Dati locali non leggibili:", keyToRemove || "senza chiave", error);
+    if (keyToRemove) localStorage.removeItem(keyToRemove);
+    return fallback;
+  }
+}
+
 function loadStaff() {
-  const weeklySaved = localStorage.getItem(currentWeekStaffKey());
-  if (weeklySaved) return normalizeStaff(JSON.parse(weeklySaved));
+  const weeklyKey = currentWeekStaffKey();
+  const weeklySaved = localStorage.getItem(weeklyKey);
+  const weeklyParsed = safeJsonParse(weeklySaved, null, weeklyKey);
+  if (weeklyParsed) return normalizeStaff(weeklyParsed);
 
   const saved = localStorage.getItem(storageKey);
-  if (saved) {
-    const migrated = normalizeStaff(JSON.parse(saved));
-    localStorage.setItem(currentWeekStaffKey(), JSON.stringify(migrated));
+  const parsed = safeJsonParse(saved, null, storageKey);
+  if (parsed) {
+    const migrated = normalizeStaff(parsed);
+    localStorage.setItem(weeklyKey, JSON.stringify(migrated));
     return migrated;
   }
 
   for (const key of oldStorageKeys) {
     const oldSaved = localStorage.getItem(key);
-    if (oldSaved) {
-      const migrated = normalizeStaff(JSON.parse(oldSaved));
-      localStorage.setItem(currentWeekStaffKey(), JSON.stringify(migrated));
+    const oldParsed = safeJsonParse(oldSaved, null, key);
+    if (oldParsed) {
+      const migrated = normalizeStaff(oldParsed);
+      localStorage.setItem(weeklyKey, JSON.stringify(migrated));
       return migrated;
     }
   }
@@ -91,7 +105,7 @@ function loadStaff() {
 
 function loadRequests() {
   const saved = localStorage.getItem(requestsKey);
-  return saved ? JSON.parse(saved) : [];
+  return safeJsonParse(saved, [], requestsKey);
 }
 
 function saveRequests() {
@@ -99,7 +113,7 @@ function saveRequests() {
 }
 
 function normalizeStaff(list) {
-  return list.map((person) => {
+  return (Array.isArray(list) ? list : []).map((person) => {
     const normalized = {
       nome: person.nome || "Staff",
       turni: {}
@@ -196,7 +210,7 @@ function slotClass(value, part) {
 
 function isWorking(value) {
   if (!value) return false;
-  const clean = value.trim().toLowerCase();
+  const clean = String(value).trim().toLowerCase();
   return clean !== "" && clean !== "riposo" && clean !== "riposto" && clean !== "-" && clean !== "—" && clean !== "vuoto";
 }
 
