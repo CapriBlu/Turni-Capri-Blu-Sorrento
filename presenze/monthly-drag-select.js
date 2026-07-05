@@ -9,8 +9,12 @@ function mKey(cell) {
   return cell.dataset.name + "-" + cell.dataset.day;
 }
 
+function mMonthInput() {
+  return document.getElementById("monthInput");
+}
+
 function mDataKey() {
-  return "capriBluPresenzeMensili-" + monthInput.value;
+  return "capriBluPresenzeMensili-" + mMonthInput().value;
 }
 
 function mRead() {
@@ -213,9 +217,11 @@ document.addEventListener("click", (e) => {
   if (mMenu && !e.target.closest(".monthly-context-menu")) mHideMenu();
 });
 
-copyBtn?.addEventListener("click", (e) => { e.preventDefault(); e.stopImmediatePropagation(); mCopy(); }, true);
-pasteBtn?.addEventListener("click", (e) => { e.preventDefault(); e.stopImmediatePropagation(); mPaste(); }, true);
-clearBtn?.addEventListener("click", (e) => { e.preventDefault(); e.stopImmediatePropagation(); mEmpty(); }, true);
+document.getElementById("clearBtn")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  mEmpty();
+}, true);
 
 document.addEventListener("keydown", (e) => {
   if (!mCells().length) return;
