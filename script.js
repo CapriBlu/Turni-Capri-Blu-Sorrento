@@ -1,4 +1,4 @@
-const names = [
+const names = window.CapriBluStaff?.getStaffNames() || [
   "Pawel",
   "Rafaele",
   "Gaetano",
@@ -125,9 +125,14 @@ function normalizeStaff(list) {
   });
 }
 
+function syncStaffNames() {
+  window.CapriBluStaff?.updateFromStaff(staff);
+}
+
 function saveStaff() {
   localStorage.setItem(currentWeekStaffKey(), JSON.stringify(staff));
   localStorage.setItem(storageKey, JSON.stringify(staff));
+  syncStaffNames();
 }
 
 function renderTable() {
@@ -547,6 +552,7 @@ document.getElementById("resetBtn").addEventListener("click", () => {
   renderTable();
 });
 
+syncStaffNames();
 createShiftEditor();
 createNotePopup();
 renderRequests();
