@@ -10,12 +10,12 @@
 .has-request .shift-cell {
   color: white !important;
   border-width: 2px !important;
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.24), 0 0 0 1px rgba(0, 0, 0, 0.06) !important;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.04) !important;
 }
 
 .shift-cell.request-festa {
-  background: #1f8f45 !important;
-  border-color: #0d6f2f !important;
+  background: #7fd89a !important;
+  border-color: #35a95b !important;
 }
 
 .shift-cell.request-ferie {
@@ -36,6 +36,10 @@
   border-color: rgba(255, 255, 255, 0.35) !important;
 }
 
+.shift-cell.request-festa .shift-time {
+  color: #064b1f !important;
+}
+
 .request-inline {
   display: none !important;
 }
@@ -48,9 +52,9 @@
 
 .request-pill.riposo,
 .request-pill.festa {
-  color: white !important;
-  background: #1f8f45 !important;
-  border-color: #0d6f2f !important;
+  color: #064b1f !important;
+  background: #7fd89a !important;
+  border-color: #35a95b !important;
 }
 
 .request-pill.permesso,
