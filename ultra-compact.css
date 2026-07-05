@@ -144,19 +144,19 @@ h1 {
 }
 
 .shift-cell.request-festa {
-  background: #bdecc8 !important;
-  border-color: #6dca84 !important;
+  background: #d8f8df !important;
+  border-color: #7bd493 !important;
 }
 
 .shift-cell.request-festa .shift-time {
-  color: #0c6229 !important;
+  color: #13722f !important;
 }
 
 .request-pill.riposo,
 .request-pill.festa {
-  color: #0c6229 !important;
-  background: #bdecc8 !important;
-  border-color: #6dca84 !important;
+  color: #13722f !important;
+  background: #d8f8df !important;
+  border-color: #7bd493 !important;
 }
 
 .requests-card {
