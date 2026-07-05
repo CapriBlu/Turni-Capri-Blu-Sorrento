@@ -1,5 +1,50 @@
 const officialSavePath = "save/turni-attuali.json";
+const officialSaveLoadedAtKey = "capriBluOfficialSaveLoadedAt";
+const localChangesAfterOfficialKey = "capriBluLocalChangesAfterOfficial";
 const loadOfficialSaveBtn = document.getElementById("loadOfficialSaveBtn");
+const saveSourceStatus = document.getElementById("saveSourceStatus");
+
+function setSaveSourceStatus(mode, text) {
+  if (!saveSourceStatus) return;
+  saveSourceStatus.classList.remove("local", "official", "changed");
+  saveSourceStatus.classList.add(mode);
+  saveSourceStatus.textContent = text;
+}
+
+function updateSaveSourceStatus() {
+  const loadedAt = localStorage.getItem(officialSaveLoadedAtKey);
+  const hasLocalChanges = localStorage.getItem(localChangesAfterOfficialKey) === "true";
+
+  if (loadedAt && hasLocalChanges) {
+    setSaveSourceStatus("changed", "Ufficiale + modifiche locali");
+    return;
+  }
+
+  if (loadedAt) {
+    setSaveSourceStatus("official", "Dati ufficiali caricati");
+    return;
+  }
+
+  setSaveSourceStatus("local", "Dati locali");
+}
+
+function markLocalChangesAfterOfficial() {
+  if (!localStorage.getItem(officialSaveLoadedAtKey)) return;
+  localStorage.setItem(localChangesAfterOfficialKey, "true");
+  updateSaveSourceStatus();
+}
+
+const saveStaffBeforeOfficialStatus = saveStaff;
+saveStaff = function () {
+  saveStaffBeforeOfficialStatus();
+  markLocalChangesAfterOfficial();
+};
+
+const saveRequestsBeforeOfficialStatus = saveRequests;
+saveRequests = function () {
+  saveRequestsBeforeOfficialStatus();
+  markLocalChangesAfterOfficial();
+};
 
 async function loadOfficialSave() {
   try {
@@ -21,7 +66,11 @@ async function loadOfficialSave() {
       return;
     }
 
+    localStorage.removeItem(localChangesAfterOfficialKey);
     restoreSession(snapshot);
+    localStorage.setItem(officialSaveLoadedAtKey, new Date().toISOString());
+    localStorage.removeItem(localChangesAfterOfficialKey);
+    updateSaveSourceStatus();
     setAutosaveStatus("Salvataggio ufficiale caricato");
   } catch (error) {
     console.error(error);
@@ -31,3 +80,4 @@ async function loadOfficialSave() {
 }
 
 loadOfficialSaveBtn?.addEventListener("click", loadOfficialSave);
+updateSaveSourceStatus();
