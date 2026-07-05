@@ -17,6 +17,10 @@ function prepareRequestBadges() {
 let selectedShiftCells = [];
 let anchorShiftCell = null;
 let shiftContextMenu = null;
+let isDraggingShiftSelection = false;
+let dragStartShiftCell = null;
+let dragMovedShiftSelection = false;
+let suppressNextShiftClick = false;
 
 function clearSelectedShiftCell() {
   selectedShiftCells.forEach((cell) => {
@@ -380,6 +384,51 @@ function showShiftContextMenu(x, y) {
   shiftContextMenu.style.top = Math.max(8, top) + "px";
 }
 
+document.addEventListener("mousedown", (event) => {
+  if (event.button !== 0) return;
+  if (event.target.closest(".shift-context-menu")) return;
+
+  const cell = event.target.closest(".shift-cell");
+  if (!cell) return;
+
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation();
+
+  hideShiftContextMenu();
+  isDraggingShiftSelection = true;
+  dragStartShiftCell = cell;
+  dragMovedShiftSelection = false;
+  document.body.style.userSelect = "none";
+  selectShiftCell(cell);
+}, true);
+
+document.addEventListener("mouseover", (event) => {
+  if (!isDraggingShiftSelection || !dragStartShiftCell) return;
+  if ((event.buttons & 1) !== 1) return;
+
+  const cell = event.target.closest(".shift-cell");
+  if (!cell) return;
+
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation();
+
+  if (cell !== dragStartShiftCell) dragMovedShiftSelection = true;
+  selectShiftRange(dragStartShiftCell, cell);
+}, true);
+
+document.addEventListener("mouseup", () => {
+  if (!isDraggingShiftSelection) return;
+
+  if (dragMovedShiftSelection) suppressNextShiftClick = true;
+
+  isDraggingShiftSelection = false;
+  dragStartShiftCell = null;
+  dragMovedShiftSelection = false;
+  document.body.style.userSelect = "";
+}, true);
+
 document.addEventListener("click", (event) => {
   if (event.target.closest(".shift-context-menu")) return;
   hideShiftContextMenu();
@@ -396,6 +445,11 @@ document.addEventListener("click", (event) => {
   event.preventDefault();
   event.stopPropagation();
   event.stopImmediatePropagation();
+
+  if (suppressNextShiftClick) {
+    suppressNextShiftClick = false;
+    return;
+  }
 
   if (event.shiftKey && anchorShiftCell) {
     selectShiftRange(anchorShiftCell, cell);
@@ -459,5 +513,11 @@ document.addEventListener("keydown", (event) => {
 
 window.addEventListener("scroll", hideShiftContextMenu, true);
 window.addEventListener("resize", hideShiftContextMenu);
+window.addEventListener("blur", () => {
+  isDraggingShiftSelection = false;
+  dragStartShiftCell = null;
+  dragMovedShiftSelection = false;
+  document.body.style.userSelect = "";
+});
 
 prepareRequestBadges();
