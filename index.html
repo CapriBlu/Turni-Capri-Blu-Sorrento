@@ -11,14 +11,19 @@
   <link rel="stylesheet" href="request-colors.css?v=8" />
   <link rel="stylesheet" href="autosave-session.css?v=2" />
   <link rel="stylesheet" href="ultra-compact.css?v=3" />
+  <link rel="stylesheet" href="top-sync-buttons.css?v=1" />
 </head>
 <body>
   <main class="page">
     <section class="top-card">
-      <div>
+      <div class="top-card-main">
         <p class="eyebrow">Turni Staff</p>
         <h1>Sala Capri Blu Sorrento</h1>
         <p class="subtitle">Possibili variazioni.</p>
+        <div class="top-sync-actions" aria-label="Salvataggio GitHub">
+          <button id="saveToGithubBtn" type="button">Salva su GitHub</button>
+          <button id="loadOfficialSaveBtn" type="button">Carica da GitHub</button>
+        </div>
       </div>
 
       <div class="week-box">
@@ -32,8 +37,6 @@
       <a href="presenze/" class="monthly-link">Presenze mensili</a>
       <button id="sendMonthlyBtn" type="button" class="send-monthly-btn">Invia al mensile</button>
       <button id="addPersonBtn" type="button">Aggiungi persona</button>
-      <button id="saveToGithubBtn" type="button" class="session-btn">Salva su GitHub</button>
-      <button id="loadOfficialSaveBtn" type="button" class="session-btn">Carica da GitHub</button>
       <button id="downloadOfficialSaveBtn" type="button" class="session-btn">Scarica JSON</button>
       <button id="downloadSessionBtn" type="button" class="session-btn">Scarica backup locale</button>
       <button id="uploadSessionBtn" type="button" class="session-btn">Carica backup locale</button>
