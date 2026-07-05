@@ -571,4 +571,3 @@ createShiftEditor();
 createNotePopup();
 renderRequests();
 renderTable();
-saveStaff();
