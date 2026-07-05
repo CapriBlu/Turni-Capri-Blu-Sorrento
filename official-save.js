@@ -1,4 +1,4 @@
-const officialSavePath = "save/turni-attuali.json";
+const officialSavePath = "https://raw.githubusercontent.com/CapriBlu/Turni-Capri-Blu-Sorrento/main/save/turni-attuali.json";
 const officialSaveLoadedAtKey = "capriBluOfficialSaveLoadedAt";
 const localChangesAfterOfficialKey = "capriBluLocalChangesAfterOfficial";
 const loadOfficialSaveBtn = document.getElementById("loadOfficialSaveBtn");
@@ -87,7 +87,7 @@ async function loadOfficialSave() {
       return;
     }
 
-    const confirmLoad = confirm("Caricare il salvataggio ufficiale da save/turni-attuali.json? Le modifiche locali verranno sostituite dai dati del file ufficiale.");
+    const confirmLoad = confirm("Caricare il salvataggio ufficiale da GitHub? Le modifiche locali verranno sostituite dai dati del file ufficiale.");
     if (!confirmLoad) {
       setAutosaveStatus("Caricamento annullato");
       return;
@@ -97,7 +97,7 @@ async function loadOfficialSave() {
     setAutosaveStatus("Salvataggio ufficiale caricato");
   } catch (error) {
     console.error(error);
-    alert("Non riesco a caricare save/turni-attuali.json. Controlla che il file esista nella cartella save.");
+    alert("Non riesco a caricare il salvataggio ufficiale da GitHub.");
     setAutosaveStatus("Errore caricamento ufficiale");
   }
 }
