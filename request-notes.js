@@ -76,6 +76,47 @@ function selectShiftRange(fromCell, toCell) {
   }
 }
 
+function getShiftCellText(cell) {
+  const parts = Array.from(cell.querySelectorAll(".shift-time"))
+    .map((part) => part.textContent.trim())
+    .filter(Boolean);
+
+  return parts.length ? parts.join(" / ") : cell.textContent.trim();
+}
+
+function buildSelectedCellsText() {
+  if (!selectedShiftCells.length) return "";
+
+  const selectedMap = new Map();
+  const positions = [];
+
+  selectedShiftCells.forEach((cell) => {
+    const position = getCellPosition(cell);
+    if (!position) return;
+    const key = position.row + ":" + position.col;
+    selectedMap.set(key, getShiftCellText(cell));
+    positions.push(position);
+  });
+
+  if (!positions.length) return "";
+
+  const rowStart = Math.min(...positions.map((position) => position.row));
+  const rowEnd = Math.max(...positions.map((position) => position.row));
+  const colStart = Math.min(...positions.map((position) => position.col));
+  const colEnd = Math.max(...positions.map((position) => position.col));
+  const rows = [];
+
+  for (let rowIndex = rowStart; rowIndex <= rowEnd; rowIndex += 1) {
+    const values = [];
+    for (let colIndex = colStart; colIndex <= colEnd; colIndex += 1) {
+      values.push(selectedMap.get(rowIndex + ":" + colIndex) || "");
+    }
+    rows.push(values.join("\t"));
+  }
+
+  return rows.join("\n");
+}
+
 document.addEventListener("click", (event) => {
   const badge = event.target.closest(".request-badge");
   if (badge) {
@@ -96,6 +137,14 @@ document.addEventListener("click", (event) => {
     selectShiftCell(cell);
   }
 }, true);
+
+document.addEventListener("copy", (event) => {
+  const text = buildSelectedCellsText();
+  if (!text) return;
+
+  event.preventDefault();
+  event.clipboardData.setData("text/plain", text);
+});
 
 document.addEventListener("dblclick", (event) => {
   const cell = event.target.closest(".shift-cell");
