@@ -1,0 +1,67 @@
+.request-badge.ferie,
+.request-pill.ferie {
+  color: #814200;
+  background: #ffd8a8;
+  border-color: #f19a38;
+}
+
+.request-badge.riposo,
+.request-badge.festa,
+.request-pill.riposo,
+.request-pill.festa {
+  color: #0b5d24;
+  background: #b8eec4;
+  border-color: #219447;
+}
+
+.request-badge.permesso,
+.request-pill.permesso {
+  color: #06496f;
+  background: #cdeeff;
+  border-color: #3da7df;
+}
+
+.request-badge.altro,
+.request-pill.altro {
+  color: #24364f;
+  background: #dfe8f5;
+  border-color: #8da6c8;
+}
+
+.has-request:has(.request-badge.ferie) {
+  background: #fff4e6;
+}
+
+.has-request:has(.request-badge.riposo),
+.has-request:has(.request-badge.festa) {
+  background: #e8f8ec;
+}
+
+.has-request:has(.request-badge.permesso) {
+  background: #eef9ff;
+}
+
+.has-request:has(.request-badge.altro) {
+  background: #f1f5fb;
+}
+
+.has-request:has(.request-badge.ferie) .shift-cell {
+  background: #ffd8a8;
+  border-color: #f19a38;
+}
+
+.has-request:has(.request-badge.riposo) .shift-cell,
+.has-request:has(.request-badge.festa) .shift-cell {
+  background: #b8eec4;
+  border-color: #219447;
+}
+
+.has-request:has(.request-badge.permesso) .shift-cell {
+  background: #cdeeff;
+  border-color: #3da7df;
+}
+
+.has-request:has(.request-badge.altro) .shift-cell {
+  background: #dfe8f5;
+  border-color: #8da6c8;
+}
