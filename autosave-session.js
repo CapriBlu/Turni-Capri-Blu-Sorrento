@@ -1,12 +1,29 @@
 const sessionBackupKey = "capriBluAutoSessionBackupV1";
+const publishedWeekPrefix = "capriBluTurniStaffPublishedWeekV1-";
+const lastPublishedWeekKey = "capriBluUltimaSettimanaInviata";
+
+function readJsonFromStorage(key, fallback) {
+  try {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : fallback;
+  } catch (error) {
+    return fallback;
+  }
+}
 
 function getSessionSnapshot() {
   const weeklyStaff = {};
+  const monthlyPublished = {};
 
   for (let index = 0; index < localStorage.length; index += 1) {
     const key = localStorage.key(index);
+
     if (key && key.startsWith(weekStoragePrefix)) {
-      weeklyStaff[key.replace(weekStoragePrefix, "")] = JSON.parse(localStorage.getItem(key) || "[]");
+      weeklyStaff[key.replace(weekStoragePrefix, "")] = readJsonFromStorage(key, []);
+    }
+
+    if (key && key.startsWith(publishedWeekPrefix)) {
+      monthlyPublished[key.replace(publishedWeekPrefix, "")] = readJsonFromStorage(key, []);
     }
   }
 
@@ -14,11 +31,13 @@ function getSessionSnapshot() {
 
   return {
     app: "Capri Blu Turni",
-    version: 1,
+    version: 2,
     savedAt: new Date().toISOString(),
     currentWeek: weekInput.value,
+    lastPublishedWeek: localStorage.getItem(lastPublishedWeekKey) || "",
     staff,
     weeklyStaff,
+    monthlyPublished,
     requests
   };
 }
@@ -77,6 +96,16 @@ function restoreSession(snapshot) {
   Object.entries(snapshot.weeklyStaff).forEach(([week, weekStaff]) => {
     localStorage.setItem(weekStoragePrefix + week, JSON.stringify(normalizeStaff(weekStaff)));
   });
+
+  if (snapshot.monthlyPublished) {
+    Object.entries(snapshot.monthlyPublished).forEach(([week, weekStaff]) => {
+      localStorage.setItem(publishedWeekPrefix + week, JSON.stringify(normalizeStaff(weekStaff)));
+    });
+  }
+
+  if (snapshot.lastPublishedWeek) {
+    localStorage.setItem(lastPublishedWeekKey, snapshot.lastPublishedWeek);
+  }
 
   requests = Array.isArray(snapshot.requests) ? snapshot.requests : [];
   localStorage.setItem(requestsKey, JSON.stringify(requests));
