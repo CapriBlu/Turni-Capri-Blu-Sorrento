@@ -1,5 +1,5 @@
 const mSel = new Set();
-const mClipKey = "capriBluMensileClipboardV1";
+const mClipKey = "capriBluMensileClipboardV2";
 let mStart = null;
 let mDown = false;
 let mBlockClick = false;
@@ -72,7 +72,14 @@ function mRange(a, b) {
 function mCopy() {
   const cells = mCells();
   if (!cells.length) return;
-  localStorage.setItem(mClipKey, JSON.stringify(cells.map((cell) => mRecord(cell))));
+  const minRow = Math.min(...cells.map((cell) => cell.parentElement.rowIndex));
+  const minCol = Math.min(...cells.map((cell) => cell.cellIndex));
+  const payload = cells.map((cell) => ({
+    rowOffset: cell.parentElement.rowIndex - minRow,
+    colOffset: cell.cellIndex - minCol,
+    record: mRecord(cell)
+  }));
+  localStorage.setItem(mClipKey, JSON.stringify(payload));
   if (typeof setAutosaveStatus === "function") setAutosaveStatus(cells.length + " celle copiate");
 }
 
@@ -90,11 +97,27 @@ function mPaste() {
   const clip = mClip();
   if (!cells.length || !clip.length) return;
   const data = mRead();
-  cells.forEach((cell, i) => {
-    const source = clip.length === cells.length ? clip[i] : clip[i % clip.length];
-    data[mKey(cell)] = { value: source.value || "", minutes: Number(source.minutes || 0) };
+  const destRow = Math.min(...cells.map((cell) => cell.parentElement.rowIndex));
+  const destCol = Math.min(...cells.map((cell) => cell.cellIndex));
+  let pasted = 0;
+
+  clip.forEach((item, i) => {
+    const source = item.record || item;
+    const targetRow = table.rows[destRow + Number(item.rowOffset || 0)];
+    const targetCell = targetRow?.cells?.[destCol + Number(item.colOffset || 0)];
+    if (targetCell && targetCell.classList.contains("presence-cell")) {
+      data[mKey(targetCell)] = { value: source.value || "", minutes: Number(source.minutes || 0) };
+      pasted += 1;
+    } else if (clip.length === cells.length) {
+      const fallback = cells[i];
+      if (fallback) {
+        data[mKey(fallback)] = { value: source.value || "", minutes: Number(source.minutes || 0) };
+        pasted += 1;
+      }
+    }
   });
-  mSave(data, cells.length + " celle incollate");
+
+  mSave(data, pasted + " celle incollate");
   renderTable();
 }
 
