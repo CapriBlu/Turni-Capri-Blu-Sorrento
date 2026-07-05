@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Presenze mensili - Capri Blu</title>
-  <link rel="stylesheet" href="style.css?v=8" />
+  <link rel="stylesheet" href="style.css?v=9" />
   <link rel="stylesheet" href="monthly-context-menu.css?v=1" />
   <link rel="stylesheet" href="monthly-archive.css?v=1" />
 </head>
@@ -20,6 +20,11 @@
         <label for="monthInput">Mese</label>
         <input id="monthInput" type="month" />
       </div>
+    </section>
+
+    <section class="department-tabs" aria-label="Reparto presenze">
+      <button id="departmentSalaBtn" type="button" class="department-tab active" data-department="sala">Sala</button>
+      <button id="departmentCucinaBtn" type="button" class="department-tab" data-department="cucina">Cucina / Pizzeria</button>
     </section>
 
     <section class="toolbar">
@@ -46,8 +51,8 @@
   </main>
 
   <script src="../staff-data.js?v=1"></script>
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
   <script src="monthly-drag-select.js?v=4"></script>
-  <script src="monthly-archive.js?v=1"></script>
+  <script src="monthly-archive.js?v=2"></script>
 </body>
 </html>
