@@ -1,12 +1,12 @@
 # Backup ultimo ripristino
 
-Punto di ripristino aggiornato prima del Passaggio 3 per la copia celle stile Excel.
+Punto di ripristino aggiornato prima del Passaggio 4 per il menu tasto destro stile Excel.
 
 ## Versione da ripristinare
 
-Commit prima del Passaggio 3:
+Commit prima del Passaggio 4:
 
-`353c770af8570a8ee459825e602f5addd1a4c05e`
+`50c5b1a6a582cf6771c8b7d9c62e323f7a1512f6`
 
 ## Versione stabile originale
 
@@ -16,13 +16,12 @@ Commit stabile precedente alla sperimentazione Excel:
 
 ## Modifica successiva prevista
 
-Passaggio 3:
+Passaggio 4:
 
-- click singolo su una cella = seleziona la cella;
-- SHIFT + click su un'altra cella = seleziona un blocco di celle;
-- CTRL + C = copia le celle selezionate in formato tabella;
-- doppio click su una cella = modifica il turno;
-- ESC = deseleziona.
+- tasto destro su una cella = apre menu stile Excel;
+- voce Copia selezione;
+- voce Deseleziona;
+- niente Incolla per ora.
 
 ## File principali da proteggere
 
