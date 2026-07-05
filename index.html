@@ -32,10 +32,11 @@
       <a href="presenze/" class="monthly-link">Presenze mensili</a>
       <button id="sendMonthlyBtn" type="button" class="send-monthly-btn">Invia al mensile</button>
       <button id="addPersonBtn" type="button">Aggiungi persona</button>
-      <button id="downloadSessionBtn" type="button" class="session-btn">Scarica sessione</button>
-      <button id="downloadOfficialSaveBtn" type="button" class="session-btn">Scarica backup ufficiale</button>
-      <button id="loadOfficialSaveBtn" type="button" class="session-btn">Carica salvataggio ufficiale</button>
-      <button id="uploadSessionBtn" type="button" class="session-btn">Carica sessione</button>
+      <button id="saveToGithubBtn" type="button" class="session-btn">Salva su GitHub</button>
+      <button id="loadOfficialSaveBtn" type="button" class="session-btn">Carica da GitHub</button>
+      <button id="downloadOfficialSaveBtn" type="button" class="session-btn">Scarica JSON</button>
+      <button id="downloadSessionBtn" type="button" class="session-btn">Scarica backup locale</button>
+      <button id="uploadSessionBtn" type="button" class="session-btn">Carica backup locale</button>
       <input id="sessionFileInput" class="session-file-input" type="file" accept="application/json,.json" />
       <span id="saveSourceStatus" class="save-source-status local">Dati locali</span>
       <span id="autosaveStatus" class="autosave-status">Autosalvataggio attivo</span>
@@ -111,13 +112,14 @@
   </main>
 
   <script src="staff-data.js?v=1"></script>
-  <script src="script.js?v=16"></script>
+  <script src="script.js?v=17"></script>
   <script src="request-render.js?v=3"></script>
   <script src="shift-buttons.js?v=2"></script>
   <script src="request-notes.js?v=14"></script>
   <script src="request-edit.js?v=1"></script>
   <script src="publish-monthly.js?v=14"></script>
   <script src="autosave-session.js?v=3"></script>
-  <script src="official-save.js?v=2"></script>
+  <script src="official-save.js?v=3"></script>
+  <script src="github-sync.js?v=1"></script>
 </body>
 </html>
