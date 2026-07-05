@@ -1,5 +1,9 @@
 const monthlyArchiveKey = "capriBluArchivioPresenzeMensiliV1";
 
+function archiveMonthInput() {
+  return document.getElementById("monthInput");
+}
+
 function archiveStorageKey(month) {
   return "capriBluPresenzeMensili-" + month;
 }
@@ -23,8 +27,10 @@ function formatArchiveLabel(month) {
 }
 
 function currentMonthlyData() {
+  const input = archiveMonthInput();
+  if (!input?.value) return {};
   try {
-    return JSON.parse(localStorage.getItem(archiveStorageKey(monthInput.value)) || "{}");
+    return JSON.parse(localStorage.getItem(archiveStorageKey(input.value)) || "{}");
   } catch (error) {
     return {};
   }
@@ -55,8 +61,11 @@ function refreshArchiveSelect() {
 }
 
 function archiveCurrentMonth() {
+  const input = archiveMonthInput();
+  if (!input?.value) return;
+
   const archive = readArchive();
-  const month = monthInput.value;
+  const month = input.value;
 
   archive[month] = {
     month,
@@ -74,14 +83,15 @@ function archiveCurrentMonth() {
 }
 
 function openArchivedMonth() {
+  const input = archiveMonthInput();
   const select = document.getElementById("archiveMonthSelect");
-  if (!select || !select.value) return;
+  if (!input || !select?.value) return;
 
   const archive = readArchive();
   const item = archive[select.value];
   if (!item) return;
 
-  monthInput.value = item.month;
+  input.value = item.month;
   localStorage.setItem("capriBluPresenzeMese", item.month);
   localStorage.setItem(archiveStorageKey(item.month), JSON.stringify(item.data || {}));
 
@@ -91,7 +101,7 @@ function openArchivedMonth() {
 
 function deleteArchivedMonth() {
   const select = document.getElementById("archiveMonthSelect");
-  if (!select || !select.value) return;
+  if (!select?.value) return;
 
   const archive = readArchive();
   const label = archive[select.value]?.label || select.value;
@@ -106,7 +116,8 @@ function deleteArchivedMonth() {
 
 function buildArchiveControls() {
   const toolbar = document.querySelector(".toolbar");
-  if (!toolbar || document.getElementById("archiveMonthBtn")) return;
+  const printButton = document.getElementById("printBtn");
+  if (!toolbar || !printButton || document.getElementById("archiveMonthBtn")) return;
 
   const saveBtn = document.createElement("button");
   saveBtn.id = "archiveMonthBtn";
@@ -129,10 +140,10 @@ function buildArchiveControls() {
   deleteBtn.type = "button";
   deleteBtn.textContent = "Elimina archivio";
 
-  toolbar.insertBefore(saveBtn, printBtn);
-  toolbar.insertBefore(select, printBtn);
-  toolbar.insertBefore(openBtn, printBtn);
-  toolbar.insertBefore(deleteBtn, printBtn);
+  toolbar.insertBefore(saveBtn, printButton);
+  toolbar.insertBefore(select, printButton);
+  toolbar.insertBefore(openBtn, printButton);
+  toolbar.insertBefore(deleteBtn, printButton);
 
   saveBtn.addEventListener("click", archiveCurrentMonth);
   openBtn.addEventListener("click", openArchivedMonth);
