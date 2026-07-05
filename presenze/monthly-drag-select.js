@@ -2,6 +2,7 @@ const monthlySelection = new Set();
 let monthlyMouseDown = false;
 let monthlyStartCell = null;
 let monthlySuppressNextClick = false;
+let monthlyContextMenu = null;
 const monthlyCopiedKey = "capriBluPresenzeCopiaV1";
 
 function monthlyCellKey(cell) {
@@ -145,21 +146,49 @@ function monthlyCellFromEvent(event) {
   return event.target.closest(".presence-cell");
 }
 
+function monthlyHideContextMenu() {
+  if (monthlyContextMenu) monthlyContextMenu.classList.remove("open");
+}
+
+function monthlyCreateContextMenu() {
+  monthlyContextMenu = document.createElement("div");
+  monthlyContextMenu.className = "monthly-context-menu";
+  monthlyContextMenu.innerHTML = `
+    <button type="button" data-action="copy">Copia</button>
+    <button type="button" data-action="paste">Incolla</button>
+    <button type="button" data-action="clear">Svuota</button>
+  `;
+  document.body.appendChild(monthlyContextMenu);
+
+  monthlyContextMenu.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+    const action = button.dataset.action;
+    monthlyHideContextMenu();
+    if (action === "copy") monthlyCopySelection();
+    if (action === "paste") monthlyPasteSelection();
+    if (action === "clear") monthlyClearSelectionValues();
+  });
+}
+
+function monthlyShowContextMenu(x, y) {
+  if (!monthlyContextMenu) monthlyCreateContextMenu();
+  monthlyContextMenu.style.left = `${x}px`;
+  monthlyContextMenu.style.top = `${y}px`;
+  monthlyContextMenu.classList.add("open");
+}
+
 // Trascina con il tasto sinistro: selezione rettangolare stile Excel.
 table.addEventListener("pointerdown", (event) => {
   if (event.button !== 0) return;
   const cell = monthlyCellFromEvent(event);
   if (!cell) return;
 
+  monthlyHideContextMenu();
   monthlyMouseDown = true;
   monthlyStartCell = cell;
   monthlySuppressNextClick = false;
   monthlySelectCellOnly(cell);
-
-  try {
-    cell.setPointerCapture(event.pointerId);
-  } catch (error) {}
-
   event.preventDefault();
 });
 
@@ -187,6 +216,26 @@ table.addEventListener("click", (event) => {
   monthlySuppressNextClick = false;
 }, true);
 
+// Tasto destro: menu copia/incolla/svuota sulla selezione.
+table.addEventListener("contextmenu", (event) => {
+  const cell = monthlyCellFromEvent(event);
+  if (!cell) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+
+  if (!cell.classList.contains("multi-selected")) {
+    monthlySelectCellOnly(cell);
+  }
+
+  monthlyShowContextMenu(event.clientX, event.clientY);
+});
+
+document.addEventListener("click", (event) => {
+  if (monthlyContextMenu && !event.target.closest(".monthly-context-menu")) {
+    monthlyHideContextMenu();
+  }
+});
+
 copyBtn?.addEventListener("click", (event) => {
   event.preventDefault();
   event.stopImmediatePropagation();
@@ -207,6 +256,11 @@ clearBtn?.addEventListener("click", (event) => {
 
 document.addEventListener("keydown", (event) => {
   if (!monthlySelectedCells().length) return;
+
+  if (event.key === "Escape") {
+    monthlyHideContextMenu();
+    monthlyClearVisualSelection();
+  }
 
   if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "c") {
     event.preventDefault();
