@@ -1,0 +1,17 @@
+.archive-select {
+  width: auto;
+  min-height: 36px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,60,130,.18);
+  background: white;
+  color: #073b7a;
+  font-weight: 900;
+  font-size: .82rem;
+}
+
+#deleteArchiveBtn {
+  background: #ffecec;
+  color: #9b1111;
+  border-color: #ffb6b6;
+}
