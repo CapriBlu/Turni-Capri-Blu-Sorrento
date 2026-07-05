@@ -103,6 +103,20 @@ button,
   min-width: 715px;
 }
 
+.shift-table,
+.shift-table th,
+.shift-table td,
+.shift-cell,
+.shift-time,
+.request-badge {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.shift-cell {
+  cursor: text;
+}
+
 .shift-table th,
 .shift-table td,
 .requests-table th,
