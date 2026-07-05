@@ -31,6 +31,7 @@ function getSessionSnapshot() {
 
   return {
     app: "Capri Blu Turni",
+    saveType: "official",
     version: 2,
     savedAt: new Date().toISOString(),
     currentWeek: weekInput.value,
@@ -71,20 +72,28 @@ saveRequests = function () {
   autoSaveSession();
 };
 
-function downloadSession() {
+function downloadSnapshot(filename, statusText) {
   autoSaveSession();
   const snapshot = getSessionSnapshot();
-  const date = new Date().toISOString().slice(0, 10);
   const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `Turni-CapriBlu-${date}.json`;
+  link.download = filename;
   document.body.appendChild(link);
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
-  setAutosaveStatus("Sessione scaricata");
+  setAutosaveStatus(statusText);
+}
+
+function downloadSession() {
+  const date = new Date().toISOString().slice(0, 10);
+  downloadSnapshot(`Turni-CapriBlu-${date}.json`, "Sessione scaricata");
+}
+
+function downloadOfficialSave() {
+  downloadSnapshot("turni-attuali.json", "Backup ufficiale scaricato");
 }
 
 function restoreSession(snapshot) {
@@ -140,10 +149,12 @@ function handleSessionFile(event) {
 }
 
 const downloadSessionBtn = document.getElementById("downloadSessionBtn");
+const downloadOfficialSaveBtn = document.getElementById("downloadOfficialSaveBtn");
 const uploadSessionBtn = document.getElementById("uploadSessionBtn");
 const sessionFileInput = document.getElementById("sessionFileInput");
 
 downloadSessionBtn?.addEventListener("click", downloadSession);
+downloadOfficialSaveBtn?.addEventListener("click", downloadOfficialSave);
 uploadSessionBtn?.addEventListener("click", () => sessionFileInput?.click());
 sessionFileInput?.addEventListener("change", handleSessionFile);
 
