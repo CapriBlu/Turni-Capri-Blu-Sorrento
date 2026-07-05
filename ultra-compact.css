@@ -90,16 +90,16 @@ h1 {
 }
 
 .shift-table {
-  min-width: 1180px !important;
+  min-width: 1120px !important;
 }
 
 .shift-table th,
 .shift-table td {
-  padding: 1px 2px !important;
+  padding: 1px 1px !important;
 }
 
 .shift-table th {
-  font-size: 0.68rem !important;
+  font-size: 0.67rem !important;
   line-height: 1.02 !important;
   padding-top: 3px !important;
   padding-bottom: 3px !important;
@@ -107,40 +107,56 @@ h1 {
 
 .shift-table th small {
   margin-top: 1px !important;
-  font-size: 0.54rem !important;
+  font-size: 0.53rem !important;
 }
 
 .shift-table td:first-child {
-  min-width: 100px !important;
-  max-width: 100px !important;
-  font-size: 0.76rem !important;
+  min-width: 96px !important;
+  max-width: 96px !important;
+  font-size: 0.75rem !important;
   padding-left: 4px !important;
 }
 
 .shift-cell {
-  min-width: 86px !important;
+  min-width: 82px !important;
   border-radius: 4px !important;
 }
 
 .one-field {
-  min-height: 28px !important;
+  min-height: 25px !important;
 }
 
 .one-field .shift-time {
-  min-height: 28px !important;
+  min-height: 25px !important;
 }
 
 .two-fields {
-  grid-template-rows: 28px !important;
-  min-height: 28px !important;
+  grid-template-rows: 25px !important;
+  min-height: 25px !important;
 }
 
 .shift-time {
-  min-height: 28px !important;
+  min-height: 25px !important;
   padding: 1px 2px !important;
-  font-size: 0.76rem !important;
+  font-size: 0.74rem !important;
   line-height: 1 !important;
   letter-spacing: -0.01em;
+}
+
+.shift-cell.request-festa {
+  background: #bdecc8 !important;
+  border-color: #6dca84 !important;
+}
+
+.shift-cell.request-festa .shift-time {
+  color: #0c6229 !important;
+}
+
+.request-pill.riposo,
+.request-pill.festa {
+  color: #0c6229 !important;
+  background: #bdecc8 !important;
+  border-color: #6dca84 !important;
 }
 
 .requests-card {
@@ -190,7 +206,7 @@ h1 {
   }
 
   .shift-table {
-    min-width: 760px !important;
+    min-width: 740px !important;
   }
 
   .request-form {
