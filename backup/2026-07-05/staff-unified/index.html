@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sala Capri Blu Sorrento</title>
+  <link rel="stylesheet" href="style.css?v=15" />
+  <link rel="stylesheet" href="compact.css?v=17" />
+  <link rel="stylesheet" href="monthly-fix.css?v=1" />
+  <link rel="stylesheet" href="shift-buttons.css?v=2" />
+  <link rel="stylesheet" href="request-colors.css?v=8" />
+  <link rel="stylesheet" href="autosave-session.css?v=2" />
+  <link rel="stylesheet" href="ultra-compact.css?v=3" />
+</head>
+<body>
+  <main class="page">
+    <section class="top-card">
+      <div>
+        <p class="eyebrow">Turni Staff</p>
+        <h1>Sala Capri Blu Sorrento</h1>
+        <p class="subtitle">Possibili variazioni.</p>
+      </div>
+
+      <div class="week-box">
+        <label for="weekInput">Settimana</label>
+        <input id="weekInput" type="week" />
+        <p id="weekRange" class="week-range"></p>
+      </div>
+    </section>
+
+    <section class="toolbar" aria-label="Strumenti tabella">
+      <a href="presenze/" class="monthly-link">Presenze mensili</a>
+      <button id="sendMonthlyBtn" type="button" class="send-monthly-btn">Invia al mensile</button>
+      <button id="addPersonBtn" type="button">Aggiungi persona</button>
+      <button id="downloadSessionBtn" type="button" class="session-btn">Scarica sessione</button>
+      <button id="downloadOfficialSaveBtn" type="button" class="session-btn">Scarica backup ufficiale</button>
+      <button id="loadOfficialSaveBtn" type="button" class="session-btn">Carica salvataggio ufficiale</button>
+      <button id="uploadSessionBtn" type="button" class="session-btn">Carica sessione</button>
+      <input id="sessionFileInput" class="session-file-input" type="file" accept="application/json,.json" />
+      <span id="saveSourceStatus" class="save-source-status local">Dati locali</span>
+      <span id="autosaveStatus" class="autosave-status">Autosalvataggio attivo</span>
+      <button id="printBtn" type="button">Stampa</button>
+      <button id="resetBtn" type="button">Reset</button>
+    </section>
+
+    <section class="legend" aria-label="Legenda colori">
+      <span><i class="dot pranzo"></i> Pranzo</span>
+      <span><i class="dot cena"></i> Sera</span>
+      <span><i class="dot spezzato"></i> Spezzato</span>
+      <span><i class="dot riposo"></i> Riposo</span>
+      <span><i class="dot richiesta"></i> Richiesta</span>
+    </section>
+
+    <section class="table-card">
+      <div class="table-scroll">
+        <table class="shift-table" id="shiftTable">
+          <thead>
+            <tr>
+              <th>Staff</th>
+              <th data-day-header="lunedi">Lunedì</th>
+              <th data-day-header="martedi">Martedì</th>
+              <th data-day-header="mercoledi">Mercoledì</th>
+              <th data-day-header="giovedi">Giovedì</th>
+              <th data-day-header="venerdi">Venerdì</th>
+              <th data-day-header="sabato">Sabato</th>
+              <th data-day-header="domenica">Domenica</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="requests-card">
+      <div class="requests-head">
+        <div>
+          <p class="eyebrow dark">Richiesta</p>
+          <h2>Richiesta</h2>
+        </div>
+        <p>La richiesta compare nella settimana selezionata.</p>
+      </div>
+
+      <div class="request-form">
+        <select id="requestName" aria-label="Nome dipendente"></select>
+        <input id="requestDate" type="date" aria-label="Data richiesta" />
+        <select id="requestType" aria-label="Tipo richiesta">
+          <option value="Ferie">Ferie</option>
+          <option value="Riposo">Festa</option>
+          <option value="Permesso">Permesso</option>
+          <option value="Altro">Altro</option>
+        </select>
+        <input id="requestNote" type="text" placeholder="Nota" aria-label="Nota richiesta" />
+        <button id="addRequestBtn" type="button">Aggiungi</button>
+      </div>
+
+      <div class="requests-list-wrap">
+        <table class="requests-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th>Nota</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="requestsBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js?v=15"></script>
+  <script src="request-render.js?v=3"></script>
+  <script src="shift-buttons.js?v=2"></script>
+  <script src="request-notes.js?v=14"></script>
+  <script src="request-edit.js?v=1"></script>
+  <script src="publish-monthly.js?v=14"></script>
+  <script src="autosave-session.js?v=3"></script>
+  <script src="official-save.js?v=2"></script>
+</body>
+</html>
