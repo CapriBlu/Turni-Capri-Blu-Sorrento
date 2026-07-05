@@ -1,16 +1,38 @@
-.autosave-status {
+.autosave-status,
+.save-source-status {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 34px;
   padding: 6px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(13, 111, 47, 0.22);
-  background: rgba(216, 255, 224, 0.92);
-  color: #064b1f;
   font-size: 0.78rem;
   font-weight: 900;
   white-space: nowrap;
+}
+
+.autosave-status {
+  border: 1px solid rgba(13, 111, 47, 0.22);
+  background: rgba(216, 255, 224, 0.92);
+  color: #064b1f;
+}
+
+.save-source-status.local {
+  border: 1px solid rgba(11, 76, 162, 0.22);
+  background: #eef6ff;
+  color: var(--blue);
+}
+
+.save-source-status.official {
+  border: 1px solid rgba(13, 111, 47, 0.28);
+  background: #d8ffe0;
+  color: #064b1f;
+}
+
+.save-source-status.changed {
+  border: 1px solid rgba(217, 119, 6, 0.32);
+  background: #fff3d8;
+  color: #8a4a00;
 }
 
 .session-btn {
@@ -24,6 +46,7 @@
 
 @media (max-width: 760px) {
   .autosave-status,
+  .save-source-status,
   .session-btn {
     width: 100%;
   }
