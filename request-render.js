@@ -26,6 +26,7 @@ renderTable = function () {
       const firstRequest = cellRequests[0];
       const requestClass = firstRequest ? requestTypeClass(firstRequest.type) : "";
       const requestNote = firstRequest?.note ? escapeHtml(firstRequest.note) : "Nessuna nota";
+      const requestDot = firstRequest ? `<span class="request-dot" aria-hidden="true"></span>` : "";
 
       if (isSplit) td.classList.add("day-spezzato");
       if (firstRequest) td.classList.add("has-request", requestClass);
@@ -46,6 +47,7 @@ renderTable = function () {
       td.innerHTML = `
         <button class="shift-cell ${isSplit ? "two-fields" : "one-field"} ${requestClass}" type="button" data-person="${personIndex}" data-day="${day.key}" title="${requestNote}" aria-label="Modifica turno ${person.nome} ${day.label}">
           ${cellContent}
+          ${requestDot}
         </button>
       `;
 
