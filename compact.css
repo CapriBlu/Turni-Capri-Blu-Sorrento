@@ -81,12 +81,12 @@ button,
 }
 
 .has-request .shift-cell {
-  color: white !important;
+  color: inherit !important;
 }
 
 .has-request .shift-cell.request-festa {
-  background: #1f8f45 !important;
-  border-color: #0d6f2f !important;
+  background: #d8f8df !important;
+  border-color: #7bd493 !important;
 }
 
 .has-request .shift-cell.request-ferie {
@@ -99,7 +99,13 @@ button,
   border-color: #0b63b6 !important;
 }
 
-.has-request .shift-cell .shift-time {
+.has-request .shift-cell.request-festa .shift-time {
+  background: transparent !important;
+  color: #13722f !important;
+}
+
+.has-request .shift-cell.request-ferie .shift-time,
+.has-request .shift-cell.request-altro .shift-time {
   background: transparent !important;
   color: white !important;
 }
