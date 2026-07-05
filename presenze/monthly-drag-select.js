@@ -1,6 +1,7 @@
 const monthlySelection = new Set();
-let monthlyDragging = false;
-let monthlyDidDrag = false;
+let monthlyMouseDown = false;
+let monthlyStartCell = null;
+let monthlySuppressNextClick = false;
 const monthlyCopiedKey = "capriBluPresenzeCopiaV1";
 
 function monthlyCellKey(cell) {
@@ -48,7 +49,7 @@ function monthlyClearVisualSelection() {
 }
 
 function monthlyAddCell(cell) {
-  if (!cell || monthlySelection.has(monthlyCellKey(cell))) return;
+  if (!cell) return;
   monthlySelection.add(monthlyCellKey(cell));
   cell.classList.add("multi-selected");
 }
@@ -116,37 +117,74 @@ function monthlySelectCellOnly(cell) {
   monthlyAddCell(cell);
 }
 
-// Selezione multipla: tieni premuto il tasto sinistro e trascina sulle celle.
-table.addEventListener("mousedown", (event) => {
+function monthlySelectRange(fromCell, toCell) {
+  if (!fromCell || !toCell) return;
+
+  const fromRow = fromCell.parentElement.rowIndex;
+  const toRow = toCell.parentElement.rowIndex;
+  const fromCol = fromCell.cellIndex;
+  const toCol = toCell.cellIndex;
+  const minRow = Math.min(fromRow, toRow);
+  const maxRow = Math.max(fromRow, toRow);
+  const minCol = Math.min(fromCol, toCol);
+  const maxCol = Math.max(fromCol, toCol);
+
+  monthlyClearVisualSelection();
+
+  Array.from(table.rows).forEach((row) => {
+    if (row.rowIndex < minRow || row.rowIndex > maxRow) return;
+    Array.from(row.cells).forEach((cell) => {
+      if (cell.cellIndex < minCol || cell.cellIndex > maxCol) return;
+      if (!cell.classList.contains("presence-cell")) return;
+      monthlyAddCell(cell);
+    });
+  });
+}
+
+function monthlyCellFromEvent(event) {
+  return event.target.closest(".presence-cell");
+}
+
+// Trascina con il tasto sinistro: selezione rettangolare stile Excel.
+table.addEventListener("pointerdown", (event) => {
   if (event.button !== 0) return;
-  const cell = event.target.closest(".presence-cell");
+  const cell = monthlyCellFromEvent(event);
   if (!cell) return;
 
-  monthlyDragging = true;
-  monthlyDidDrag = false;
+  monthlyMouseDown = true;
+  monthlyStartCell = cell;
+  monthlySuppressNextClick = false;
   monthlySelectCellOnly(cell);
+
+  try {
+    cell.setPointerCapture(event.pointerId);
+  } catch (error) {}
+
   event.preventDefault();
 });
 
-table.addEventListener("mouseover", (event) => {
-  if (!monthlyDragging) return;
-  const cell = event.target.closest(".presence-cell");
+table.addEventListener("pointermove", (event) => {
+  if (!monthlyMouseDown || !monthlyStartCell) return;
+  const element = document.elementFromPoint(event.clientX, event.clientY);
+  const cell = element?.closest?.(".presence-cell");
   if (!cell) return;
-  monthlyDidDrag = true;
-  monthlyAddCell(cell);
+
+  if (cell !== monthlyStartCell) monthlySuppressNextClick = true;
+  monthlySelectRange(monthlyStartCell, cell);
+  event.preventDefault();
 });
 
-document.addEventListener("mouseup", () => {
-  if (!monthlyDragging) return;
-  monthlyDragging = false;
+document.addEventListener("pointerup", () => {
+  monthlyMouseDown = false;
+  monthlyStartCell = null;
 });
 
-// Se hai trascinato, non aprire il menu della singola cella.
+// Se hai trascinato, blocca il menu della singola cella.
 table.addEventListener("click", (event) => {
-  if (!monthlyDidDrag) return;
+  if (!monthlySuppressNextClick) return;
   event.preventDefault();
   event.stopImmediatePropagation();
-  monthlyDidDrag = false;
+  monthlySuppressNextClick = false;
 }, true);
 
 copyBtn?.addEventListener("click", (event) => {
