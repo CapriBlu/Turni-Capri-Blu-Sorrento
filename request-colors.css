@@ -9,14 +9,13 @@
 
 .has-request .shift-cell {
   position: relative !important;
-  color: white !important;
   border-width: 1px !important;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.03) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28), 0 0 0 1px rgba(0, 0, 0, 0.03) !important;
 }
 
 .shift-cell.request-festa {
-  background: #bdecc8 !important;
-  border-color: #6dca84 !important;
+  background: rgba(216, 248, 223, 0.78) !important;
+  border-color: rgba(123, 212, 147, 0.9) !important;
 }
 
 .shift-cell.request-ferie {
@@ -37,7 +36,7 @@
 }
 
 .shift-cell.request-festa .shift-time {
-  color: #0c6229 !important;
+  color: #13722f !important;
 }
 
 .shift-cell.request-ferie .shift-time,
@@ -72,9 +71,9 @@
 
 .request-pill.riposo,
 .request-pill.festa {
-  color: #0c6229 !important;
-  background: #bdecc8 !important;
-  border-color: #6dca84 !important;
+  color: #13722f !important;
+  background: rgba(216, 248, 223, 0.78) !important;
+  border-color: rgba(123, 212, 147, 0.9) !important;
 }
 
 .request-pill.permesso,
