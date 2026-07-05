@@ -14,7 +14,36 @@ const defaultPresenceStaffNames = [
   "Carmine"
 ];
 
-let staffNames = window.CapriBluStaff?.getStaffNames() || defaultPresenceStaffNames.slice();
+const kitchenStaffNames = [
+  "Pizzeria 1",
+  "Pizzeria 2",
+  "Cucina 1",
+  "Cucina 2",
+  "Lavapiatti"
+];
+
+const departments = {
+  sala: {
+    label: "Sala",
+    storagePrefix: "capriBluPresenzeMensili-",
+    copiedKey: "capriBluPresenzeCopiaV1",
+    automatic: true,
+    getNames: () => window.CapriBluStaff?.getStaffNames() || defaultPresenceStaffNames.slice()
+  },
+  cucina: {
+    label: "Cucina / Pizzeria",
+    storagePrefix: "capriBluPresenzeMensiliCucina-",
+    copiedKey: "capriBluPresenzeCopiaCucinaV1",
+    automatic: false,
+    getNames: () => kitchenStaffNames.slice()
+  }
+};
+
+const departmentKey = "capriBluPresenzeRepartoV1";
+let activeDepartment = localStorage.getItem(departmentKey) || "sala";
+if (!departments[activeDepartment]) activeDepartment = "sala";
+
+let staffNames = departments[activeDepartment].getNames();
 
 const dayKeys = ["lunedi", "martedi", "mercoledi", "giovedi", "venerdi", "sabato", "domenica"];
 const classMap = {
@@ -27,7 +56,6 @@ const classMap = {
 
 const publishedWeekStoragePrefix = "capriBluTurniStaffPublishedWeekV1-";
 const requestsKey = "capriBluRichiesteStaffV1";
-const copiedPresenceKey = "capriBluPresenzeCopiaV1";
 
 const monthInput = document.getElementById("monthInput");
 const table = document.getElementById("presenceTable");
@@ -37,10 +65,15 @@ const copyBtn = document.getElementById("copyBtn");
 const pasteBtn = document.getElementById("pasteBtn");
 const clearBtn = document.getElementById("clearBtn");
 const autosaveStatus = document.getElementById("autosaveStatus");
+const departmentTabs = document.querySelectorAll(".department-tab");
 let activeCell = null;
 let selectedCell = null;
 let menuBackdrop = null;
 let copiedRecord = null;
+
+function currentDepartment() {
+  return departments[activeDepartment] || departments.sala;
+}
 
 function safeJsonParse(value, fallback, keyToRemove = "") {
   try {
@@ -53,7 +86,7 @@ function safeJsonParse(value, fallback, keyToRemove = "") {
 }
 
 function refreshStaffNames() {
-  staffNames = window.CapriBluStaff?.getStaffNames() || defaultPresenceStaffNames.slice();
+  staffNames = currentDepartment().getNames();
 }
 
 function currentMonthValue() {
@@ -63,8 +96,8 @@ function currentMonthValue() {
   return year + "-" + month;
 }
 
-function storageKey() {
-  return "capriBluPresenzeMensili-" + monthInput.value;
+function storageKey(month = monthInput.value) {
+  return currentDepartment().storagePrefix + month;
 }
 
 function readData() {
@@ -80,7 +113,7 @@ function setAutosaveStatus(text) {
 
 function saveData(data) {
   localStorage.setItem(storageKey(), JSON.stringify(data));
-  setAutosaveStatus("Salvato " + new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }));
+  setAutosaveStatus(currentDepartment().label + " salvato " + new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }));
 }
 
 function readRequests() {
@@ -129,6 +162,8 @@ function normalizeRequestType(type) {
 }
 
 function autoValueFromRequests(name, dateISO) {
+  if (!currentDepartment().automatic) return "";
+
   const requests = readRequests();
   const request = requests.find((item) => item.name === name && item.date === dateISO);
   if (!request) return "";
@@ -141,6 +176,8 @@ function autoValueFromRequests(name, dateISO) {
 }
 
 function autoValueFromShift(name, date) {
+  if (!currentDepartment().automatic) return "";
+
   const weekValue = getISOWeekString(date);
   const key = publishedWeekStoragePrefix + weekValue;
   const saved = localStorage.getItem(key);
@@ -228,8 +265,16 @@ function getCellRecord(cell) {
   return { value, minutes };
 }
 
+function updateDepartmentTabs() {
+  departmentTabs.forEach((button) => {
+    button.classList.toggle("active", button.dataset.department === activeDepartment);
+  });
+}
+
 function renderTable() {
   refreshStaffNames();
+  updateDepartmentTabs();
+
   const manualData = readData();
   const parts = monthInput.value.split("-");
   const year = Number(parts[0]);
@@ -237,7 +282,7 @@ function renderTable() {
   const totalDays = daysInMonth(monthInput.value);
   const oldSelectedKey = selectedCell ? getCellKey(selectedCell) : "";
 
-  let html = "<thead><tr><th>Staff</th>";
+  let html = "<thead><tr><th>" + currentDepartment().label + "</th>";
   for (let day = 1; day <= totalDays; day++) {
     html += "<th><span class='day-number'>" + day + "</span><span class='day-name'>" + dayLabel(year, month, day) + "</span></th>";
   }
@@ -332,7 +377,7 @@ function openPresenceMenu(cell) {
   selectCell(cell);
   if (!menuBackdrop) createMenu();
   const subtitle = document.getElementById("presenceMenuSubtitle");
-  if (subtitle) subtitle.textContent = cell.dataset.name + " - giorno " + cell.dataset.day;
+  if (subtitle) subtitle.textContent = currentDepartment().label + " · " + cell.dataset.name + " - giorno " + cell.dataset.day;
   menuBackdrop.classList.add("open");
 }
 
@@ -377,15 +422,15 @@ function saveCellValue(cell, value) {
 function copyCell(cell = selectedCell) {
   if (!cell) return;
   copiedRecord = getCellRecord(cell);
-  localStorage.setItem(copiedPresenceKey, JSON.stringify(copiedRecord));
-  setAutosaveStatus("Cella copiata");
+  localStorage.setItem(currentDepartment().copiedKey, JSON.stringify(copiedRecord));
+  setAutosaveStatus("Cella copiata · " + currentDepartment().label);
 }
 
 function pasteCell(cell = selectedCell) {
   if (!cell) return;
   if (!copiedRecord) {
-    const saved = localStorage.getItem(copiedPresenceKey);
-    copiedRecord = safeJsonParse(saved, null, copiedPresenceKey);
+    const saved = localStorage.getItem(currentDepartment().copiedKey);
+    copiedRecord = safeJsonParse(saved, null, currentDepartment().copiedKey);
   }
   if (!copiedRecord) return;
   saveCellRecord(cell, { value: copiedRecord.value || "", minutes: Number(copiedRecord.minutes || 0) });
@@ -396,14 +441,40 @@ function clearSelectedCell() {
   saveCellValue(selectedCell, "");
 }
 
+function setDepartment(department) {
+  if (!departments[department]) return;
+  activeDepartment = department;
+  selectedCell = null;
+  copiedRecord = null;
+  localStorage.setItem(departmentKey, activeDepartment);
+  renderTable();
+  setAutosaveStatus("Reparto: " + currentDepartment().label);
+}
+
+window.getPresenceStorageKey = function (month) {
+  return storageKey(month || monthInput.value);
+};
+
+window.getPresenceDepartmentLabel = function () {
+  return currentDepartment().label;
+};
+
+window.getPresenceDepartmentKey = function () {
+  return activeDepartment;
+};
+
 monthInput.value = localStorage.getItem("capriBluPresenzeMese") || currentMonthValue();
 renderTable();
-setAutosaveStatus("Pronto");
+setAutosaveStatus("Pronto · " + currentDepartment().label);
 
 table.addEventListener("click", (event) => {
   const cell = event.target.closest(".presence-cell");
   if (!cell) return;
   openPresenceMenu(cell);
+});
+
+departmentTabs.forEach((button) => {
+  button.addEventListener("click", () => setDepartment(button.dataset.department));
 });
 
 monthInput.addEventListener("input", () => {
@@ -433,8 +504,8 @@ document.addEventListener("keydown", (event) => {
 });
 
 resetBtn.addEventListener("click", () => {
-  if (!confirm("Cancellare solo le modifiche manuali di questo mese? I dati inviati dai turni resteranno visibili.")) return;
+  if (!confirm("Cancellare solo le modifiche manuali di questo mese per " + currentDepartment().label + "?")) return;
   localStorage.removeItem(storageKey());
   renderTable();
-  setAutosaveStatus("Mese resettato");
+  setAutosaveStatus("Mese resettato · " + currentDepartment().label);
 });
