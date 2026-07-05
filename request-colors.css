@@ -4,47 +4,66 @@
 }
 
 .has-request {
-  background: #d7f3dc !important;
+  background: transparent !important;
 }
 
 .has-request .shift-cell {
-  background: #b8eec4 !important;
-  border-color: #219447 !important;
-  box-shadow: inset 0 0 0 2px rgba(33, 148, 71, 0.22) !important;
+  color: white !important;
+  border-width: 2px !important;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.24), 0 0 0 1px rgba(0, 0, 0, 0.06) !important;
 }
 
-.request-badge,
-.request-badge.ferie,
-.request-badge.riposo,
-.request-badge.festa,
-.request-badge.permesso,
-.request-badge.altro {
-  color: #0b5d24 !important;
-  background: #b8eec4 !important;
-  border-color: #219447 !important;
+.shift-cell.request-festa {
+  background: #1f8f45 !important;
+  border-color: #0d6f2f !important;
+}
+
+.shift-cell.request-ferie {
+  background: #063b78 !important;
+  border-color: #031f44 !important;
+}
+
+.shift-cell.request-altro {
+  background: #1f8fd6 !important;
+  border-color: #0b63b6 !important;
+}
+
+.shift-cell.request-festa .shift-time,
+.shift-cell.request-ferie .shift-time,
+.shift-cell.request-altro .shift-time {
+  background: transparent !important;
+  color: white !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.request-inline {
+  display: block;
+  width: 100%;
+  padding: 3px 5px;
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 900;
+  line-height: 1.05;
+  color: white;
+  border-top: 1px dashed rgba(255, 255, 255, 0.42);
 }
 
 .request-pill.ferie {
-  color: #814200 !important;
-  background: #ffd8a8 !important;
-  border-color: #f19a38 !important;
+  color: white !important;
+  background: #063b78 !important;
+  border-color: #031f44 !important;
 }
 
 .request-pill.riposo,
 .request-pill.festa {
-  color: #0b5d24 !important;
-  background: #b8eec4 !important;
-  border-color: #219447 !important;
+  color: white !important;
+  background: #1f8f45 !important;
+  border-color: #0d6f2f !important;
 }
 
-.request-pill.permesso {
-  color: #06496f !important;
-  background: #cdeeff !important;
-  border-color: #3da7df !important;
-}
-
+.request-pill.permesso,
 .request-pill.altro {
-  color: #24364f !important;
-  background: #dfe8f5 !important;
-  border-color: #8da6c8 !important;
+  color: white !important;
+  background: #1f8fd6 !important;
+  border-color: #0b63b6 !important;
 }
