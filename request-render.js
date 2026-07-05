@@ -5,14 +5,6 @@ function requestTypeClass(type) {
   return "request-altro";
 }
 
-function requestTypeLabel(type) {
-  const clean = String(type || "").trim();
-  if (clean.toLowerCase() === "festa") return "Festa";
-  if (clean.toLowerCase() === "riposo") return "Festa";
-  if (!clean) return "Richiesta";
-  return clean;
-}
-
 renderTable = function () {
   scheduleBody.innerHTML = "";
 
@@ -34,7 +26,6 @@ renderTable = function () {
       const firstRequest = cellRequests[0];
       const requestClass = firstRequest ? requestTypeClass(firstRequest.type) : "";
       const requestNote = firstRequest?.note ? escapeHtml(firstRequest.note) : "Nessuna nota";
-      const requestLabel = firstRequest ? requestTypeLabel(firstRequest.type) : "";
 
       if (isSplit) td.classList.add("day-spezzato");
       if (firstRequest) td.classList.add("has-request", requestClass);
@@ -52,14 +43,9 @@ renderTable = function () {
         cellContent = `<span class="shift-time single ${slotClass(singleValue, singlePart)}">${escapeHtml(singleValue)}</span>`;
       }
 
-      const requestInfo = firstRequest
-        ? `<span class="request-inline" data-note="${requestNote}" title="${requestNote}">Richiesta ${escapeHtml(requestLabel)}</span>`
-        : "";
-
       td.innerHTML = `
-        <button class="shift-cell ${isSplit ? "two-fields" : "one-field"} ${requestClass}" type="button" data-person="${personIndex}" data-day="${day.key}" aria-label="Modifica turno ${person.nome} ${day.label}">
+        <button class="shift-cell ${isSplit ? "two-fields" : "one-field"} ${requestClass}" type="button" data-person="${personIndex}" data-day="${day.key}" title="${requestNote}" aria-label="Modifica turno ${person.nome} ${day.label}">
           ${cellContent}
-          ${requestInfo}
         </button>
       `;
 
