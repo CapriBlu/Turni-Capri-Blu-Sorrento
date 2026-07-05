@@ -71,17 +71,40 @@ input, button, .link-btn {
 
 .toolbar {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
   margin: 6px 0;
 }
 
 .toolbar button,
-.link-btn {
+.link-btn,
+.autosave-status {
   width: auto;
   text-decoration: none;
   color: #073b7a;
   background: white;
   cursor: pointer;
+}
+
+.autosave-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #d9f7df;
+  color: #0a5b20;
+  border: 1px solid #7bd493;
+  font-size: .82rem;
+  font-weight: 900;
+}
+
+.copy-btn {
+  background: #fff7db !important;
+  color: #795200 !important;
+  border-color: #e9c34d !important;
 }
 
 .legend {
@@ -171,6 +194,15 @@ input, button, .link-btn {
   background: #f0f7ff;
 }
 
+.presence-table .selected-cell {
+  outline: 3px solid #f5c542 !important;
+  outline-offset: -3px;
+}
+
+.presence-table .manual-cell {
+  box-shadow: inset 0 0 0 2px rgba(245, 197, 66, .45);
+}
+
 .presence-table .total-cell {
   cursor: default;
   background: #eaf3ff !important;
@@ -243,6 +275,19 @@ input, button, .link-btn {
 .menu-mal { background: #ffd6e0; color: #8a1230; }
 .menu-rit { background: #ffd49a; color: #743800; }
 .menu-empty { background: #eef3f8; color: #12305a; }
+
+.presence-menu-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.presence-menu-actions button {
+  background: #fff7db;
+  color: #795200;
+  border-color: #e9c34d;
+}
 
 .presence-menu-close {
   margin-top: 12px;
