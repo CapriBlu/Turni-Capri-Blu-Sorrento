@@ -61,7 +61,15 @@ function createFastShiftEditor() {
             <button type="button" class="quick-choice" data-group="pranzo" data-value="riposo"><strong>R</strong><small>Riposo</small></button>
           </div>
           <label class="fast-time-label" for="pranzoTime">Orario</label>
-          <input id="pranzoTime" class="fast-time-input" type="text" placeholder="10:30-15:30" />
+          <input id="pranzoTime" class="fast-time-input" type="text" list="pranzoTimeList" placeholder="10:30-15:30" />
+          <datalist id="pranzoTimeList">
+            <option value="10:30-15:30"></option>
+            <option value="11:00-15:30"></option>
+            <option value="11:00-16:00"></option>
+            <option value="12:00-16:00"></option>
+            <option value="15:30"></option>
+            <option value="16"></option>
+          </datalist>
         </div>
 
         <div class="fast-panel serale">
@@ -76,7 +84,15 @@ function createFastShiftEditor() {
             <button type="button" class="quick-choice" data-group="sera" data-value="riposo"><strong>R</strong><small>Riposo</small></button>
           </div>
           <label class="fast-time-label" for="seraTime">Orario</label>
-          <input id="seraTime" class="fast-time-input" type="text" placeholder="18:30-23:30" />
+          <input id="seraTime" class="fast-time-input" type="text" list="seraTimeList" placeholder="18:30-23:30" />
+          <datalist id="seraTimeList">
+            <option value="15:30"></option>
+            <option value="16"></option>
+            <option value="17"></option>
+            <option value="18:00-23:30"></option>
+            <option value="18:30-23:30"></option>
+            <option value="19:00-23:30"></option>
+          </datalist>
         </div>
       </div>
 
