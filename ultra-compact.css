@@ -1,0 +1,199 @@
+/* Layout ultra compatto */
+.page {
+  width: min(1840px, 100%);
+  padding: 4px 6px !important;
+}
+
+.top-card {
+  min-height: 64px;
+  padding: 8px 12px !important;
+  border-radius: 12px !important;
+  align-items: center;
+}
+
+.eyebrow {
+  margin-bottom: 2px !important;
+  font-size: 0.62rem !important;
+}
+
+h1 {
+  font-size: clamp(1.15rem, 2vw, 1.75rem) !important;
+  line-height: 1.05 !important;
+}
+
+.subtitle {
+  margin-top: 4px !important;
+  font-size: 0.78rem !important;
+}
+
+.week-box {
+  min-width: 190px !important;
+  padding: 8px 10px !important;
+  border-radius: 12px !important;
+}
+
+.week-box label {
+  margin-bottom: 3px !important;
+  font-size: 0.82rem !important;
+}
+
+.week-box input {
+  min-height: 30px !important;
+  padding: 5px 8px !important;
+  border-radius: 9px !important;
+  font-size: 0.82rem !important;
+}
+
+.week-range {
+  margin-top: 4px !important;
+  font-size: 0.68rem !important;
+}
+
+.toolbar {
+  margin-top: 5px !important;
+  gap: 5px !important;
+}
+
+.toolbar button,
+.monthly-link,
+.autosave-status {
+  min-height: 30px !important;
+  padding: 5px 10px !important;
+  font-size: 0.72rem !important;
+  border-radius: 999px !important;
+  box-shadow: 0 4px 10px rgba(6, 27, 58, 0.08) !important;
+}
+
+.legend {
+  margin-top: 4px !important;
+  gap: 4px !important;
+  font-size: 0.7rem !important;
+}
+
+.legend span {
+  padding: 3px 7px !important;
+}
+
+.dot {
+  width: 7px !important;
+  height: 7px !important;
+}
+
+.table-card {
+  margin-top: 5px !important;
+  padding: 2px !important;
+  border-radius: 9px !important;
+}
+
+.table-scroll {
+  border-radius: 9px !important;
+}
+
+.shift-table {
+  min-width: 1180px !important;
+}
+
+.shift-table th,
+.shift-table td {
+  padding: 1px 2px !important;
+}
+
+.shift-table th {
+  font-size: 0.68rem !important;
+  line-height: 1.02 !important;
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+}
+
+.shift-table th small {
+  margin-top: 1px !important;
+  font-size: 0.54rem !important;
+}
+
+.shift-table td:first-child {
+  min-width: 100px !important;
+  max-width: 100px !important;
+  font-size: 0.76rem !important;
+  padding-left: 4px !important;
+}
+
+.shift-cell {
+  min-width: 86px !important;
+  border-radius: 4px !important;
+}
+
+.one-field {
+  min-height: 28px !important;
+}
+
+.one-field .shift-time {
+  min-height: 28px !important;
+}
+
+.two-fields {
+  grid-template-rows: 28px !important;
+  min-height: 28px !important;
+}
+
+.shift-time {
+  min-height: 28px !important;
+  padding: 1px 2px !important;
+  font-size: 0.76rem !important;
+  line-height: 1 !important;
+  letter-spacing: -0.01em;
+}
+
+.requests-card {
+  margin-top: 5px !important;
+  padding: 3px !important;
+  border-radius: 9px !important;
+}
+
+.requests-head {
+  padding: 5px 7px !important;
+  margin-bottom: 4px !important;
+}
+
+.requests-head h2 {
+  font-size: 1rem !important;
+}
+
+.requests-head p {
+  font-size: 0.7rem !important;
+}
+
+.request-form {
+  padding: 4px !important;
+  gap: 4px !important;
+  grid-template-columns: 1fr 135px 120px 1.2fr auto !important;
+}
+
+.request-form input,
+.request-form select,
+.request-form button {
+  min-height: 30px !important;
+  padding: 4px 8px !important;
+  border-radius: 9px !important;
+  font-size: 0.74rem !important;
+}
+
+.requests-table th,
+.requests-table td {
+  padding: 3px 5px !important;
+  font-size: 0.72rem !important;
+}
+
+@media (max-width: 760px) {
+  .top-card {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+
+  .shift-table {
+    min-width: 760px !important;
+  }
+
+  .request-form {
+    grid-template-columns: 1fr !important;
+  }
+}
