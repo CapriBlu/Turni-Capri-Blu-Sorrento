@@ -111,6 +111,36 @@
   background: white;
 }
 
+.quick-time-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.quick-time-btn {
+  min-height: 42px;
+  padding: 8px 6px;
+  border-radius: 14px;
+  border: 1px solid rgba(6, 27, 58, 0.16);
+  background: white;
+  color: var(--blue);
+  box-shadow: none;
+  font-weight: 900;
+  font-size: 0.9rem;
+}
+
+.quick-time-btn.active {
+  color: white;
+  background: linear-gradient(135deg, #0b8bd6, #0b3d91);
+  border-color: transparent;
+  box-shadow: 0 10px 20px rgba(11, 61, 145, 0.22);
+}
+
+.serale .quick-time-btn.active {
+  background: linear-gradient(135deg, #7a42db, #3446c5);
+}
+
 @media (max-width: 760px) {
   .shift-editor.fast-editor {
     padding: 18px;
@@ -122,6 +152,10 @@
 
   .quick-choice-row {
     grid-template-columns: 1fr;
+  }
+
+  .quick-time-row {
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .editor-actions button {
