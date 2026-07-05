@@ -42,6 +42,16 @@ let selectedCell = null;
 let menuBackdrop = null;
 let copiedRecord = null;
 
+function safeJsonParse(value, fallback, keyToRemove = "") {
+  try {
+    return value ? JSON.parse(value) : fallback;
+  } catch (error) {
+    console.warn("Dati locali non leggibili:", keyToRemove || "senza chiave", error);
+    if (keyToRemove) localStorage.removeItem(keyToRemove);
+    return fallback;
+  }
+}
+
 function refreshStaffNames() {
   staffNames = window.CapriBluStaff?.getStaffNames() || defaultPresenceStaffNames.slice();
 }
@@ -58,8 +68,9 @@ function storageKey() {
 }
 
 function readData() {
-  const saved = localStorage.getItem(storageKey());
-  return saved ? JSON.parse(saved) : {};
+  const key = storageKey();
+  const saved = localStorage.getItem(key);
+  return safeJsonParse(saved, {}, key);
 }
 
 function setAutosaveStatus(text) {
@@ -74,7 +85,7 @@ function saveData(data) {
 
 function readRequests() {
   const saved = localStorage.getItem(requestsKey);
-  return saved ? JSON.parse(saved) : [];
+  return safeJsonParse(saved, [], requestsKey);
 }
 
 function daysInMonth(value) {
@@ -131,10 +142,11 @@ function autoValueFromRequests(name, dateISO) {
 
 function autoValueFromShift(name, date) {
   const weekValue = getISOWeekString(date);
-  const saved = localStorage.getItem(publishedWeekStoragePrefix + weekValue);
+  const key = publishedWeekStoragePrefix + weekValue;
+  const saved = localStorage.getItem(key);
   if (!saved) return "";
 
-  const staff = JSON.parse(saved);
+  const staff = safeJsonParse(saved, [], key);
   const person = staff.find((item) => item.nome === name);
   if (!person) return "";
 
@@ -373,7 +385,7 @@ function pasteCell(cell = selectedCell) {
   if (!cell) return;
   if (!copiedRecord) {
     const saved = localStorage.getItem(copiedPresenceKey);
-    copiedRecord = saved ? JSON.parse(saved) : null;
+    copiedRecord = safeJsonParse(saved, null, copiedPresenceKey);
   }
   if (!copiedRecord) return;
   saveCellRecord(cell, { value: copiedRecord.value || "", minutes: Number(copiedRecord.minutes || 0) });
