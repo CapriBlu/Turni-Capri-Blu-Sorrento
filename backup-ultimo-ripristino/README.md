@@ -1,12 +1,12 @@
 # Backup ultimo ripristino
 
-Punto di ripristino aggiornato prima del Passaggio 5 per Incolla stile Excel.
+Punto di ripristino aggiornato prima del Passaggio 6 per trascinamento celle stile Excel.
 
 ## Versione da ripristinare
 
-Commit prima del Passaggio 5:
+Commit prima del Passaggio 6:
 
-`306a7b2feedbae78800d9a4afe61ce66472314be`
+`792974b107121f5f43fc8b0f0ef6c16e0154c634`
 
 ## Versione stabile originale
 
@@ -16,13 +16,13 @@ Commit stabile precedente alla sperimentazione Excel:
 
 ## Modifica successiva prevista
 
-Passaggio 5:
+Passaggio 6:
 
-- tasto destro su una cella = apre menu stile Excel;
-- voce Copia selezione;
-- voce Incolla;
-- voce Deseleziona;
-- l'incolla parte dalla prima cella selezionata.
+- tasto sinistro premuto su una cella;
+- trascinamento sulle altre celle;
+- rilascio mouse = blocco selezionato;
+- resta attivo doppio click per modificare;
+- resta attivo tasto destro con Copia, Incolla, Deseleziona.
 
 ## File principali da proteggere
 
