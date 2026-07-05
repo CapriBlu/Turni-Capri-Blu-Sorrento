@@ -25,13 +25,20 @@ const classMap = {
 
 const publishedWeekStoragePrefix = "capriBluTurniStaffPublishedWeekV1-";
 const requestsKey = "capriBluRichiesteStaffV1";
+const copiedPresenceKey = "capriBluPresenzeCopiaV1";
 
 const monthInput = document.getElementById("monthInput");
 const table = document.getElementById("presenceTable");
 const printBtn = document.getElementById("printBtn");
 const resetBtn = document.getElementById("resetBtn");
+const copyBtn = document.getElementById("copyBtn");
+const pasteBtn = document.getElementById("pasteBtn");
+const clearBtn = document.getElementById("clearBtn");
+const autosaveStatus = document.getElementById("autosaveStatus");
 let activeCell = null;
+let selectedCell = null;
 let menuBackdrop = null;
+let copiedRecord = null;
 
 function currentMonthValue() {
   const now = new Date();
@@ -49,8 +56,14 @@ function readData() {
   return saved ? JSON.parse(saved) : {};
 }
 
+function setAutosaveStatus(text) {
+  if (!autosaveStatus) return;
+  autosaveStatus.textContent = text;
+}
+
 function saveData(data) {
   localStorage.setItem(storageKey(), JSON.stringify(data));
+  setAutosaveStatus("Salvato " + new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }));
 }
 
 function readRequests() {
@@ -92,14 +105,21 @@ function isWorking(value) {
   return clean !== "" && clean !== "riposo" && clean !== "riposto" && clean !== "-" && clean !== "—" && clean !== "vuoto";
 }
 
+function normalizeRequestType(type) {
+  const clean = String(type || "").toLowerCase();
+  if (clean === "riposo") return "festa";
+  return clean;
+}
+
 function autoValueFromRequests(name, dateISO) {
   const requests = readRequests();
   const request = requests.find((item) => item.name === name && item.date === dateISO);
   if (!request) return "";
 
-  const type = String(request.type || "").toLowerCase();
+  const type = normalizeRequestType(request.type);
   if (type === "ferie") return "Fer";
   if (type === "festa") return "F";
+  if (type === "permesso" || type === "altro") return "F";
   return "";
 }
 
@@ -151,10 +171,10 @@ function finalCellInfo(name, day, date, manualData) {
   const manualValue = getManualValue(manualRecord);
   const minutes = getManualMinutes(manualRecord);
 
-  if (manualValue) return { value: manualValue, minutes };
+  if (manualValue) return { value: manualValue, minutes, manual: true };
 
   const auto = automaticValue(name, date);
-  return { value: auto || "", minutes: 0 };
+  return { value: auto || "", minutes: 0, manual: false };
 }
 
 function addCount(counts, value, minutes) {
@@ -169,12 +189,34 @@ function addCount(counts, value, minutes) {
   }
 }
 
+function selectCell(cell) {
+  if (selectedCell) selectedCell.classList.remove("selected-cell");
+  selectedCell = cell;
+  if (selectedCell) selectedCell.classList.add("selected-cell");
+}
+
+function getCellKey(cell) {
+  return cell.dataset.name + "-" + cell.dataset.day;
+}
+
+function getCellRecord(cell) {
+  const data = readData();
+  const record = data[getCellKey(cell)];
+  if (record) {
+    return typeof record === "string" ? { value: record, minutes: 0 } : record;
+  }
+  const value = cell.dataset.value || "";
+  const minutes = Number(cell.dataset.minutes || 0);
+  return { value, minutes };
+}
+
 function renderTable() {
   const manualData = readData();
   const parts = monthInput.value.split("-");
   const year = Number(parts[0]);
   const month = Number(parts[1]);
   const totalDays = daysInMonth(monthInput.value);
+  const oldSelectedKey = selectedCell ? getCellKey(selectedCell) : "";
 
   let html = "<thead><tr><th>Staff</th>";
   for (let day = 1; day <= totalDays; day++) {
@@ -192,7 +234,8 @@ function renderTable() {
       const info = finalCellInfo(name, day, date, manualData);
       addCount(counts, info.value, info.minutes);
       const cls = classMap[info.value] || "";
-      html += "<td class='presence-cell " + cls + "' data-name='" + name + "' data-day='" + day + "'>" + displayValue(info.value, info.minutes) + "</td>";
+      const manualClass = info.manual ? " manual-cell" : "";
+      html += "<td class='presence-cell " + cls + manualClass + "' data-name='" + name + "' data-day='" + day + "' data-value='" + info.value + "' data-minutes='" + info.minutes + "'>" + displayValue(info.value, info.minutes) + "</td>";
     }
 
     html += "<td class='total-cell'>" + counts.presenze + "</td>";
@@ -206,6 +249,12 @@ function renderTable() {
 
   html += "</tbody>";
   table.innerHTML = html;
+
+  if (oldSelectedKey) {
+    const [name, day] = oldSelectedKey.split("-");
+    const restored = table.querySelector(`.presence-cell[data-name="${CSS.escape(name)}"][data-day="${CSS.escape(day)}"]`);
+    if (restored) selectCell(restored);
+  }
 }
 
 function createMenu() {
@@ -224,6 +273,10 @@ function createMenu() {
         <button type="button" data-value="P+Rit" class="menu-rit">P+Rit<br><small>Ritardo</small></button>
         <button type="button" data-value="" class="menu-empty">Vuoto<br><small>Cancella</small></button>
       </div>
+      <div class="presence-menu-actions">
+        <button type="button" id="presenceCopyBtn">Copia</button>
+        <button type="button" id="presencePasteBtn">Incolla</button>
+      </div>
       <button type="button" id="presenceMenuClose" class="presence-menu-close">Annulla</button>
     </div>
   `;
@@ -235,6 +288,14 @@ function createMenu() {
   });
 
   document.getElementById("presenceMenuClose").addEventListener("click", closePresenceMenu);
+  document.getElementById("presenceCopyBtn").addEventListener("click", () => {
+    if (activeCell) copyCell(activeCell);
+    closePresenceMenu();
+  });
+  document.getElementById("presencePasteBtn").addEventListener("click", () => {
+    if (activeCell) pasteCell(activeCell);
+    closePresenceMenu();
+  });
 
   menuBackdrop.querySelectorAll("[data-value]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -249,6 +310,7 @@ function createMenu() {
 
 function openPresenceMenu(cell) {
   activeCell = cell;
+  selectCell(cell);
   if (!menuBackdrop) createMenu();
   const subtitle = document.getElementById("presenceMenuSubtitle");
   if (subtitle) subtitle.textContent = cell.dataset.name + " - giorno " + cell.dataset.day;
@@ -260,9 +322,16 @@ function closePresenceMenu() {
   activeCell = null;
 }
 
+function saveCellRecord(cell, record) {
+  const data = readData();
+  data[getCellKey(cell)] = record;
+  saveData(data);
+  renderTable();
+}
+
 function saveCellValue(cell, value) {
   const data = readData();
-  const key = cell.dataset.name + "-" + cell.dataset.day;
+  const key = getCellKey(cell);
   const oldRecord = data[key];
 
   if (!value) {
@@ -286,8 +355,31 @@ function saveCellValue(cell, value) {
   renderTable();
 }
 
+function copyCell(cell = selectedCell) {
+  if (!cell) return;
+  copiedRecord = getCellRecord(cell);
+  localStorage.setItem(copiedPresenceKey, JSON.stringify(copiedRecord));
+  setAutosaveStatus("Cella copiata");
+}
+
+function pasteCell(cell = selectedCell) {
+  if (!cell) return;
+  if (!copiedRecord) {
+    const saved = localStorage.getItem(copiedPresenceKey);
+    copiedRecord = saved ? JSON.parse(saved) : null;
+  }
+  if (!copiedRecord) return;
+  saveCellRecord(cell, { value: copiedRecord.value || "", minutes: Number(copiedRecord.minutes || 0) });
+}
+
+function clearSelectedCell() {
+  if (!selectedCell) return;
+  saveCellValue(selectedCell, "");
+}
+
 monthInput.value = localStorage.getItem("capriBluPresenzeMese") || currentMonthValue();
 renderTable();
+setAutosaveStatus("Pronto");
 
 table.addEventListener("click", (event) => {
   const cell = event.target.closest(".presence-cell");
@@ -300,10 +392,30 @@ monthInput.addEventListener("input", () => {
   renderTable();
 });
 
+copyBtn?.addEventListener("click", () => copyCell());
+pasteBtn?.addEventListener("click", () => pasteCell());
+clearBtn?.addEventListener("click", clearSelectedCell);
 printBtn.addEventListener("click", () => window.print());
+
+document.addEventListener("keydown", (event) => {
+  if (!selectedCell) return;
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "c") {
+    event.preventDefault();
+    copyCell();
+  }
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "v") {
+    event.preventDefault();
+    pasteCell();
+  }
+  if (event.key === "Delete" || event.key === "Backspace") {
+    event.preventDefault();
+    clearSelectedCell();
+  }
+});
 
 resetBtn.addEventListener("click", () => {
   if (!confirm("Cancellare solo le modifiche manuali di questo mese? I dati inviati dai turni resteranno visibili.")) return;
   localStorage.removeItem(storageKey());
   renderTable();
+  setAutosaveStatus("Mese resettato");
 });
