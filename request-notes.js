@@ -118,6 +118,152 @@ function buildSelectedCellsText() {
   return rows.join("\n");
 }
 
+function getTopLeftSelectedShiftCell() {
+  if (!selectedShiftCells.length) return anchorShiftCell;
+
+  return selectedShiftCells
+    .slice()
+    .sort((a, b) => {
+      const posA = getCellPosition(a);
+      const posB = getCellPosition(b);
+      if (!posA || !posB) return 0;
+      if (posA.row !== posB.row) return posA.row - posB.row;
+      return posA.col - posB.col;
+    })[0];
+}
+
+function normalizePastedValue(value) {
+  const clean = String(value || "").trim();
+  const lower = clean.toLowerCase();
+
+  if (!clean || lower === "riposo" || lower === "riposto" || lower === "vuoto" || lower === "-" || lower === "—") {
+    return "Riposo";
+  }
+
+  if (lower === "apertura" || lower === "a") return "Apertura";
+  if (lower === "pranzo" || lower === "p") return "Pranzo";
+  if (lower === "sera" || lower === "s") return "Sera";
+  if (lower === "cena" || lower === "c") return "Cena";
+
+  return clean;
+}
+
+function pastedValueLooksLikeSera(value) {
+  const lower = String(value || "").trim().toLowerCase();
+  if (["sera", "s", "cena", "c"].includes(lower)) return true;
+
+  const match = lower.match(/(\d{1,2})[.:]/);
+  if (!match) return false;
+
+  const hour = Number(match[1]);
+  return !Number.isNaN(hour) && hour >= 16;
+}
+
+function shiftFromPastedText(value) {
+  const clean = String(value || "").trim();
+  if (!clean) return { pranzo: "Riposo", sera: "Riposo" };
+
+  const parts = clean.split("/").map((part) => normalizePastedValue(part));
+
+  if (parts.length >= 2) {
+    return {
+      pranzo: parts[0] || "Riposo",
+      sera: parts[1] || "Riposo"
+    };
+  }
+
+  const single = normalizePastedValue(clean);
+
+  if (single === "Riposo") {
+    return { pranzo: "Riposo", sera: "Riposo" };
+  }
+
+  if (pastedValueLooksLikeSera(single)) {
+    return { pranzo: "Riposo", sera: single };
+  }
+
+  return { pranzo: single, sera: "Riposo" };
+}
+
+function applyPastedTextToShifts(text) {
+  if (typeof staff === "undefined" || typeof days === "undefined") {
+    showCopyNotice("Dati turni non disponibili");
+    return;
+  }
+
+  const startCell = getTopLeftSelectedShiftCell();
+  const start = startCell ? getCellPosition(startCell) : null;
+  if (!start) {
+    showCopyNotice("Seleziona una cella prima di incollare");
+    return;
+  }
+
+  const rows = String(text || "")
+    .replace(/\r/g, "")
+    .split("\n")
+    .filter((row, index, list) => !(index === list.length - 1 && row === ""))
+    .map((row) => row.split("\t"));
+
+  if (!rows.length) {
+    showCopyNotice("Niente da incollare");
+    return;
+  }
+
+  let changed = 0;
+
+  rows.forEach((rowValues, rowOffset) => {
+    rowValues.forEach((value, colOffset) => {
+      const rowIndex = start.row + rowOffset;
+      const colIndex = start.col + colOffset;
+      const personIndex = rowIndex - 1;
+      const dayIndex = colIndex - 1;
+
+      if (!staff[personIndex] || !days[dayIndex]) return;
+
+      const dayKey = days[dayIndex].key;
+      staff[personIndex].turni[dayKey] = shiftFromPastedText(value);
+      changed += 1;
+    });
+  });
+
+  if (!changed) {
+    showCopyNotice("Nessun turno incollato");
+    return;
+  }
+
+  saveStaff();
+  renderTable();
+  prepareRequestBadges();
+  selectedShiftCells = [];
+  anchorShiftCell = null;
+  showCopyNotice("Turni incollati");
+}
+
+async function pasteSelectedCellsFromMenu() {
+  let text = "";
+
+  try {
+    if (navigator.clipboard && navigator.clipboard.readText) {
+      text = await navigator.clipboard.readText();
+    }
+  } catch (error) {
+    text = "";
+  }
+
+  if (!text) {
+    const manualText = window.prompt("Incolla qui i dati copiati da Excel o Google Sheets:");
+    if (manualText === null) return;
+    text = manualText;
+  }
+
+  if (!String(text).trim()) {
+    showCopyNotice("Niente da incollare");
+    return;
+  }
+
+  applyPastedTextToShifts(text);
+}
+
 function showCopyNotice(message) {
   const oldNotice = document.getElementById("shiftCopyNotice");
   if (oldNotice) oldNotice.remove();
@@ -219,6 +365,7 @@ function showShiftContextMenu(x, y) {
   shiftContextMenu.style.boxShadow = "0 14px 32px rgba(0, 34, 79, 0.22)";
 
   shiftContextMenu.appendChild(createMenuButton("Copia selezione", copySelectedCellsFromMenu));
+  shiftContextMenu.appendChild(createMenuButton("Incolla", pasteSelectedCellsFromMenu));
   shiftContextMenu.appendChild(createMenuButton("Deseleziona", () => {
     clearSelectedShiftCell();
     anchorShiftCell = null;
