@@ -1,12 +1,26 @@
 # Backup ultimo ripristino
 
-Punto di ripristino creato prima della modifica pesante per rendere le celle selezionabili/copiabili come Excel.
+Punto di ripristino aggiornato prima del Passaggio 1 per la selezione celle stile Excel.
 
-## Versione stabile da ripristinare
+## Versione da ripristinare
 
-Ultimo commit stabile conosciuto prima della modifica Excel:
+Commit prima del Passaggio 1:
+
+`d3b8ad3850defca31bafea3a0982a154cec32824`
+
+## Versione stabile originale
+
+Commit stabile precedente alla sperimentazione Excel:
 
 `ba26d33fd295c6d1199af485b41b2ba1246a7e20`
+
+## Modifica successiva prevista
+
+Passaggio 1:
+
+- click singolo su una cella = seleziona la cella;
+- doppio click su una cella = modifica il turno;
+- ESC = deseleziona.
 
 ## File principali da proteggere
 
