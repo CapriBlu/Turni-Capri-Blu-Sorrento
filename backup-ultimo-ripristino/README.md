@@ -1,12 +1,12 @@
 # Backup ultimo ripristino
 
-Punto di ripristino aggiornato prima del Passaggio 2 per la selezione celle stile Excel.
+Punto di ripristino aggiornato prima del Passaggio 3 per la copia celle stile Excel.
 
 ## Versione da ripristinare
 
-Commit prima del Passaggio 2:
+Commit prima del Passaggio 3:
 
-`1ddefb212dbbced1a470625f93c078b8e42b5223`
+`353c770af8570a8ee459825e602f5addd1a4c05e`
 
 ## Versione stabile originale
 
@@ -16,10 +16,11 @@ Commit stabile precedente alla sperimentazione Excel:
 
 ## Modifica successiva prevista
 
-Passaggio 2:
+Passaggio 3:
 
 - click singolo su una cella = seleziona la cella;
 - SHIFT + click su un'altra cella = seleziona un blocco di celle;
+- CTRL + C = copia le celle selezionate in formato tabella;
 - doppio click su una cella = modifica il turno;
 - ESC = deseleziona.
 
