@@ -1,12 +1,12 @@
 # Backup ultimo ripristino
 
-Punto di ripristino aggiornato prima del Passaggio 4 per il menu tasto destro stile Excel.
+Punto di ripristino aggiornato prima del Passaggio 5 per Incolla stile Excel.
 
 ## Versione da ripristinare
 
-Commit prima del Passaggio 4:
+Commit prima del Passaggio 5:
 
-`50c5b1a6a582cf6771c8b7d9c62e323f7a1512f6`
+`306a7b2feedbae78800d9a4afe61ce66472314be`
 
 ## Versione stabile originale
 
@@ -16,12 +16,13 @@ Commit stabile precedente alla sperimentazione Excel:
 
 ## Modifica successiva prevista
 
-Passaggio 4:
+Passaggio 5:
 
 - tasto destro su una cella = apre menu stile Excel;
 - voce Copia selezione;
+- voce Incolla;
 - voce Deseleziona;
-- niente Incolla per ora.
+- l'incolla parte dalla prima cella selezionata.
 
 ## File principali da proteggere
 
