@@ -34,6 +34,36 @@ function markLocalChangesAfterOfficial() {
   updateSaveSourceStatus();
 }
 
+function hasUsefulOfficialSnapshot(snapshot) {
+  if (!snapshot || !snapshot.weeklyStaff || !snapshot.requests) return false;
+  if (Array.isArray(snapshot.staff) && snapshot.staff.length > 0) return true;
+  return Object.values(snapshot.weeklyStaff).some((weekStaff) => Array.isArray(weekStaff) && weekStaff.length > 0);
+}
+
+function hasLocalTurniData() {
+  const currentWeek = document.getElementById("weekInput")?.value || "";
+  const currentWeekKey = "capriBluTurniStaffWeekV1-" + currentWeek;
+  return Boolean(
+    localStorage.getItem(currentWeekKey) ||
+    localStorage.getItem("capriBluTurniStaffV5") ||
+    localStorage.getItem(officialSaveLoadedAtKey)
+  );
+}
+
+async function fetchOfficialSnapshot() {
+  const response = await fetch(officialSavePath + "?v=" + Date.now(), { cache: "no-store" });
+  if (!response.ok) throw new Error("HTTP " + response.status);
+  return response.json();
+}
+
+function applyOfficialSnapshot(snapshot) {
+  localStorage.removeItem(localChangesAfterOfficialKey);
+  restoreSession(snapshot);
+  localStorage.setItem(officialSaveLoadedAtKey, new Date().toISOString());
+  localStorage.removeItem(localChangesAfterOfficialKey);
+  updateSaveSourceStatus();
+}
+
 const saveStaffBeforeOfficialStatus = saveStaff;
 saveStaff = function () {
   saveStaffBeforeOfficialStatus();
@@ -50,13 +80,10 @@ async function loadOfficialSave() {
   try {
     setAutosaveStatus("Carico salvataggio ufficiale...");
 
-    const response = await fetch(officialSavePath + "?v=" + Date.now(), { cache: "no-store" });
-    if (!response.ok) throw new Error("HTTP " + response.status);
-
-    const snapshot = await response.json();
-    if (!snapshot || !snapshot.weeklyStaff || !snapshot.requests) {
-      alert("Il file save/turni-attuali.json non contiene una sessione valida.");
-      setAutosaveStatus("Salvataggio ufficiale non valido");
+    const snapshot = await fetchOfficialSnapshot();
+    if (!hasUsefulOfficialSnapshot(snapshot)) {
+      alert("Il file save/turni-attuali.json è vuoto o non contiene turni salvati.");
+      setAutosaveStatus("Salvataggio ufficiale vuoto");
       return;
     }
 
@@ -66,11 +93,7 @@ async function loadOfficialSave() {
       return;
     }
 
-    localStorage.removeItem(localChangesAfterOfficialKey);
-    restoreSession(snapshot);
-    localStorage.setItem(officialSaveLoadedAtKey, new Date().toISOString());
-    localStorage.removeItem(localChangesAfterOfficialKey);
-    updateSaveSourceStatus();
+    applyOfficialSnapshot(snapshot);
     setAutosaveStatus("Salvataggio ufficiale caricato");
   } catch (error) {
     console.error(error);
@@ -79,5 +102,29 @@ async function loadOfficialSave() {
   }
 }
 
+async function autoLoadOfficialSaveIfNeeded() {
+  if (hasLocalTurniData()) {
+    updateSaveSourceStatus();
+    return;
+  }
+
+  try {
+    setAutosaveStatus("Cerco salvataggio ufficiale...");
+    const snapshot = await fetchOfficialSnapshot();
+
+    if (!hasUsefulOfficialSnapshot(snapshot)) {
+      setAutosaveStatus("Nessun salvataggio ufficiale trovato");
+      updateSaveSourceStatus();
+      return;
+    }
+
+    applyOfficialSnapshot(snapshot);
+    setAutosaveStatus("Salvataggio ufficiale caricato automaticamente");
+  } catch (error) {
+    console.warn("Salvataggio ufficiale non caricato automaticamente", error);
+    updateSaveSourceStatus();
+  }
+}
+
 loadOfficialSaveBtn?.addEventListener("click", loadOfficialSave);
-updateSaveSourceStatus();
+autoLoadOfficialSaveIfNeeded();
