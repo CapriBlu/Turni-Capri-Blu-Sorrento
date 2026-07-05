@@ -1,23 +1,24 @@
 function prepareRequestBadges() {
   document.querySelectorAll(".request-badge").forEach((badge) => {
-    const originalType = badge.dataset.originalType || badge.textContent.trim() || "Richiesta";
+    if (badge.dataset.prepared === "true") return;
+
+    const originalType = badge.textContent.trim() || "Richiesta";
     const note = badge.dataset.note || badge.getAttribute("title") || "Nessuna nota";
 
     badge.dataset.originalType = originalType;
     badge.dataset.note = note;
     badge.textContent = "Richiesta";
     badge.title = note;
-    badge.setAttribute("aria-label", `Richiesta: ${note}`);
+    badge.dataset.prepared = "true";
+    badge.setAttribute("aria-label", "Richiesta: " + note);
   });
 }
 
-const badgeObserver = new MutationObserver(() => {
-  prepareRequestBadges();
-});
+document.addEventListener("click", (event) => {
+  const badge = event.target.closest(".request-badge");
+  if (!badge) return;
 
-badgeObserver.observe(document.body, {
-  childList: true,
-  subtree: true
+  prepareRequestBadges();
 });
 
 prepareRequestBadges();
