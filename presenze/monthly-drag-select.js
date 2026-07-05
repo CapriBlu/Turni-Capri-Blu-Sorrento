@@ -161,10 +161,20 @@ document.addEventListener("pointerup", () => {
 });
 
 table.addEventListener("click", (e) => {
-  if (!mBlockClick) return;
+  const cell = e.target.closest(".presence-cell");
+  if (!cell) return;
   e.preventDefault();
   e.stopImmediatePropagation();
   mBlockClick = false;
+}, true);
+
+table.addEventListener("dblclick", (e) => {
+  const cell = e.target.closest(".presence-cell");
+  if (!cell) return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  mSingle(cell);
+  if (typeof openPresenceMenu === "function") openPresenceMenu(cell);
 }, true);
 
 table.addEventListener("contextmenu", (e) => {
