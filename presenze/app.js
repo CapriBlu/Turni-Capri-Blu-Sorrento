@@ -1,4 +1,4 @@
-const staffNames = [
+const defaultPresenceStaffNames = [
   "Pawel",
   "Rafaele",
   "Gaetano",
@@ -13,6 +13,8 @@ const staffNames = [
   "Natalia",
   "Carmine"
 ];
+
+let staffNames = window.CapriBluStaff?.getStaffNames() || defaultPresenceStaffNames.slice();
 
 const dayKeys = ["lunedi", "martedi", "mercoledi", "giovedi", "venerdi", "sabato", "domenica"];
 const classMap = {
@@ -39,6 +41,10 @@ let activeCell = null;
 let selectedCell = null;
 let menuBackdrop = null;
 let copiedRecord = null;
+
+function refreshStaffNames() {
+  staffNames = window.CapriBluStaff?.getStaffNames() || defaultPresenceStaffNames.slice();
+}
 
 function currentMonthValue() {
   const now = new Date();
@@ -211,6 +217,7 @@ function getCellRecord(cell) {
 }
 
 function renderTable() {
+  refreshStaffNames();
   const manualData = readData();
   const parts = monthInput.value.split("-");
   const year = Number(parts[0]);
