@@ -1,3 +1,5 @@
+const quickTimes = ["9", "10", "12", "15:30", "16", "17", "19"];
+
 function setFastChoice(group, value) {
   const hiddenInput = document.getElementById(group + "Status");
   if (!hiddenInput) return;
@@ -9,9 +11,35 @@ function setFastChoice(group, value) {
   });
 }
 
+function setQuickTime(group, value) {
+  const input = document.getElementById(group + "Time");
+  if (!input) return;
+
+  input.value = value;
+
+  document.querySelectorAll(`[data-time-group="${group}"]`).forEach((button) => {
+    button.classList.toggle("active", button.dataset.time === value);
+  });
+}
+
+function syncQuickTimes() {
+  ["pranzo", "sera"].forEach((group) => {
+    const input = document.getElementById(group + "Time");
+    const value = input ? input.value : "";
+    document.querySelectorAll(`[data-time-group="${group}"]`).forEach((button) => {
+      button.classList.toggle("active", button.dataset.time === value);
+    });
+  });
+}
+
+function timeButtons(group) {
+  return quickTimes.map((time) => `<button type="button" class="quick-time-btn" data-time-group="${group}" data-time="${time}">${time}</button>`).join("");
+}
+
 function syncFastChoices() {
   setFastChoice("pranzo", document.getElementById("pranzoStatus").value || "riposo");
   setFastChoice("sera", document.getElementById("seraStatus").value || "riposo");
+  syncQuickTimes();
 }
 
 function openShiftMenu(personIndex, dayKey) {
@@ -61,15 +89,10 @@ function createFastShiftEditor() {
             <button type="button" class="quick-choice" data-group="pranzo" data-value="riposo"><strong>R</strong><small>Riposo</small></button>
           </div>
           <label class="fast-time-label" for="pranzoTime">Orario</label>
-          <input id="pranzoTime" class="fast-time-input" type="text" list="pranzoTimeList" placeholder="10:30-15:30" />
-          <datalist id="pranzoTimeList">
-            <option value="10:30-15:30"></option>
-            <option value="11:00-15:30"></option>
-            <option value="11:00-16:00"></option>
-            <option value="12:00-16:00"></option>
-            <option value="15:30"></option>
-            <option value="16"></option>
-          </datalist>
+          <input id="pranzoTime" class="fast-time-input" type="text" placeholder="Scrivi o scegli sotto" />
+          <div class="quick-time-row" aria-label="Orari rapidi apertura">
+            ${timeButtons("pranzo")}
+          </div>
         </div>
 
         <div class="fast-panel serale">
@@ -84,15 +107,10 @@ function createFastShiftEditor() {
             <button type="button" class="quick-choice" data-group="sera" data-value="riposo"><strong>R</strong><small>Riposo</small></button>
           </div>
           <label class="fast-time-label" for="seraTime">Orario</label>
-          <input id="seraTime" class="fast-time-input" type="text" list="seraTimeList" placeholder="18:30-23:30" />
-          <datalist id="seraTimeList">
-            <option value="15:30"></option>
-            <option value="16"></option>
-            <option value="17"></option>
-            <option value="18:00-23:30"></option>
-            <option value="18:30-23:30"></option>
-            <option value="19:00-23:30"></option>
-          </datalist>
+          <input id="seraTime" class="fast-time-input" type="text" placeholder="Scrivi o scegli sotto" />
+          <div class="quick-time-row" aria-label="Orari rapidi sera">
+            ${timeButtons("sera")}
+          </div>
         </div>
       </div>
 
@@ -119,11 +137,21 @@ function createFastShiftEditor() {
     });
   });
 
+  editor.querySelectorAll(".quick-time-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      setQuickTime(button.dataset.timeGroup, button.dataset.time);
+    });
+  });
+
+  document.getElementById("pranzoTime").addEventListener("input", syncQuickTimes);
+  document.getElementById("seraTime").addEventListener("input", syncQuickTimes);
+
   document.getElementById("clearShiftBtn").addEventListener("click", () => {
     document.getElementById("pranzoTime").value = "";
     document.getElementById("seraTime").value = "";
     setFastChoice("pranzo", "riposo");
     setFastChoice("sera", "riposo");
+    syncQuickTimes();
   });
 
   document.getElementById("saveShiftBtn").addEventListener("click", () => {
