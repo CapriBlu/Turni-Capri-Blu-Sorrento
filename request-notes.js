@@ -16,6 +16,7 @@ function prepareRequestBadges() {
 
 let selectedShiftCells = [];
 let anchorShiftCell = null;
+let shiftContextMenu = null;
 
 function clearSelectedShiftCell() {
   selectedShiftCells.forEach((cell) => {
@@ -117,7 +118,125 @@ function buildSelectedCellsText() {
   return rows.join("\n");
 }
 
+function showCopyNotice(message) {
+  const oldNotice = document.getElementById("shiftCopyNotice");
+  if (oldNotice) oldNotice.remove();
+
+  const notice = document.createElement("div");
+  notice.id = "shiftCopyNotice";
+  notice.textContent = message;
+  notice.style.position = "fixed";
+  notice.style.left = "50%";
+  notice.style.bottom = "24px";
+  notice.style.transform = "translateX(-50%)";
+  notice.style.zIndex = "99999";
+  notice.style.padding = "10px 16px";
+  notice.style.borderRadius = "999px";
+  notice.style.background = "#063b7a";
+  notice.style.color = "#ffffff";
+  notice.style.fontWeight = "800";
+  notice.style.boxShadow = "0 8px 22px rgba(0, 0, 0, 0.22)";
+  document.body.appendChild(notice);
+
+  window.setTimeout(() => notice.remove(), 1300);
+}
+
+function copySelectedCellsFromMenu() {
+  const text = buildSelectedCellsText();
+  if (!text) {
+    showCopyNotice("Nessuna cella selezionata");
+    return;
+  }
+
+  const area = document.createElement("textarea");
+  area.value = text;
+  area.setAttribute("readonly", "readonly");
+  area.style.position = "fixed";
+  area.style.left = "-9999px";
+  area.style.top = "0";
+  document.body.appendChild(area);
+  area.select();
+
+  try {
+    document.execCommand("copy");
+    showCopyNotice("Selezione copiata");
+  } catch (error) {
+    showCopyNotice("Usa CTRL + C");
+  }
+
+  area.remove();
+}
+
+function hideShiftContextMenu() {
+  if (!shiftContextMenu) return;
+  shiftContextMenu.remove();
+  shiftContextMenu = null;
+}
+
+function createMenuButton(label, action) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.textContent = label;
+  button.style.display = "block";
+  button.style.width = "100%";
+  button.style.padding = "10px 14px";
+  button.style.border = "0";
+  button.style.background = "#ffffff";
+  button.style.color = "#063b7a";
+  button.style.textAlign = "left";
+  button.style.fontSize = "0.95rem";
+  button.style.fontWeight = "800";
+  button.style.cursor = "pointer";
+  button.addEventListener("mouseenter", () => {
+    button.style.background = "#eaf3ff";
+  });
+  button.addEventListener("mouseleave", () => {
+    button.style.background = "#ffffff";
+  });
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    hideShiftContextMenu();
+    action();
+  });
+  return button;
+}
+
+function showShiftContextMenu(x, y) {
+  hideShiftContextMenu();
+
+  shiftContextMenu = document.createElement("div");
+  shiftContextMenu.className = "shift-context-menu";
+  shiftContextMenu.style.position = "fixed";
+  shiftContextMenu.style.left = x + "px";
+  shiftContextMenu.style.top = y + "px";
+  shiftContextMenu.style.zIndex = "99998";
+  shiftContextMenu.style.minWidth = "185px";
+  shiftContextMenu.style.padding = "6px";
+  shiftContextMenu.style.border = "1px solid #b8d7ff";
+  shiftContextMenu.style.borderRadius = "12px";
+  shiftContextMenu.style.background = "#ffffff";
+  shiftContextMenu.style.boxShadow = "0 14px 32px rgba(0, 34, 79, 0.22)";
+
+  shiftContextMenu.appendChild(createMenuButton("Copia selezione", copySelectedCellsFromMenu));
+  shiftContextMenu.appendChild(createMenuButton("Deseleziona", () => {
+    clearSelectedShiftCell();
+    anchorShiftCell = null;
+  }));
+
+  document.body.appendChild(shiftContextMenu);
+
+  const rect = shiftContextMenu.getBoundingClientRect();
+  const left = Math.min(x, window.innerWidth - rect.width - 8);
+  const top = Math.min(y, window.innerHeight - rect.height - 8);
+  shiftContextMenu.style.left = Math.max(8, left) + "px";
+  shiftContextMenu.style.top = Math.max(8, top) + "px";
+}
+
 document.addEventListener("click", (event) => {
+  if (event.target.closest(".shift-context-menu")) return;
+  hideShiftContextMenu();
+
   const badge = event.target.closest(".request-badge");
   if (badge) {
     prepareRequestBadges();
@@ -136,6 +255,24 @@ document.addEventListener("click", (event) => {
   } else {
     selectShiftCell(cell);
   }
+}, true);
+
+document.addEventListener("contextmenu", (event) => {
+  const cell = event.target.closest(".shift-cell");
+  if (!cell) {
+    hideShiftContextMenu();
+    return;
+  }
+
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation();
+
+  if (!selectedShiftCells.includes(cell)) {
+    selectShiftCell(cell);
+  }
+
+  showShiftContextMenu(event.clientX, event.clientY);
 }, true);
 
 document.addEventListener("copy", (event) => {
@@ -158,6 +295,7 @@ document.addEventListener("dblclick", (event) => {
   const dayKey = cell.dataset.day;
   clearSelectedShiftCell();
   anchorShiftCell = null;
+  hideShiftContextMenu();
 
   if (!Number.isNaN(personIndex) && dayKey && typeof openShiftMenu === "function") {
     openShiftMenu(personIndex, dayKey);
@@ -168,7 +306,11 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     clearSelectedShiftCell();
     anchorShiftCell = null;
+    hideShiftContextMenu();
   }
 });
+
+window.addEventListener("scroll", hideShiftContextMenu, true);
+window.addEventListener("resize", hideShiftContextMenu);
 
 prepareRequestBadges();
