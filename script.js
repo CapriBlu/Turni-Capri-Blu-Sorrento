@@ -386,6 +386,23 @@ function addRequest() {
   renderTable();
 }
 
+function addPerson() {
+  const typedName = window.prompt("Nome nuova persona:", "Nuovo staff");
+  if (typedName === null) return;
+
+  const nome = typedName.trim() || "Nuovo staff";
+
+  staff.push({
+    nome,
+    turni: createEmptyWeek()
+  });
+
+  saveStaff();
+  populateRequestNames();
+  renderRequests();
+  renderTable();
+}
+
 function getRequestsFor(name, dateISO) {
   return requests.filter((request) => request.name === name && request.date === dateISO);
 }
@@ -501,6 +518,7 @@ weekInput.addEventListener("input", () => {
   renderTable();
 });
 
+document.getElementById("addPersonBtn")?.addEventListener("click", addPerson);
 document.getElementById("addRequestBtn").addEventListener("click", addRequest);
 
 requestsBody.addEventListener("click", (event) => {
