@@ -1,0 +1,36 @@
+.top-card .department-tabs {
+  flex: 1 1 auto;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: none;
+}
+
+.top-card .department-tab {
+  min-width: 150px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #073b7a;
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.top-card .department-tab.active {
+  background: #ffffff;
+  color: #073b7a;
+  border-color: #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 20, 60, 0.26);
+}
+
+@media (max-width: 760px) {
+  .top-card .department-tabs {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .top-card .department-tab {
+    width: 100%;
+  }
+}
