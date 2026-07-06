@@ -1,9 +1,10 @@
 {
   "app": "Capri Blu Turni",
   "saveType": "official",
-  "version": 2,
-  "savedAt": "2026-07-05T23:36:32.131Z",
+  "version": 3,
+  "savedAt": "2026-07-06T00:57:44.761Z",
   "currentWeek": "2026-W28",
+  "kitchenCurrentWeek": "2026-W28",
   "lastPublishedWeek": "2026-W28",
   "staff": [
     {
@@ -1302,5 +1303,108 @@
       }
     ]
   },
-  "requests": []
+  "kitchenWeekly": {
+    "2026-W28": {
+      "LUCA": {
+        "lunedi": "S",
+        "martedi": "S",
+        "mercoledi": "S",
+        "giovedi": "S",
+        "venerdi": "S",
+        "sabato": "",
+        "domenica": ""
+      },
+      "MARIO": {
+        "lunedi": "M",
+        "martedi": "M",
+        "mercoledi": "M",
+        "giovedi": "M",
+        "venerdi": "M",
+        "sabato": "",
+        "domenica": ""
+      },
+      "IGOR": {
+        "lunedi": "M/S",
+        "martedi": "",
+        "mercoledi": "",
+        "giovedi": "",
+        "venerdi": "",
+        "sabato": "",
+        "domenica": ""
+      },
+      "CRISTIAN": {
+        "lunedi": "",
+        "martedi": "",
+        "mercoledi": "",
+        "giovedi": "",
+        "venerdi": "",
+        "sabato": "",
+        "domenica": ""
+      },
+      "PIETRO": {
+        "lunedi": "",
+        "martedi": "",
+        "mercoledi": "",
+        "giovedi": "",
+        "venerdi": "",
+        "sabato": "",
+        "domenica": ""
+      },
+      "ANTONINO": {
+        "lunedi": "",
+        "martedi": "",
+        "mercoledi": "",
+        "giovedi": "",
+        "venerdi": "",
+        "sabato": "",
+        "domenica": ""
+      },
+      "Lavapiatti": {
+        "lunedi": "",
+        "martedi": "",
+        "mercoledi": "",
+        "giovedi": "",
+        "venerdi": "",
+        "sabato": "",
+        "domenica": ""
+      },
+      "AJITH": {
+        "lunedi": "",
+        "martedi": "",
+        "mercoledi": "",
+        "giovedi": "",
+        "venerdi": "",
+        "sabato": "",
+        "domenica": ""
+      },
+      "DIEGO": {
+        "lunedi": "",
+        "martedi": "",
+        "mercoledi": "",
+        "giovedi": "",
+        "venerdi": "",
+        "sabato": "",
+        "domenica": ""
+      },
+      "Saja": {
+        "lunedi": "",
+        "martedi": "",
+        "mercoledi": "",
+        "giovedi": "",
+        "venerdi": "",
+        "sabato": "",
+        "domenica": ""
+      }
+    }
+  },
+  "kitchenMonthlyPublished": {},
+  "requests": [
+    {
+      "id": "d1d01729-b7be-4513-86d6-f1fae1149640",
+      "name": "Pawel",
+      "date": "2026-07-09",
+      "type": "Riposo",
+      "note": ""
+    }
+  ]
 }
