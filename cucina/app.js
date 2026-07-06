@@ -1,6 +1,7 @@
 const weekKey = "capriBluTurniCucinaWeekSelectedV1";
 const weekStoragePrefix = "capriBluTurniCucinaWeekV1-";
 const publishedWeekStoragePrefix = "capriBluTurniCucinaPublishedWeekV1-";
+const copiedKitchenShiftKey = "capriBluTurniCucinaCopiedShiftV1";
 
 const dayKeys = ["lunedi", "martedi", "mercoledi", "giovedi", "venerdi", "sabato", "domenica"];
 const dayLabels = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
@@ -24,6 +25,15 @@ const autosaveStatus = document.getElementById("autosaveStatus");
 const sendMonthlyBtn = document.getElementById("sendMonthlyBtn");
 const printBtn = document.getElementById("printBtn");
 const resetBtn = document.getElementById("resetBtn");
+
+let selectedCell = null;
+let activeCell = null;
+let menuBackdrop = null;
+let copiedShift = null;
+let isDragging = false;
+let dragStarted = false;
+let dragAnchor = null;
+const multiSelectedKeys = new Set();
 
 function safeJsonParse(value, fallback, keyToRemove = "") {
   try {
@@ -115,13 +125,81 @@ function classForValue(value) {
   return "";
 }
 
-function nextValue(value) {
-  const index = shiftOptions.indexOf(value);
-  return shiftOptions[(index + 1) % shiftOptions.length];
+function getCellKey(cell) {
+  return cell.dataset.name + "-" + cell.dataset.day;
+}
+
+function cellFromKey(key) {
+  const [name, day] = key.split("-");
+  return table.querySelector(`.shift-cell[data-name="${CSS.escape(name)}"][data-day="${CSS.escape(day)}"]`);
+}
+
+function clearSelection() {
+  table.querySelectorAll(".selected-cell, .multi-selected").forEach((cell) => {
+    cell.classList.remove("selected-cell", "multi-selected");
+  });
+  selectedCell = null;
+  multiSelectedKeys.clear();
+}
+
+function selectCell(cell, keepMulti = false) {
+  if (!keepMulti) clearSelection();
+  selectedCell = cell;
+  if (cell) {
+    cell.classList.add("selected-cell");
+    multiSelectedKeys.add(getCellKey(cell));
+  }
+}
+
+function applyMultiSelection() {
+  table.querySelectorAll(".multi-selected").forEach((cell) => cell.classList.remove("multi-selected"));
+  multiSelectedKeys.forEach((key) => {
+    const cell = cellFromKey(key);
+    if (cell) cell.classList.add("multi-selected");
+  });
+}
+
+function selectRange(anchor, target) {
+  if (!anchor || !target) return;
+  const rows = Array.from(table.querySelectorAll("tr")).filter((row) => row.querySelector(".shift-cell"));
+  const anchorRow = rows.findIndex((row) => row.contains(anchor));
+  const targetRow = rows.findIndex((row) => row.contains(target));
+  const anchorDay = dayKeys.indexOf(anchor.dataset.day);
+  const targetDay = dayKeys.indexOf(target.dataset.day);
+  if (anchorRow < 0 || targetRow < 0 || anchorDay < 0 || targetDay < 0) return;
+
+  const rowStart = Math.min(anchorRow, targetRow);
+  const rowEnd = Math.max(anchorRow, targetRow);
+  const dayStart = Math.min(anchorDay, targetDay);
+  const dayEnd = Math.max(anchorDay, targetDay);
+
+  multiSelectedKeys.clear();
+  for (let rowIndex = rowStart; rowIndex <= rowEnd; rowIndex += 1) {
+    const cells = rows[rowIndex].querySelectorAll(".shift-cell");
+    for (let dayIndex = dayStart; dayIndex <= dayEnd; dayIndex += 1) {
+      const cell = cells[dayIndex];
+      if (cell) multiSelectedKeys.add(getCellKey(cell));
+    }
+  }
+  selectedCell = target;
+  applyMultiSelection();
+}
+
+function selectedCells() {
+  const cells = [];
+  multiSelectedKeys.forEach((key) => {
+    const cell = cellFromKey(key);
+    if (cell) cells.push(cell);
+  });
+  if (!cells.length && selectedCell) cells.push(selectedCell);
+  return cells;
 }
 
 function renderTable() {
   const data = readData();
+  const oldSelected = selectedCell ? getCellKey(selectedCell) : "";
+  const oldMulti = new Set(multiSelectedKeys);
+
   let html = "<thead><tr><th>Staff</th>";
   dayLabels.forEach((label) => {
     html += "<th>" + label + "</th>";
@@ -142,16 +220,120 @@ function renderTable() {
 
   html += "</tbody>";
   table.innerHTML = html;
+
+  multiSelectedKeys.clear();
+  oldMulti.forEach((key) => {
+    if (cellFromKey(key)) multiSelectedKeys.add(key);
+  });
+  applyMultiSelection();
+  if (oldSelected) {
+    const restored = cellFromKey(oldSelected);
+    if (restored) {
+      selectedCell = restored;
+      restored.classList.add("selected-cell");
+    }
+  }
 }
 
-function saveCell(cell, value) {
+function saveCells(cells, value) {
+  if (!cells.length) return;
   const data = readData();
-  const name = cell.dataset.name;
-  const day = cell.dataset.day;
-  if (!data[name]) data[name] = {};
-  data[name][day] = value;
+  cells.forEach((cell) => {
+    const name = cell.dataset.name;
+    const day = cell.dataset.day;
+    if (!data[name]) data[name] = {};
+    data[name][day] = value;
+  });
   saveData(data);
   renderTable();
+}
+
+function copySelection() {
+  const cell = selectedCell || selectedCells()[0];
+  if (!cell) return;
+  copiedShift = cell.dataset.value || "";
+  localStorage.setItem(copiedKitchenShiftKey, copiedShift);
+  setAutosaveStatus("Copiato: " + (copiedShift || "vuoto"));
+}
+
+function pasteSelection() {
+  if (copiedShift === null || copiedShift === undefined) {
+    copiedShift = localStorage.getItem(copiedKitchenShiftKey) || "";
+  }
+  const cells = selectedCells();
+  if (!cells.length) return;
+  saveCells(cells, copiedShift);
+  setAutosaveStatus("Incollato: " + (copiedShift || "vuoto"));
+}
+
+function clearSelectionValues() {
+  const cells = selectedCells();
+  if (!cells.length) return;
+  saveCells(cells, "");
+}
+
+function createMenu() {
+  menuBackdrop = document.createElement("div");
+  menuBackdrop.className = "kitchen-menu-backdrop";
+  menuBackdrop.innerHTML = `
+    <div class="kitchen-menu-panel" role="dialog" aria-modal="true">
+      <h2>Seleziona turno</h2>
+      <p id="kitchenMenuSubtitle">Scegli una voce</p>
+      <div class="kitchen-menu-grid">
+        <button type="button" data-value="M" class="menu-m">M<br><small>Mattina</small></button>
+        <button type="button" data-value="S" class="menu-s">S<br><small>Sera</small></button>
+        <button type="button" data-value="M/S" class="menu-ms">M/S<br><small>Spezzato</small></button>
+        <button type="button" data-value="Off" class="menu-off">Off<br><small>Riposo</small></button>
+        <button type="button" data-value="12/chius" class="menu-chius">12/chius<br><small>Fino chiusura</small></button>
+        <button type="button" data-value="" class="menu-empty">Vuoto<br><small>Cancella</small></button>
+      </div>
+      <div class="kitchen-menu-actions">
+        <button type="button" id="kitchenCopyBtn">Copia</button>
+        <button type="button" id="kitchenPasteBtn">Incolla</button>
+      </div>
+      <button type="button" id="kitchenMenuClose" class="kitchen-menu-close">Annulla</button>
+    </div>
+  `;
+
+  document.body.appendChild(menuBackdrop);
+  menuBackdrop.addEventListener("click", (event) => {
+    if (event.target === menuBackdrop) closeMenu();
+  });
+
+  document.getElementById("kitchenMenuClose").addEventListener("click", closeMenu);
+  document.getElementById("kitchenCopyBtn").addEventListener("click", () => {
+    copySelection();
+    closeMenu();
+  });
+  document.getElementById("kitchenPasteBtn").addEventListener("click", () => {
+    pasteSelection();
+    closeMenu();
+  });
+
+  menuBackdrop.querySelectorAll("[data-value]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const cells = selectedCells();
+      saveCells(cells, button.dataset.value);
+      closeMenu();
+    });
+  });
+}
+
+function openMenu(cell) {
+  activeCell = cell;
+  if (!multiSelectedKeys.has(getCellKey(cell))) selectCell(cell);
+  if (!menuBackdrop) createMenu();
+  const count = selectedCells().length;
+  const subtitle = document.getElementById("kitchenMenuSubtitle");
+  if (subtitle) {
+    subtitle.textContent = count > 1 ? count + " caselle selezionate" : cell.dataset.name + " - " + cell.dataset.day;
+  }
+  menuBackdrop.classList.add("open");
+}
+
+function closeMenu() {
+  if (menuBackdrop) menuBackdrop.classList.remove("open");
+  activeCell = null;
 }
 
 function sendToMonthly() {
@@ -166,23 +348,54 @@ updateWeekRange();
 renderTable();
 setAutosaveStatus("Pronto");
 
-table.addEventListener("click", (event) => {
+table.addEventListener("pointerdown", (event) => {
   const cell = event.target.closest(".shift-cell");
   if (!cell) return;
-  saveCell(cell, nextValue(cell.dataset.value || ""));
+  isDragging = true;
+  dragStarted = false;
+  dragAnchor = cell;
+  selectCell(cell);
+});
+
+table.addEventListener("pointerover", (event) => {
+  if (!isDragging || !dragAnchor) return;
+  const cell = event.target.closest(".shift-cell");
+  if (!cell || cell === dragAnchor) return;
+  dragStarted = true;
+  selectRange(dragAnchor, cell);
+});
+
+document.addEventListener("pointerup", () => {
+  isDragging = false;
+  dragAnchor = null;
+});
+
+table.addEventListener("dblclick", (event) => {
+  const cell = event.target.closest(".shift-cell");
+  if (!cell) return;
+  openMenu(cell);
 });
 
 table.addEventListener("contextmenu", (event) => {
   const cell = event.target.closest(".shift-cell");
   if (!cell) return;
   event.preventDefault();
-  const value = prompt("Inserisci turno: M, S, M/S, Off, 12/chius", cell.dataset.value || "");
-  if (value === null) return;
-  saveCell(cell, value.trim());
+  openMenu(cell);
+});
+
+table.addEventListener("click", (event) => {
+  const cell = event.target.closest(".shift-cell");
+  if (!cell) return;
+  if (dragStarted) {
+    dragStarted = false;
+    return;
+  }
+  selectCell(cell);
 });
 
 weekInput.addEventListener("input", () => {
   localStorage.setItem(weekKey, weekInput.value);
+  clearSelection();
   updateWeekRange();
   renderTable();
 });
@@ -192,6 +405,26 @@ printBtn.addEventListener("click", () => window.print());
 resetBtn.addEventListener("click", () => {
   if (!confirm("Cancellare i turni cucina/pizzeria di questa settimana?")) return;
   localStorage.removeItem(storageKey());
+  clearSelection();
   renderTable();
   setAutosaveStatus("Settimana resettata");
+});
+
+document.addEventListener("keydown", (event) => {
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "c") {
+    event.preventDefault();
+    copySelection();
+  }
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "v") {
+    event.preventDefault();
+    pasteSelection();
+  }
+  if (event.key === "Delete" || event.key === "Backspace") {
+    event.preventDefault();
+    clearSelectionValues();
+  }
+  if (event.key === "Enter" && selectedCell) {
+    event.preventDefault();
+    openMenu(selectedCell);
+  }
 });
