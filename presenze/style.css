@@ -69,33 +69,6 @@ input, button, .link-btn {
   font-size: .9rem;
 }
 
-.department-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 8px 0 6px;
-  padding: 8px;
-  border-radius: 14px;
-  background: white;
-  box-shadow: 0 8px 22px rgba(0,45,100,.08);
-}
-
-.department-tab {
-  width: auto;
-  min-width: 150px;
-  border-radius: 999px;
-  background: #eef6ff;
-  color: #073b7a;
-  cursor: pointer;
-}
-
-.department-tab.active {
-  background: linear-gradient(135deg, #073b7a, #0b63b6);
-  color: #ffffff;
-  border-color: #073b7a;
-  box-shadow: 0 8px 18px rgba(0,45,100,.22);
-}
-
 .toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -220,6 +193,18 @@ input, button, .link-btn {
 
 .presence-table tr:nth-child(even) td:not(:first-child) {
   background: #f0f7ff;
+}
+
+.presence-table .section-row td {
+  position: static;
+  background: linear-gradient(135deg, #073b7a, #0b63b6) !important;
+  color: white !important;
+  text-align: left !important;
+  font-weight: 950;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  padding-left: 10px;
+  height: 32px;
 }
 
 .presence-table .selected-cell,
@@ -349,26 +334,12 @@ input, button, .link-btn {
 }
 
 @media (max-width: 760px) {
-  .top-card {
-    display: grid;
-  }
-
-  .month-box {
-    min-width: 100%;
-  }
-
-  .department-tabs {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  .department-tab {
-    width: 100%;
-  }
+  .top-card { display: grid; }
+  .month-box { min-width: 100%; }
 }
 
 @media print {
-  .top-card, .toolbar, .legend, .presence-menu-backdrop, .department-tabs { display: none; }
+  .top-card, .toolbar, .legend, .presence-menu-backdrop { display: none; }
   .page { padding: 0; }
   .presence-table { min-width: 100%; font-size: 8px; }
   .presence-table th, .presence-table td { height: 22px; padding: 1px; }
