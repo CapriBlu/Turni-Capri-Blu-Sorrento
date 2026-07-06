@@ -2,7 +2,7 @@
   "app": "Capri Blu Turni",
   "saveType": "official",
   "version": 3,
-  "savedAt": "2026-07-06T00:57:44.761Z",
+  "savedAt": "2026-07-06T01:12:00.479Z",
   "currentWeek": "2026-W28",
   "kitchenCurrentWeek": "2026-W28",
   "lastPublishedWeek": "2026-W28",
@@ -1306,44 +1306,44 @@
   "kitchenWeekly": {
     "2026-W28": {
       "LUCA": {
-        "lunedi": "S",
-        "martedi": "S",
-        "mercoledi": "S",
-        "giovedi": "S",
-        "venerdi": "S",
-        "sabato": "",
-        "domenica": ""
+        "lunedi": "M/S",
+        "martedi": "M/S",
+        "mercoledi": "M/S",
+        "giovedi": "Off",
+        "venerdi": "M/S",
+        "sabato": "M/S",
+        "domenica": "S"
       },
       "MARIO": {
-        "lunedi": "M",
-        "martedi": "M",
-        "mercoledi": "M",
-        "giovedi": "M",
-        "venerdi": "M",
-        "sabato": "",
-        "domenica": ""
+        "lunedi": "S",
+        "martedi": "Off",
+        "mercoledi": "S",
+        "giovedi": "M/S",
+        "venerdi": "M/S",
+        "sabato": "S",
+        "domenica": "M/S"
       },
       "IGOR": {
-        "lunedi": "M/S",
-        "martedi": "",
-        "mercoledi": "",
-        "giovedi": "",
-        "venerdi": "",
-        "sabato": "",
-        "domenica": ""
+        "lunedi": "Off",
+        "martedi": "S",
+        "mercoledi": "M/S",
+        "giovedi": "M/S",
+        "venerdi": "S",
+        "sabato": "M/S",
+        "domenica": "M/S"
       },
       "CRISTIAN": {
         "lunedi": "",
         "martedi": "",
         "mercoledi": "",
-        "giovedi": "",
+        "giovedi": "S",
         "venerdi": "",
-        "sabato": "",
-        "domenica": ""
+        "sabato": "S",
+        "domenica": "S"
       },
       "PIETRO": {
-        "lunedi": "",
-        "martedi": "",
+        "lunedi": "Pietro",
+        "martedi": "Pietro",
         "mercoledi": "",
         "giovedi": "",
         "venerdi": "",
@@ -1351,53 +1351,146 @@
         "domenica": ""
       },
       "ANTONINO": {
-        "lunedi": "",
-        "martedi": "",
-        "mercoledi": "",
-        "giovedi": "",
-        "venerdi": "",
-        "sabato": "",
-        "domenica": ""
+        "lunedi": "M",
+        "martedi": "M",
+        "mercoledi": "Off",
+        "giovedi": "M",
+        "venerdi": "M",
+        "sabato": "M",
+        "domenica": "M"
       },
       "Lavapiatti": {
-        "lunedi": "",
-        "martedi": "",
-        "mercoledi": "",
-        "giovedi": "",
-        "venerdi": "",
-        "sabato": "",
-        "domenica": ""
+        "lunedi": "Off",
+        "martedi": "M/S",
+        "mercoledi": "M/S",
+        "giovedi": "M/S",
+        "venerdi": "M/S",
+        "sabato": "M/S",
+        "domenica": "M/S"
       },
       "AJITH": {
-        "lunedi": "",
-        "martedi": "",
-        "mercoledi": "",
-        "giovedi": "",
-        "venerdi": "",
-        "sabato": "",
-        "domenica": ""
+        "lunedi": "S",
+        "martedi": "S",
+        "mercoledi": "S",
+        "giovedi": "Off",
+        "venerdi": "S",
+        "sabato": "S",
+        "domenica": "S"
       },
       "DIEGO": {
-        "lunedi": "",
-        "martedi": "",
-        "mercoledi": "",
-        "giovedi": "",
-        "venerdi": "",
-        "sabato": "",
-        "domenica": ""
+        "lunedi": "M/S",
+        "martedi": "S",
+        "mercoledi": "M/S",
+        "giovedi": "M/S",
+        "venerdi": "Off",
+        "sabato": "S",
+        "domenica": "S"
       },
       "Saja": {
-        "lunedi": "",
-        "martedi": "",
-        "mercoledi": "",
-        "giovedi": "",
-        "venerdi": "",
-        "sabato": "",
-        "domenica": ""
+        "lunedi": "Off",
+        "martedi": "12/chius",
+        "mercoledi": "M/S",
+        "giovedi": "12/chius",
+        "venerdi": "12/chius",
+        "sabato": "12/chius",
+        "domenica": "12/chius"
       }
     }
   },
-  "kitchenMonthlyPublished": {},
+  "kitchenMonthlyPublished": {
+    "2026-W28": {
+      "LUCA": {
+        "lunedi": "M/S",
+        "martedi": "M/S",
+        "mercoledi": "M/S",
+        "giovedi": "Off",
+        "venerdi": "M/S",
+        "sabato": "M/S",
+        "domenica": "S"
+      },
+      "MARIO": {
+        "lunedi": "S",
+        "martedi": "Off",
+        "mercoledi": "S",
+        "giovedi": "M/S",
+        "venerdi": "M/S",
+        "sabato": "S",
+        "domenica": "M/S"
+      },
+      "IGOR": {
+        "lunedi": "Off",
+        "martedi": "S",
+        "mercoledi": "M/S",
+        "giovedi": "M/S",
+        "venerdi": "S",
+        "sabato": "M/S",
+        "domenica": "M/S"
+      },
+      "CRISTIAN": {
+        "lunedi": "",
+        "martedi": "",
+        "mercoledi": "",
+        "giovedi": "S",
+        "venerdi": "",
+        "sabato": "S",
+        "domenica": "S"
+      },
+      "PIETRO": {
+        "lunedi": "Pietro",
+        "martedi": "Pietro",
+        "mercoledi": "",
+        "giovedi": "",
+        "venerdi": "",
+        "sabato": "",
+        "domenica": ""
+      },
+      "ANTONINO": {
+        "lunedi": "M",
+        "martedi": "M",
+        "mercoledi": "Off",
+        "giovedi": "M",
+        "venerdi": "M",
+        "sabato": "M",
+        "domenica": "M"
+      },
+      "Lavapiatti": {
+        "lunedi": "Off",
+        "martedi": "M/S",
+        "mercoledi": "M/S",
+        "giovedi": "M/S",
+        "venerdi": "M/S",
+        "sabato": "M/S",
+        "domenica": "M/S"
+      },
+      "AJITH": {
+        "lunedi": "S",
+        "martedi": "S",
+        "mercoledi": "S",
+        "giovedi": "Off",
+        "venerdi": "S",
+        "sabato": "S",
+        "domenica": "S"
+      },
+      "DIEGO": {
+        "lunedi": "M/S",
+        "martedi": "S",
+        "mercoledi": "M/S",
+        "giovedi": "M/S",
+        "venerdi": "Off",
+        "sabato": "S",
+        "domenica": "S"
+      },
+      "Saja": {
+        "lunedi": "Off",
+        "martedi": "12/chius",
+        "mercoledi": "M/S",
+        "giovedi": "12/chius",
+        "venerdi": "12/chius",
+        "sabato": "12/chius",
+        "domenica": "12/chius"
+      }
+    }
+  },
   "requests": [
     {
       "id": "d1d01729-b7be-4513-86d6-f1fae1149640",
