@@ -5,17 +5,10 @@ const copiedKitchenShiftKey = "capriBluTurniCucinaCopiedShiftV1";
 
 const dayKeys = ["lunedi", "martedi", "mercoledi", "giovedi", "venerdi", "sabato", "domenica"];
 const dayLabels = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
-const shiftOptions = ["", "M", "S", "M/S", "Off", "12/chius"];
 
 const groups = [
-  {
-    title: "Turni Pizzeria",
-    people: ["LUCA", "MARIO", "IGOR", "CRISTIAN", "PIETRO"]
-  },
-  {
-    title: "Turni Cucina / Lavaggio",
-    people: ["ANTONINO", "Lavapiatti", "AJITH", "DIEGO", "Saja"]
-  }
+  { title: "Turni Pizzeria", people: ["LUCA", "MARIO", "IGOR", "CRISTIAN", "PIETRO"] },
+  { title: "Turni Cucina / Lavaggio", people: ["ANTONINO", "Lavapiatti", "AJITH", "DIEGO", "Saja"] }
 ];
 
 const weekInput = document.getElementById("weekInput");
@@ -27,12 +20,13 @@ const printBtn = document.getElementById("printBtn");
 const resetBtn = document.getElementById("resetBtn");
 
 let selectedCell = null;
-let activeCell = null;
 let menuBackdrop = null;
 let copiedShift = null;
 let isDragging = false;
 let dragStarted = false;
 let dragAnchor = null;
+let dragEndCell = null;
+let suppressNextClick = false;
 const multiSelectedKeys = new Set();
 
 function safeJsonParse(value, fallback, keyToRemove = "") {
@@ -96,13 +90,11 @@ function storageKey() {
 function readData() {
   const saved = localStorage.getItem(storageKey());
   const data = Object.assign(blankData(), safeJsonParse(saved, {}, storageKey()));
-
   groups.forEach((group) => {
     group.people.forEach((name) => {
       data[name] = Object.assign(blankData()[name], data[name] || {});
     });
   });
-
   return data;
 }
 
@@ -182,6 +174,7 @@ function selectRange(anchor, target) {
     }
   }
   selectedCell = target;
+  dragEndCell = target;
   applyMultiSelection();
 }
 
@@ -312,28 +305,24 @@ function createMenu() {
 
   menuBackdrop.querySelectorAll("[data-value]").forEach((button) => {
     button.addEventListener("click", () => {
-      const cells = selectedCells();
-      saveCells(cells, button.dataset.value);
+      saveCells(selectedCells(), button.dataset.value);
       closeMenu();
     });
   });
 }
 
 function openMenu(cell) {
-  activeCell = cell;
+  if (!cell) return;
   if (!multiSelectedKeys.has(getCellKey(cell))) selectCell(cell);
   if (!menuBackdrop) createMenu();
   const count = selectedCells().length;
   const subtitle = document.getElementById("kitchenMenuSubtitle");
-  if (subtitle) {
-    subtitle.textContent = count > 1 ? count + " caselle selezionate" : cell.dataset.name + " - " + cell.dataset.day;
-  }
+  if (subtitle) subtitle.textContent = count > 1 ? count + " caselle selezionate" : cell.dataset.name + " - " + cell.dataset.day;
   menuBackdrop.classList.add("open");
 }
 
 function closeMenu() {
   if (menuBackdrop) menuBackdrop.classList.remove("open");
-  activeCell = null;
 }
 
 function sendToMonthly() {
@@ -354,20 +343,29 @@ table.addEventListener("pointerdown", (event) => {
   isDragging = true;
   dragStarted = false;
   dragAnchor = cell;
+  dragEndCell = cell;
+  suppressNextClick = false;
   selectCell(cell);
 });
 
 table.addEventListener("pointerover", (event) => {
   if (!isDragging || !dragAnchor) return;
   const cell = event.target.closest(".shift-cell");
-  if (!cell || cell === dragAnchor) return;
+  if (!cell || cell === dragEndCell) return;
   dragStarted = true;
+  dragEndCell = cell;
   selectRange(dragAnchor, cell);
 });
 
 document.addEventListener("pointerup", () => {
+  if (isDragging && dragStarted) {
+    suppressNextClick = true;
+    const cellForMenu = dragEndCell || selectedCell;
+    setTimeout(() => openMenu(cellForMenu), 0);
+  }
   isDragging = false;
   dragAnchor = null;
+  dragEndCell = null;
 });
 
 table.addEventListener("dblclick", (event) => {
@@ -386,8 +384,8 @@ table.addEventListener("contextmenu", (event) => {
 table.addEventListener("click", (event) => {
   const cell = event.target.closest(".shift-cell");
   if (!cell) return;
-  if (dragStarted) {
-    dragStarted = false;
+  if (suppressNextClick) {
+    suppressNextClick = false;
     return;
   }
   selectCell(cell);
