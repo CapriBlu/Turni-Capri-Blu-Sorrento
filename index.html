@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="sections.css?v=1" />
 
   <!-- Livello di manutenzione: nuove regole mobile/tablet solo qui -->
-  <link rel="stylesheet" href="responsive.css?v=1" />
+  <link rel="stylesheet" href="responsive.css?v=2" />
 </head>
 <body>
   <main class="page">
@@ -63,6 +63,16 @@
       <span><i class="dot spezzato"></i> Spezzato / M-S</span>
       <span><i class="dot riposo"></i> Riposo / Off</span>
       <span><i class="dot richiesta"></i> Richiesta</span>
+    </section>
+
+    <section class="table-zoom-bar" aria-label="Zoom tabella turni">
+      <span class="zoom-label">Zoom tabella</span>
+      <div class="zoom-actions">
+        <button id="zoomOutBtn" type="button" aria-label="Riduci zoom tabella">−</button>
+        <span id="zoomValue" class="zoom-value">100%</span>
+        <button id="zoomInBtn" type="button" aria-label="Aumenta zoom tabella">+</button>
+        <button id="zoomResetBtn" type="button">Reset</button>
+      </div>
     </section>
 
     <section class="table-card">
@@ -136,5 +146,6 @@
   <script src="autosave-session.js?v=3"></script>
   <script src="official-save.js?v=4"></script>
   <script src="github-sync.js?v=1"></script>
+  <script src="table-zoom.js?v=1"></script>
 </body>
 </html>
