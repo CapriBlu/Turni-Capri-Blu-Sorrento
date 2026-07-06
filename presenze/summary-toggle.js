@@ -5,53 +5,59 @@ function markSummaryColumns() {
   const rows = document.querySelectorAll('#presenceTable tr');
   rows.forEach((row) => {
     const cells = Array.from(row.children);
-    if (cells.length <= summaryColumnCount) return;
     cells.forEach((cell) => cell.classList.remove('summary-column'));
+    if (row.classList.contains('section-row')) return;
+    if (cells.length <= summaryColumnCount) return;
     cells.slice(-summaryColumnCount).forEach((cell) => cell.classList.add('summary-column'));
   });
+}
+
+function getSummaryBar() {
+  return document.querySelector('.presenze-top-left-controls') || document.querySelector('.top-card') || document.querySelector('.toolbar');
 }
 
 function applySummaryState() {
   markSummaryColumns();
   const collapsed = localStorage.getItem(summaryToggleKey) === 'true';
   document.body.classList.toggle('summary-collapsed', collapsed);
-  document.querySelectorAll('#summaryToggleBtn, #summaryFloatingToggleBtn').forEach((btn) => {
+  const btn = document.getElementById('summaryToggleBtn');
+  if (btn) {
     btn.textContent = collapsed ? 'Mostra riepilogo' : 'Nascondi riepilogo';
     btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-  });
+  }
 }
 
-function toggleSummary() {
+function toggleSummary(event) {
+  event?.preventDefault?.();
+  event?.stopPropagation?.();
   const collapsed = localStorage.getItem(summaryToggleKey) === 'true';
   localStorage.setItem(summaryToggleKey, collapsed ? 'false' : 'true');
   applySummaryState();
 }
 
-function setupSummaryToggle() {
-  const toolbar = document.querySelector('.toolbar');
-  const resetBtn = document.getElementById('resetBtn');
+function placeSummaryButton() {
+  const bar = getSummaryBar();
+  if (!bar) return false;
 
-  if (toolbar && !document.getElementById('summaryToggleBtn')) {
-    const btn = document.createElement('button');
+  let btn = document.getElementById('summaryToggleBtn');
+  if (!btn) {
+    btn = document.createElement('button');
     btn.id = 'summaryToggleBtn';
     btn.type = 'button';
     btn.className = 'summary-toggle-btn';
     btn.setAttribute('aria-expanded', 'true');
     btn.addEventListener('click', toggleSummary);
-    toolbar.insertBefore(btn, resetBtn || null);
   }
 
-  if (!document.getElementById('summaryFloatingToggleBtn')) {
-    const floating = document.createElement('button');
-    floating.id = 'summaryFloatingToggleBtn';
-    floating.type = 'button';
-    floating.className = 'summary-floating-toggle-btn';
-    floating.setAttribute('aria-expanded', 'true');
-    floating.addEventListener('click', toggleSummary);
-    document.body.appendChild(floating);
-  }
-
+  if (btn.parentElement !== bar) bar.appendChild(btn);
   applySummaryState();
+  return true;
+}
+
+function setupSummaryToggle() {
+  placeSummaryButton();
+  setTimeout(placeSummaryButton, 50);
+  setTimeout(placeSummaryButton, 250);
 }
 
 setupSummaryToggle();
