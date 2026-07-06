@@ -36,37 +36,12 @@ function currentMonthlyData() {
   }
 }
 
-function refreshArchiveSelect() {
-  const select = document.getElementById("archiveMonthSelect");
-  if (!select) return;
-
-  const archive = readArchive();
-  const months = Object.keys(archive).sort().reverse();
-  select.innerHTML = "";
-
-  if (!months.length) {
-    const option = document.createElement("option");
-    option.value = "";
-    option.textContent = "Archivio vuoto";
-    select.appendChild(option);
-    return;
-  }
-
-  months.forEach((month) => {
-    const option = document.createElement("option");
-    option.value = month;
-    option.textContent = archive[month].label || formatArchiveLabel(month);
-    select.appendChild(option);
-  });
-}
-
 function archiveCurrentMonth() {
   const input = archiveMonthInput();
   if (!input?.value) return;
 
   const archive = readArchive();
   const month = input.value;
-
   archive[month] = {
     month,
     label: formatArchiveLabel(month),
@@ -75,43 +50,38 @@ function archiveCurrentMonth() {
   };
 
   saveArchive(archive);
-  refreshArchiveSelect();
-
-  if (typeof setAutosaveStatus === "function") {
-    setAutosaveStatus("Archiviato " + formatArchiveLabel(month));
-  }
+  if (typeof setAutosaveStatus === "function") setAutosaveStatus("Archiviato " + formatArchiveLabel(month));
 }
 
-function openArchivedMonth() {
-  const input = archiveMonthInput();
-  const select = document.getElementById("archiveMonthSelect");
-  if (!input || !select?.value) return;
-
+function openArchiveManager() {
   const archive = readArchive();
-  const item = archive[select.value];
-  if (!item) return;
+  const months = Object.keys(archive).sort().reverse();
+
+  if (!months.length) {
+    alert("Archivio mensile vuoto.");
+    return;
+  }
+
+  const list = months.map((month, index) => `${index + 1}) ${archive[month].label || formatArchiveLabel(month)}`).join("\n");
+  const answer = prompt("Archivio mensile:\n\n" + list + "\n\nScrivi il numero del mese da aprire, oppure lascia vuoto per annullare.");
+  if (!answer) return;
+
+  const index = Number(answer) - 1;
+  const month = months[index];
+  if (!month) {
+    alert("Numero archivio non valido.");
+    return;
+  }
+
+  const item = archive[month];
+  const input = archiveMonthInput();
+  if (!input) return;
 
   input.value = item.month;
   localStorage.setItem("capriBluPresenzeMese", item.month);
   localStorage.setItem(archiveStorageKey(item.month), JSON.stringify(item.data || {}));
-
   if (typeof renderTable === "function") renderTable();
   if (typeof setAutosaveStatus === "function") setAutosaveStatus("Aperto " + (item.label || item.month));
-}
-
-function deleteArchivedMonth() {
-  const select = document.getElementById("archiveMonthSelect");
-  if (!select?.value) return;
-
-  const archive = readArchive();
-  const label = archive[select.value]?.label || select.value;
-  if (!confirm("Eliminare dall'archivio " + label + "?")) return;
-
-  delete archive[select.value];
-  saveArchive(archive);
-  refreshArchiveSelect();
-
-  if (typeof setAutosaveStatus === "function") setAutosaveStatus("Archivio eliminato");
 }
 
 function buildArchiveControls() {
@@ -125,31 +95,16 @@ function buildArchiveControls() {
   saveBtn.className = "copy-btn";
   saveBtn.textContent = "Archivia mese";
 
-  const select = document.createElement("select");
-  select.id = "archiveMonthSelect";
-  select.className = "archive-select";
-  select.setAttribute("aria-label", "Archivio mensile");
-
-  const openBtn = document.createElement("button");
-  openBtn.id = "openArchiveBtn";
-  openBtn.type = "button";
-  openBtn.textContent = "Apri archivio";
-
-  const deleteBtn = document.createElement("button");
-  deleteBtn.id = "deleteArchiveBtn";
-  deleteBtn.type = "button";
-  deleteBtn.textContent = "Elimina archivio";
+  const manageBtn = document.createElement("button");
+  manageBtn.id = "openArchiveManagerBtn";
+  manageBtn.type = "button";
+  manageBtn.textContent = "Gestisci archivio";
 
   toolbar.insertBefore(saveBtn, printButton);
-  toolbar.insertBefore(select, printButton);
-  toolbar.insertBefore(openBtn, printButton);
-  toolbar.insertBefore(deleteBtn, printButton);
+  toolbar.insertBefore(manageBtn, printButton);
 
   saveBtn.addEventListener("click", archiveCurrentMonth);
-  openBtn.addEventListener("click", openArchivedMonth);
-  deleteBtn.addEventListener("click", deleteArchivedMonth);
-
-  refreshArchiveSelect();
+  manageBtn.addEventListener("click", openArchiveManager);
 }
 
 buildArchiveControls();
