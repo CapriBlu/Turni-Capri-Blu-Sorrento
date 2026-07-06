@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded', function () {
-  var min = 0.80;
+  var min = 0.70;
   var max = 1.20;
   var step = 0.10;
   var key = 'capriBluTableZoomV3';
