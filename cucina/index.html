@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Turni Cucina / Pizzeria - Capri Blu</title>
+  <link rel="stylesheet" href="style.css?v=1" />
+</head>
+<body>
+  <main class="page">
+    <section class="top-card">
+      <div>
+        <p class="eyebrow">Turni cucina</p>
+        <h1>Cucina / Pizzeria</h1>
+        <p class="subtitle">M mattina · S sera · M/S spezzato · Off riposo · 12/chius fino a chiusura</p>
+      </div>
+      <div class="week-box">
+        <label for="weekInput">Settimana</label>
+        <input id="weekInput" type="week" />
+        <p id="weekRange" class="week-range"></p>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <a class="link-btn" href="../">Torna alla Sala</a>
+      <a class="link-btn" href="../presenze/">Presenze mensili</a>
+      <button id="sendMonthlyBtn" type="button" class="send-monthly-btn">Invia al mensile</button>
+      <span id="autosaveStatus" class="autosave-status">Pronto</span>
+      <button id="printBtn" type="button">Stampa</button>
+      <button id="resetBtn" type="button">Reset settimana</button>
+    </section>
+
+    <section class="legend">
+      <span class="m">M</span><b>Mattina</b>
+      <span class="s">S</span><b>Sera</b>
+      <span class="ms">M/S</span><b>Spezzato</b>
+      <span class="off">Off</span><b>Riposo</b>
+      <span class="chius">12/chius</span><b>12 fino chiusura</b>
+    </section>
+
+    <section class="table-card">
+      <div class="table-scroll">
+        <table id="kitchenTable" class="kitchen-table"></table>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js?v=1"></script>
+</body>
+</html>
