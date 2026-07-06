@@ -15,14 +15,32 @@
   --mobile-page-padding: 6px;
   --tablet-table-width: 980px;
   --mobile-table-width: 740px;
-  --table-zoom: 1;
+  --table-zoom: 0.90;
+  --zoom-table-width: 666px;
+  --zoom-name-width: 83px;
+  --zoom-cell-width: 65px;
+  --zoom-th-font: 0.59rem;
+  --zoom-th-small-font: 0.47rem;
+  --zoom-name-font: 0.66rem;
+  --zoom-time-font: 0.65rem;
 }
 
 /* Base di sicurezza: evita elementi più larghi del viewport */
 html,
 body {
+  width: 100%;
   max-width: 100%;
   overflow-x: hidden;
+}
+
+.page,
+.top-card,
+.toolbar,
+.legend,
+.table-card,
+.requests-card,
+.table-zoom-bar {
+  max-width: 100%;
 }
 
 img,
@@ -37,6 +55,26 @@ canvas {
 .requests-list-wrap {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
+}
+
+.shift-cell,
+.shift-time,
+.shift-table th,
+.table-zoom-bar button {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.shift-table td:first-child,
+.request-form input,
+.request-form select,
+.fast-time-input,
+.week-box input {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 /* Barra zoom tabella */
@@ -126,13 +164,19 @@ canvas {
 
 /* Mobile: pagina compatta, tabella scrollabile e comandi più ordinati */
 @media (max-width: 760px) {
+  html,
+  body {
+    min-width: 0 !important;
+  }
+
   .page {
+    width: 100% !important;
     padding: var(--mobile-page-padding) !important;
   }
 
   .top-card {
     display: grid !important;
-    grid-template-columns: 1fr auto !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
     gap: 6px !important;
     padding: 6px 7px !important;
     align-items: start !important;
@@ -247,35 +291,78 @@ canvas {
     border-radius: 10px !important;
   }
 
+  .table-card {
+    overflow: hidden !important;
+  }
+
   .table-scroll {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
     border-radius: 8px !important;
+    touch-action: pan-x pan-y;
   }
 
   .shift-table {
+    width: var(--zoom-table-width) !important;
     min-width: var(--zoom-table-width) !important;
+    table-layout: fixed !important;
+  }
+
+  .shift-table th,
+  .shift-table td {
+    overflow: hidden;
   }
 
   .shift-table th {
-    font-size: calc(0.66rem * var(--table-zoom)) !important;
+    font-size: var(--zoom-th-font) !important;
   }
 
   .shift-table th small {
-    font-size: calc(0.52rem * var(--table-zoom)) !important;
+    font-size: var(--zoom-th-small-font) !important;
+  }
+
+  .shift-table th:first-child,
+  .shift-table td:first-child {
+    width: var(--zoom-name-width) !important;
+    min-width: var(--zoom-name-width) !important;
+    max-width: var(--zoom-name-width) !important;
   }
 
   .shift-table td:first-child {
-    min-width: calc(92px * var(--table-zoom)) !important;
-    max-width: calc(92px * var(--table-zoom)) !important;
-    font-size: calc(0.73rem * var(--table-zoom)) !important;
+    font-size: var(--zoom-name-font) !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .shift-table th:not(:first-child),
+  .shift-table td:not(:first-child) {
+    width: var(--zoom-cell-width) !important;
+    min-width: var(--zoom-cell-width) !important;
+    max-width: var(--zoom-cell-width) !important;
   }
 
   .shift-cell {
-    min-width: calc(72px * var(--table-zoom)) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
   }
 
   .shift-time {
-    font-size: calc(0.72rem * var(--table-zoom)) !important;
+    font-size: var(--zoom-time-font) !important;
     letter-spacing: -0.02em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .request-badge,
+  .request-inline {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .request-form {
@@ -325,15 +412,11 @@ canvas {
   }
 
   .shift-table td:first-child {
-    min-width: calc(86px * var(--table-zoom)) !important;
-    max-width: calc(86px * var(--table-zoom)) !important;
+    min-width: var(--zoom-name-width) !important;
+    max-width: var(--zoom-name-width) !important;
   }
 
   .shift-cell {
-    min-width: calc(68px * var(--table-zoom)) !important;
-  }
-
-  .shift-time {
-    font-size: calc(0.68rem * var(--table-zoom)) !important;
+    min-width: 0 !important;
   }
 }
