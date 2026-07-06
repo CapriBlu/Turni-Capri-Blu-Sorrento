@@ -5,13 +5,23 @@ window.addEventListener('DOMContentLoaded', function () {
   var key = 'capriBluTableZoomV3';
 
   var table = document.querySelector('#shiftTable');
-  var scroll = document.querySelector('.table-scroll');
+  var card = document.querySelector('.table-card');
   var minus = document.querySelector('#zoomOutBtn');
   var plus = document.querySelector('#zoomInBtn');
   var reset = document.querySelector('#zoomResetBtn');
   var label = document.querySelector('#zoomValue');
 
-  if (!table || !scroll || !minus || !plus || !reset || !label) return;
+  if (!table || !card || !minus || !plus || !reset || !label) return;
+
+  var base = {
+    tableWidth: 740,
+    nameWidth: 92,
+    cellWidth: 72,
+    thFont: 0.66,
+    thSmallFont: 0.52,
+    nameFont: 0.73,
+    timeFont: 0.72
+  };
 
   var zoom = parseFloat(localStorage.getItem(key));
   if (!isFinite(zoom)) zoom = 1;
@@ -20,12 +30,33 @@ window.addEventListener('DOMContentLoaded', function () {
     return Math.max(min, Math.min(max, value));
   }
 
+  function px(value) {
+    return Math.round(value) + 'px';
+  }
+
+  function rem(value) {
+    return (Math.round(value * 100) / 100) + 'rem';
+  }
+
   function apply() {
     zoom = clamp(Math.round(zoom * 100) / 100);
-    table.style.zoom = zoom;
-    table.style.transformOrigin = 'top left';
-    table.style.webkitTransformOrigin = 'top left';
-    table.style.setProperty('--table-zoom', zoom);
+
+    // Non usare CSS zoom/transform: su mobile può sfalsare il punto del tocco
+    // e aprire/modificare la riga sbagliata. Ridimensioniamo solo misure e font.
+    table.style.zoom = '';
+    table.style.transform = '';
+    table.style.webkitTransform = '';
+    table.style.transformOrigin = '';
+    table.style.webkitTransformOrigin = '';
+
+    card.style.setProperty('--zoom-table-width', px(base.tableWidth * zoom));
+    card.style.setProperty('--zoom-name-width', px(base.nameWidth * zoom));
+    card.style.setProperty('--zoom-cell-width', px(base.cellWidth * zoom));
+    card.style.setProperty('--zoom-th-font', rem(base.thFont * zoom));
+    card.style.setProperty('--zoom-th-small-font', rem(base.thSmallFont * zoom));
+    card.style.setProperty('--zoom-name-font', rem(base.nameFont * zoom));
+    card.style.setProperty('--zoom-time-font', rem(base.timeFont * zoom));
+
     label.textContent = Math.round(zoom * 100) + '%';
     minus.disabled = zoom <= min + 0.001;
     plus.disabled = zoom >= max - 0.001;
