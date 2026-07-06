@@ -45,6 +45,22 @@ function setupTopToolsMenu() {
     panel.appendChild(item);
   });
 
+  const archiveWrap = document.createElement('div');
+  archiveWrap.className = 'archive-submenu-wrap';
+  archiveWrap.innerHTML = `
+    <button id="archiveSubmenuBtn" type="button" class="archive-submenu-btn" aria-expanded="false">Archivio ▸</button>
+    <div id="archiveSubmenuPanel" class="archive-submenu-panel">
+      <a href="presenze/" class="archive-submenu-link">Archivio mensile</a>
+      <button id="weeklyArchiveBtn" type="button" class="archive-submenu-link">Archivio settimanale</button>
+    </div>
+  `;
+  panel.insertBefore(archiveWrap, panel.firstChild);
+
+  const weeklyArchiveBtn = document.getElementById('weeklyArchiveBtn');
+  weeklyArchiveBtn?.addEventListener('click', () => {
+    alert('Archivio settimanale: prossimo passaggio da strutturare.');
+  });
+
   if (legend && legendPanel) {
     Array.from(legend.children).forEach((item) => legendPanel.appendChild(item));
     legend.classList.add('legend-moved-to-menu');
@@ -53,11 +69,17 @@ function setupTopToolsMenu() {
   function closeToolsMenu() {
     menu.classList.remove('open');
     button.setAttribute('aria-expanded', 'false');
+    closeArchiveSubmenu();
   }
 
   function closeLegendMenu() {
     legendMenu.classList.remove('open');
     legendButton.setAttribute('aria-expanded', 'false');
+  }
+
+  function closeArchiveSubmenu() {
+    archiveWrap.classList.remove('open');
+    document.getElementById('archiveSubmenuBtn')?.setAttribute('aria-expanded', 'false');
   }
 
   button.addEventListener('click', (event) => {
@@ -76,7 +98,16 @@ function setupTopToolsMenu() {
     legendButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
   });
 
+  archiveWrap.querySelector('#archiveSubmenuBtn')?.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const isOpen = archiveWrap.classList.toggle('open');
+    event.currentTarget.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
   panel.addEventListener('click', (event) => {
+    const archiveClick = event.target.closest('.archive-submenu-wrap');
+    if (archiveClick) return;
     const clickable = event.target.closest('a, button');
     if (clickable && clickable.id !== 'uploadSessionBtn') closeToolsMenu();
   });
