@@ -32,7 +32,10 @@ window.addEventListener('DOMContentLoaded', function () {
     if (!target || target.dataset.field !== 'nome') return;
 
     var personIndex = rowIndexFromCell(target);
-    if (personIndex < 0 || !window.staff && typeof staff === 'undefined') return;
+    if (personIndex < 0 || typeof staff === 'undefined') return;
+
+    event.stopPropagation();
+    event.stopImmediatePropagation();
 
     try {
       staff[personIndex][target.dataset.field] = target.textContent.trim();
