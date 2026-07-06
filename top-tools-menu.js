@@ -1,7 +1,12 @@
 function setupTopToolsMenu() {
   const topCard = document.querySelector('.top-card');
   const toolbar = document.querySelector('.toolbar');
+  const legend = document.querySelector('.legend');
   if (!topCard || !toolbar || document.getElementById('topToolsMenu')) return;
+
+  const topLeftBar = document.createElement('div');
+  topLeftBar.id = 'topLeftControls';
+  topLeftBar.className = 'top-left-controls';
 
   const menu = document.createElement('div');
   menu.id = 'topToolsMenu';
@@ -11,51 +16,81 @@ function setupTopToolsMenu() {
     <div id="topToolsMenuPanel" class="top-tools-menu-panel" role="menu"></div>
   `;
 
-  topCard.insertBefore(menu, topCard.firstChild);
+  const legendMenu = document.createElement('div');
+  legendMenu.id = 'topLegendMenu';
+  legendMenu.className = 'top-legend-menu';
+  legendMenu.innerHTML = `
+    <button id="topLegendMenuBtn" type="button" class="top-legend-menu-btn" aria-expanded="false">Legenda ▾</button>
+    <div id="topLegendMenuPanel" class="top-legend-menu-panel"></div>
+  `;
+
+  topLeftBar.appendChild(menu);
+  topLeftBar.appendChild(legendMenu);
+  topCard.insertBefore(topLeftBar, topCard.firstChild);
 
   const panel = document.getElementById('topToolsMenuPanel');
   const button = document.getElementById('topToolsMenuBtn');
+  const legendPanel = document.getElementById('topLegendMenuPanel');
+  const legendButton = document.getElementById('topLegendMenuBtn');
 
   const statusWrap = document.createElement('div');
-  statusWrap.className = 'toolbar-status-wrap';
-  toolbar.appendChild(statusWrap);
+  statusWrap.className = 'top-status-wrap';
+  topLeftBar.appendChild(statusWrap);
 
   Array.from(toolbar.children).forEach((item) => {
-    if (item === statusWrap) return;
-
     if (item.id === 'saveSourceStatus' || item.id === 'autosaveStatus') {
       statusWrap.appendChild(item);
       return;
     }
-
     panel.appendChild(item);
   });
 
-  function closeMenu() {
+  if (legend && legendPanel) {
+    Array.from(legend.children).forEach((item) => legendPanel.appendChild(item));
+    legend.classList.add('legend-moved-to-menu');
+  }
+
+  function closeToolsMenu() {
     menu.classList.remove('open');
     button.setAttribute('aria-expanded', 'false');
   }
 
-  function toggleMenu(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    const isOpen = menu.classList.toggle('open');
-    button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  function closeLegendMenu() {
+    legendMenu.classList.remove('open');
+    legendButton.setAttribute('aria-expanded', 'false');
   }
 
-  button.addEventListener('click', toggleMenu);
+  button.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    closeLegendMenu();
+    const isOpen = menu.classList.toggle('open');
+    button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  legendButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    closeToolsMenu();
+    const isOpen = legendMenu.classList.toggle('open');
+    legendButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
 
   panel.addEventListener('click', (event) => {
     const clickable = event.target.closest('a, button');
-    if (clickable && clickable.id !== 'uploadSessionBtn') closeMenu();
+    if (clickable && clickable.id !== 'uploadSessionBtn') closeToolsMenu();
   });
 
   document.addEventListener('click', (event) => {
-    if (!menu.contains(event.target)) closeMenu();
+    if (!menu.contains(event.target)) closeToolsMenu();
+    if (!legendMenu.contains(event.target)) closeLegendMenu();
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closeMenu();
+    if (event.key === 'Escape') {
+      closeToolsMenu();
+      closeLegendMenu();
+    }
   });
 
   toolbar.classList.add('toolbar-compact-status');
