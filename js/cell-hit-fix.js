@@ -11,10 +11,14 @@ window.addEventListener('DOMContentLoaded', function () {
     return target.isContentEditable || tag === 'input' || tag === 'textarea' || tag === 'select';
   }
 
-  function rowIndexFromCell(cell) {
-    var row = cell && cell.closest ? cell.closest('tr') : null;
-    if (!row || !row.parentElement) return -1;
-    return Array.prototype.indexOf.call(row.parentElement.children, row);
+  function getPersonIndexFromTarget(target) {
+    if (!target || !target.closest) return -1;
+
+    var holder = target.closest('[data-person]');
+    if (!holder) return -1;
+
+    var index = Number(holder.dataset.person);
+    return Number.isInteger(index) ? index : -1;
   }
 
   function getShiftButtonFromEvent(event) {
@@ -23,8 +27,10 @@ window.addEventListener('DOMContentLoaded', function () {
 
   function readCellInfo(cell) {
     if (!cell) return null;
-    var personIndex = rowIndexFromCell(cell);
+
+    var personIndex = getPersonIndexFromTarget(cell);
     var dayKey = cell.dataset.day;
+
     if (personIndex < 0 || !dayKey || typeof staff === 'undefined' || !staff[personIndex]) return null;
 
     return {
@@ -78,8 +84,10 @@ window.addEventListener('DOMContentLoaded', function () {
   function showStatus(text) {
     var status = document.getElementById('autosaveStatus');
     if (!status) return;
+
     var oldText = status.textContent;
     status.textContent = text;
+
     window.clearTimeout(showStatus._timer);
     showStatus._timer = window.setTimeout(function () {
       status.textContent = oldText || 'Autosalvataggio attivo';
@@ -117,9 +125,8 @@ window.addEventListener('DOMContentLoaded', function () {
     selectedCell = info;
 
     window.setTimeout(function () {
-      var row = body.children[info.personIndex];
-      if (!row) return;
-      var cell = row.querySelector('.shift-cell[data-day="' + info.dayKey + '"]');
+      var selector = '.shift-cell[data-person="' + info.personIndex + '"][data-day="' + info.dayKey + '"]';
+      var cell = body.querySelector(selector);
       if (cell) markSelected(cell);
     }, 0);
 
@@ -154,7 +161,7 @@ window.addEventListener('DOMContentLoaded', function () {
     var target = event.target;
     if (!target || target.dataset.field !== 'nome') return;
 
-    var personIndex = rowIndexFromCell(target);
+    var personIndex = getPersonIndexFromTarget(target);
     if (personIndex < 0 || typeof staff === 'undefined') return;
 
     event.stopPropagation();
