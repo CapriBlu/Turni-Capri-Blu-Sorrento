@@ -1,0 +1,1 @@
+window.CB_STAFF_REQUESTS_ENDPOINT='';
