@@ -8,6 +8,29 @@
   --zoom-time-font: 0.72rem;
 }
 
+.table-card .shift-table,
+.table-card .shift-table th,
+.table-card .shift-table td:not([contenteditable="true"]),
+.table-card .shift-cell,
+.table-card .shift-time,
+.table-card .request-badge {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.table-card .shift-cell,
+.table-card .request-badge {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.table-card .shift-table td[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
 @media (max-width: 760px) {
   .table-card .shift-table {
     min-width: var(--zoom-table-width) !important;
