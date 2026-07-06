@@ -2,16 +2,6 @@ const summaryToggleKey = 'capriBluPresenzeRiepilogoApertoV2';
 const summaryColumnCount = 7;
 const summaryLabels = ['P', 'F', 'Fer', 'MAL', 'Ass', 'Rit', 'Min'];
 
-function removeSummaryColumnsFromTable() {
-  const rows = document.querySelectorAll('#presenceTable tr');
-  rows.forEach((row) => {
-    if (row.classList.contains('section-row')) return;
-    const cells = Array.from(row.children);
-    if (cells.length <= summaryColumnCount) return;
-    cells.slice(-summaryColumnCount).forEach((cell) => cell.remove());
-  });
-}
-
 function countRow(row) {
   const result = { p: 0, f: 0, fer: 0, mal: 0, ass: 0, rit: 0, min: 0 };
   row.querySelectorAll('.presence-cell').forEach((cell) => {
@@ -118,24 +108,13 @@ function placeSummaryButton() {
   return true;
 }
 
-function applySummaryLayout() {
-  removeSummaryColumnsFromTable();
-  placeSummaryButton();
-}
-
 function setupSummaryToggle() {
-  applySummaryLayout();
-  setTimeout(applySummaryLayout, 50);
-  setTimeout(applySummaryLayout, 250);
+  placeSummaryButton();
+  setTimeout(placeSummaryButton, 50);
+  setTimeout(placeSummaryButton, 250);
 }
 
 setupSummaryToggle();
-
-const presenceTable = document.getElementById('presenceTable');
-if (presenceTable) {
-  const observer = new MutationObserver(applySummaryLayout);
-  observer.observe(presenceTable, { childList: true, subtree: true });
-}
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') closeSummaryPanel();
