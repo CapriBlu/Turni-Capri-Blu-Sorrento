@@ -45,16 +45,58 @@ function setupTopToolsMenu() {
     panel.appendChild(item);
   });
 
+  function getISOWeekValue(date) {
+    const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const dayNumber = localDate.getDay() || 7;
+    localDate.setDate(localDate.getDate() + 4 - dayNumber);
+    const yearStart = new Date(localDate.getFullYear(), 0, 1);
+    const weekNumber = Math.ceil((((localDate - yearStart) / 86400000) + 1) / 7);
+    return localDate.getFullYear() + '-W' + String(weekNumber).padStart(2, '0');
+  }
+
+  function mondayFromISOWeek(weekValue) {
+    const [yearText, weekText] = weekValue.split('-W');
+    const year = Number(yearText);
+    const week = Number(weekText);
+    const date = new Date(year, 0, 1 + (week - 1) * 7);
+    const day = date.getDay() || 7;
+    date.setDate(date.getDate() - day + 1);
+    return date;
+  }
+
+  function addDays(date, amount) {
+    const next = new Date(date);
+    next.setDate(next.getDate() + amount);
+    return next;
+  }
+
+  function formatShortDate(date) {
+    return date.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' });
+  }
+
   const monthNames = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
   const today = new Date();
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth();
+  const currentWeekValue = getISOWeekValue(today);
+
   const monthlyLinks = monthNames.map((monthName, index) => {
     const monthNumber = String(index + 1).padStart(2, '0');
     const monthValue = `${currentYear}-${monthNumber}`;
     const currentClass = index === currentMonth ? ' current-archive-month' : '';
     const marker = index === currentMonth ? '🟢 ' : '';
     return `<a href="presenze/?mese=${monthValue}" class="archive-month-link${currentClass}" data-month="${monthValue}">${marker}${monthName}</a>`;
+  }).join('');
+
+  const currentMonday = mondayFromISOWeek(currentWeekValue);
+  const weeklyLinks = [-2, -1, 0, 1, 2, 3].map((offset) => {
+    const monday = addDays(currentMonday, offset * 7);
+    const sunday = addDays(monday, 6);
+    const weekValue = getISOWeekValue(monday);
+    const currentClass = weekValue === currentWeekValue ? ' current-archive-week' : '';
+    const marker = weekValue === currentWeekValue ? '🟢 ' : '';
+    const label = `${marker}${weekValue.replace('-W', ' sett. ')} · ${formatShortDate(monday)}-${formatShortDate(sunday)}`;
+    return `<button type="button" class="archive-week-link${currentClass}" data-week="${weekValue}">${label}</button>`;
   }).join('');
 
   const archiveWrap = document.createElement('div');
@@ -64,23 +106,45 @@ function setupTopToolsMenu() {
     <div id="archiveSubmenuPanel" class="archive-submenu-panel">
       <button id="monthlyArchiveSubmenuBtn" type="button" class="archive-submenu-link archive-nested-btn" aria-expanded="false">Archivio mensile ▸</button>
       <div id="monthlyArchiveMonths" class="archive-months-panel">${monthlyLinks}</div>
-      <button id="weeklyArchiveBtn" type="button" class="archive-submenu-link">Archivio settimanale</button>
+      <button id="weeklyArchiveSubmenuBtn" type="button" class="archive-submenu-link archive-nested-btn" aria-expanded="false">Archivio settimanale ▸</button>
+      <div id="weeklyArchiveWeeks" class="archive-weeks-panel">${weeklyLinks}</div>
     </div>
   `;
   panel.insertBefore(archiveWrap, panel.firstChild);
 
-  const weeklyArchiveBtn = document.getElementById('weeklyArchiveBtn');
-  weeklyArchiveBtn?.addEventListener('click', () => {
-    alert('Archivio settimanale: prossimo passaggio da strutturare.');
-  });
-
   const monthlyArchiveBtn = document.getElementById('monthlyArchiveSubmenuBtn');
   const monthlyArchivePanel = document.getElementById('monthlyArchiveMonths');
+  const weeklyArchiveBtn = document.getElementById('weeklyArchiveSubmenuBtn');
+  const weeklyArchivePanel = document.getElementById('weeklyArchiveWeeks');
+
   monthlyArchiveBtn?.addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
+    weeklyArchivePanel?.classList.remove('open');
+    weeklyArchiveBtn?.setAttribute('aria-expanded', 'false');
     const isOpen = monthlyArchivePanel.classList.toggle('open');
     monthlyArchiveBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  weeklyArchiveBtn?.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    monthlyArchivePanel?.classList.remove('open');
+    monthlyArchiveBtn?.setAttribute('aria-expanded', 'false');
+    const isOpen = weeklyArchivePanel.classList.toggle('open');
+    weeklyArchiveBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  weeklyArchivePanel?.addEventListener('click', (event) => {
+    const weekButton = event.target.closest('.archive-week-link');
+    if (!weekButton) return;
+    const week = weekButton.dataset.week;
+    const weekInput = document.getElementById('weekInput');
+    if (!week || !weekInput) return;
+    weekInput.value = week;
+    weekInput.dispatchEvent(new Event('input', { bubbles: true }));
+    weekInput.dispatchEvent(new Event('change', { bubbles: true }));
+    closeToolsMenu();
   });
 
   if (legend && legendPanel) {
@@ -104,6 +168,8 @@ function setupTopToolsMenu() {
     document.getElementById('archiveSubmenuBtn')?.setAttribute('aria-expanded', 'false');
     monthlyArchivePanel?.classList.remove('open');
     monthlyArchiveBtn?.setAttribute('aria-expanded', 'false');
+    weeklyArchivePanel?.classList.remove('open');
+    weeklyArchiveBtn?.setAttribute('aria-expanded', 'false');
   }
 
   button.addEventListener('click', (event) => {
