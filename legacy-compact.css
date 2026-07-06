@@ -1,0 +1,395 @@
+/*
+  Capri Blu Turni - Legacy compact layer
+  --------------------------------------------------
+  Accorpa le vecchie regole di compact.css e ultra-compact.css.
+  Il contenuto è mantenuto nello stesso ordine originale:
+  1) compact.css
+  2) ultra-compact.css
+
+  Nota manutenzione:
+  - Nuove regole mobile/tablet vanno in responsive.css.
+  - Questo file serve solo a preservare il comportamento compatto esistente.
+*/
+
+/* ===== Da compact.css ===== */
+/* CSS compatto alleggerito per stabilita */
+.page {
+  width: min(1840px, 100%);
+  padding: 6px;
+}
+
+.top-card {
+  padding: 8px 12px;
+  border-radius: 14px;
+}
+
+.toolbar,
+.legend {
+  margin-top: 6px;
+  gap: 6px;
+}
+
+button,
+.monthly-link {
+  padding: 6px 10px;
+  font-size: 0.82rem;
+}
+
+.table-card,
+.requests-card {
+  margin-top: 6px;
+  padding: 3px;
+  border-radius: 10px;
+}
+
+.shift-table {
+  min-width: 715px;
+}
+
+.shift-table th,
+.shift-table td,
+.requests-table th,
+.requests-table td {
+  padding: 2px;
+}
+
+.shift-table td {
+  position: relative;
+}
+
+.shift-cell {
+  min-width: 78px;
+  border-radius: 5px;
+}
+
+.one-field {
+  min-height: 34px;
+}
+
+.one-field .shift-time {
+  min-height: 34px;
+}
+
+.two-fields {
+  grid-template-columns: 1fr 1fr !important;
+  grid-template-rows: 34px !important;
+  min-height: 34px;
+}
+
+.two-fields .shift-time + .shift-time {
+  border-top: 0 !important;
+  border-left: 1px dashed rgba(6, 27, 58, 0.22) !important;
+}
+
+.shift-time {
+  padding: 2px;
+  font-size: 0.86rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.has-request,
+.shift-table tbody tr:nth-child(odd) td.has-request,
+.shift-table tbody tr:nth-child(even) td.has-request {
+  background: transparent !important;
+}
+
+.has-request .shift-cell {
+  color: inherit !important;
+}
+
+.has-request .shift-cell.request-festa {
+  background: #d8f8df !important;
+  border-color: #7bd493 !important;
+}
+
+.has-request .shift-cell.request-ferie {
+  background: #063b78 !important;
+  border-color: #031f44 !important;
+}
+
+.has-request .shift-cell.request-altro {
+  background: #1f8fd6 !important;
+  border-color: #0b63b6 !important;
+}
+
+.has-request .shift-cell.request-festa .shift-time {
+  background: transparent !important;
+  color: #13722f !important;
+}
+
+.has-request .shift-cell.request-ferie .shift-time,
+.has-request .shift-cell.request-altro .shift-time {
+  background: transparent !important;
+  color: white !important;
+}
+
+.request-inline {
+  font-size: 0.68rem;
+  line-height: 1;
+}
+
+.requests-card {
+  background: #d6ffd8 !important;
+  border: 2px solid #16a34a !important;
+}
+
+.requests-head {
+  padding: 6px;
+  background: #22c55e;
+  color: #063b1c;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+.requests-head .eyebrow.dark,
+.requests-head h2,
+.requests-head p {
+  color: #063b1c !important;
+}
+
+.request-form {
+  gap: 5px;
+  padding: 5px;
+  background: #ecfff0 !important;
+  border: 1px solid #16a34a !important;
+}
+
+.note {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding: 4px;
+  }
+
+  .shift-table {
+    min-width: 690px;
+  }
+
+  .shift-cell {
+    min-width: 72px;
+  }
+
+  .shift-time {
+    font-size: 0.82rem;
+  }
+}
+
+/* ===== Da ultra-compact.css ===== */
+/* Layout ultra compatto */
+.page {
+  width: min(1840px, 100%);
+  padding: 4px 6px !important;
+}
+
+.top-card {
+  min-height: 64px;
+  padding: 8px 12px !important;
+  border-radius: 12px !important;
+  align-items: center;
+}
+
+.eyebrow {
+  margin-bottom: 2px !important;
+  font-size: 0.62rem !important;
+}
+
+h1 {
+  font-size: clamp(1.15rem, 2vw, 1.75rem) !important;
+  line-height: 1.05 !important;
+}
+
+.subtitle {
+  margin-top: 4px !important;
+  font-size: 0.78rem !important;
+}
+
+.week-box {
+  min-width: 190px !important;
+  padding: 8px 10px !important;
+  border-radius: 12px !important;
+}
+
+.week-box label {
+  margin-bottom: 3px !important;
+  font-size: 0.82rem !important;
+}
+
+.week-box input {
+  min-height: 30px !important;
+  padding: 5px 8px !important;
+  border-radius: 9px !important;
+  font-size: 0.82rem !important;
+}
+
+.week-range {
+  margin-top: 4px !important;
+  font-size: 0.68rem !important;
+}
+
+.toolbar {
+  margin-top: 5px !important;
+  gap: 5px !important;
+}
+
+.toolbar button,
+.monthly-link,
+.autosave-status {
+  min-height: 30px !important;
+  padding: 5px 10px !important;
+  font-size: 0.72rem !important;
+  border-radius: 999px !important;
+  box-shadow: 0 4px 10px rgba(6, 27, 58, 0.08) !important;
+}
+
+.legend {
+  margin-top: 4px !important;
+  gap: 4px !important;
+  font-size: 0.7rem !important;
+}
+
+.legend span {
+  padding: 3px 7px !important;
+}
+
+.dot {
+  width: 7px !important;
+  height: 7px !important;
+}
+
+.table-card {
+  margin-top: 5px !important;
+  padding: 2px !important;
+  border-radius: 9px !important;
+}
+
+.table-scroll {
+  border-radius: 9px !important;
+}
+
+.shift-table {
+  min-width: 1120px !important;
+}
+
+.shift-table th,
+.shift-table td {
+  padding: 1px 1px !important;
+}
+
+.shift-table th {
+  font-size: 0.67rem !important;
+  line-height: 1.02 !important;
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+}
+
+.shift-table th small {
+  margin-top: 1px !important;
+  font-size: 0.53rem !important;
+}
+
+.shift-table td:first-child {
+  min-width: 96px !important;
+  max-width: 96px !important;
+  font-size: 0.75rem !important;
+  padding-left: 4px !important;
+}
+
+.shift-cell {
+  min-width: 82px !important;
+  border-radius: 4px !important;
+}
+
+.one-field {
+  min-height: 25px !important;
+}
+
+.one-field .shift-time {
+  min-height: 25px !important;
+}
+
+.two-fields {
+  grid-template-rows: 25px !important;
+  min-height: 25px !important;
+}
+
+.shift-time {
+  min-height: 25px !important;
+  padding: 1px 2px !important;
+  font-size: 0.74rem !important;
+  line-height: 1 !important;
+  letter-spacing: -0.01em;
+}
+
+.shift-cell.request-festa {
+  background: #d8f8df !important;
+  border-color: #7bd493 !important;
+}
+
+.shift-cell.request-festa .shift-time {
+  color: #13722f !important;
+}
+
+.request-pill.riposo,
+.request-pill.festa {
+  color: #13722f !important;
+  background: #d8f8df !important;
+  border-color: #7bd493 !important;
+}
+
+.requests-card {
+  margin-top: 5px !important;
+  padding: 3px !important;
+  border-radius: 9px !important;
+}
+
+.requests-head {
+  padding: 5px 7px !important;
+  margin-bottom: 4px !important;
+}
+
+.requests-head h2 {
+  font-size: 1rem !important;
+}
+
+.requests-head p {
+  font-size: 0.7rem !important;
+}
+
+.request-form {
+  padding: 4px !important;
+  gap: 4px !important;
+  grid-template-columns: 1fr 135px 120px 1.2fr auto !important;
+}
+
+.request-form input,
+.request-form select,
+.request-form button {
+  min-height: 30px !important;
+  padding: 4px 8px !important;
+  border-radius: 9px !important;
+  font-size: 0.74rem !important;
+}
+
+.requests-table th,
+.requests-table td {
+  padding: 3px 5px !important;
+  font-size: 0.72rem !important;
+}
+
+@media (max-width: 760px) {
+  .top-card {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+
+  .shift-table {
+    min-width: 740px !important;
+  }
+
+  .request-form {
+    grid-template-columns: 1fr !important;
+  }
+}
