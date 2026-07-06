@@ -5,354 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Turni Settimanali - Capri Blu Sorrento</title>
   <style>
-    :root {
-      --blu: #0b2f63;
-      --blu-2: #174f9b;
-      --cream: #fff8ec;
-      --light: #f7fbff;
-      --border: rgba(11, 47, 99, 0.18);
-      --shadow: 0 18px 45px rgba(10, 32, 73, 0.16);
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(23, 79, 155, 0.16), transparent 35%),
-        linear-gradient(135deg, #fffaf0 0%, #f3f8ff 50%, #ffffff 100%);
-      color: #10264a;
-      padding: 28px;
-    }
-
-    .page {
-      width: 100%;
-      max-width: 1280px;
-      margin: 0 auto;
-    }
-
-    .hero {
-      background: rgba(255, 255, 255, 0.88);
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      padding: 26px 30px;
-      box-shadow: var(--shadow);
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 24px;
-      margin-bottom: 22px;
-    }
-
-    .eyebrow {
-      margin: 0 0 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--blu-2);
-    }
-
-    h1 {
-      margin: 0;
-      color: var(--blu);
-      font-size: clamp(30px, 4vw, 52px);
-      line-height: 1;
-    }
-
-    .subtitle {
-      margin: 10px 0 0;
-      font-size: 18px;
-      color: #4d607b;
-    }
-
-    .week-card {
-      min-width: 260px;
-      border-radius: 22px;
-      border: 1px solid rgba(23, 79, 155, 0.18);
-      background: var(--cream);
-      padding: 18px 20px;
-      text-align: right;
-    }
-
-    .week-label {
-      margin: 0;
-      font-weight: 800;
-      color: var(--blu);
-      font-size: 24px;
-    }
-
-    .updated {
-      margin: 8px 0 0;
-      color: #697895;
-      font-size: 14px;
-    }
-
-    .notice {
-      margin: 0 0 18px;
-      padding: 14px 18px;
-      border-radius: 18px;
-      background: rgba(255, 248, 236, 0.86);
-      border: 1px solid rgba(11, 47, 99, 0.14);
-      color: #455875;
-      font-weight: 700;
-    }
-
-    .table-card {
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .table-scroll { overflow-x: auto; }
-
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      min-width: 1050px;
-    }
-
-    th, td {
-      border-bottom: 1px solid rgba(11, 47, 99, 0.12);
-      border-right: 1px solid rgba(11, 47, 99, 0.09);
-      padding: 14px 12px;
-      text-align: center;
-      vertical-align: middle;
-    }
-
-    th {
-      position: sticky;
-      top: 0;
-      background: var(--blu);
-      color: white;
-      z-index: 2;
-      font-size: 15px;
-      letter-spacing: 0.02em;
-    }
-
-    th:first-child, td:first-child {
-      position: sticky;
-      left: 0;
-      z-index: 3;
-    }
-
-    th:first-child { background: #082650; }
-
-    td:first-child {
-      background: #f9fbff;
-      color: var(--blu);
-      font-weight: 900;
-      text-align: left;
-      min-width: 150px;
-    }
-
-    tr:last-child td { border-bottom: 0; }
-
-    .shift {
-      display: inline-flex;
-      flex-direction: column;
-      gap: 6px;
-      min-width: 86px;
-      align-items: center;
-    }
-
-    .slot {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      min-width: 76px;
-      min-height: 34px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      font-weight: 900;
-      font-size: 14px;
-      white-space: nowrap;
-      border: 1px solid transparent;
-    }
-
-    .slot.pranzo { background: #e7f1ff; color: #0b4a91; border-color: #b9d6ff; }
-    .slot.sera { background: #fff1da; color: #8a4f00; border-color: #ffd38e; }
-    .slot.spezzato { background: #ecf8ed; color: #247036; border-color: #bce5c3; }
-    .slot.riposo { background: #eef1f6; color: #7b8798; border-color: #d8dee9; }
-
-    .status {
-      margin: 16px 0 0;
-      color: #61708b;
-      font-size: 14px;
-      text-align: center;
-    }
-
-    .error {
-      color: #9b1c1c;
-      background: #fff1f1;
-      border: 1px solid #ffcaca;
-      padding: 18px;
-      border-radius: 18px;
-      font-weight: 800;
-    }
+    :root{--blue-dark:#061b3a;--blue:#0b4ca2;--blue-light:#dff1ff;--sera-light:#dfe6ff;--green:#d8f8df;--green-text:#13722f;--orange:#ffd8a8;--table-line:#d8e2f0;--shadow:0 18px 42px rgba(6,27,58,.08)}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eaf5ff,#fff);color:var(--blue-dark);padding:14px}.page{width:min(1280px,100%);margin:0 auto}.top-card,.section-card{background:rgba(255,255,255,.94);border:1px solid rgba(6,27,58,.12);border-radius:20px;box-shadow:var(--shadow)}.top-card{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px;margin-bottom:10px}.eyebrow{margin:0 0 3px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);font-size:.68rem}h1{margin:0;color:var(--blue-dark);font-size:clamp(1.25rem,2.4vw,1.9rem)}.subtitle{margin:5px 0 0;color:#51627b;font-size:.86rem}.week-box{min-width:210px;padding:10px 12px;border-radius:16px;background:#f4f9ff;text-align:right}.week-label{margin:0;font-weight:900;color:var(--blue);font-size:1.1rem}.updated{margin:5px 0 0;color:#51627b;font-size:.75rem}.notice{margin:0 0 8px;padding:8px 12px;border-radius:14px;background:#fff7db;border:1px solid rgba(6,27,58,.1);color:#795200;font-size:.82rem;font-weight:900}.section-card{margin-top:10px;overflow:hidden}.section-card summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:linear-gradient(180deg,#0b4ca2,#062e72);color:#fff;font-weight:950;text-transform:uppercase;letter-spacing:.05em;cursor:pointer}.section-card summary::-webkit-details-marker{display:none}.section-card summary::after{content:'Apri';font-size:.72rem;letter-spacing:0;text-transform:none;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);padding:5px 10px;border-radius:999px}.section-card[open] summary::after{content:'Chiudi'}.section-inner{padding:7px;background:#fff}.table-scroll{overflow-x:auto;border-radius:14px;background:white}.shift-table{width:100%;min-width:940px;border-collapse:separate;border-spacing:0;color:var(--blue-dark)}.shift-table th,.shift-table td{border-right:1px solid var(--table-line);border-bottom:1px solid var(--table-line);padding:5px;vertical-align:middle;text-align:center}.shift-table th{position:sticky;top:0;z-index:2;background:linear-gradient(180deg,#0b4ca2,#062e72);color:white;font-size:.78rem;letter-spacing:.02em;line-height:1.1}.shift-table th:first-child,.shift-table td:first-child{position:sticky;left:0;z-index:3}.shift-table th:first-child{z-index:4}.shift-table td:first-child{min-width:112px;max-width:112px;background:#f7fbff;font-weight:900;color:var(--blue);font-size:.84rem;text-align:left}.shift-cell{min-width:98px;width:100%;border:1px solid rgba(6,27,58,.12);border-radius:11px;overflow:hidden;background:#f8fbff;padding:0;box-shadow:none;display:flex;align-items:center;justify-content:center}.two-fields{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:36px;min-height:36px}.one-field{min-height:36px}.shift-time{display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;line-height:1.05;padding:3px 4px;font-size:.74rem;min-width:0;white-space:nowrap}.one-field .shift-time{width:100%;min-height:36px}.shift-time+.shift-time{border-left:1px dashed rgba(6,27,58,.22)}.shift-time.pranzo{background:var(--blue-light)}.shift-time.sera{background:var(--sera-light)}.shift-time.riposo{background:var(--green);color:var(--green-text)}.shift-time.spezzato{background:#fff1bf;color:#745000}.day-spezzato .shift-cell{border-color:#e0b52e;box-shadow:inset 0 0 0 2px rgba(245,197,66,.28)}.kitchen-name{background:#fff7db!important;color:#795200!important}.empty{padding:16px!important;color:#9b1c1c;font-weight:900;background:#fff1f1}.status{margin:10px 0 0;color:#61708b;font-size:.78rem;text-align:center}@media(max-width:900px){body{padding:10px}.top-card{align-items:flex-start;flex-direction:column}.week-box{text-align:left;width:100%}}
   </style>
 </head>
 <body>
   <main class="page">
-    <section class="hero">
-      <div>
-        <p class="eyebrow">Turni Staff</p>
-        <h1>Capri Blu Sorrento</h1>
-        <p class="subtitle">Visualizzazione settimanale in sola lettura.</p>
-      </div>
-      <div class="week-card">
-        <p class="week-label" id="weekLabel">Caricamento...</p>
-        <p class="updated" id="updatedLabel"></p>
-      </div>
+    <section class="top-card">
+      <div><p class="eyebrow">Turni Staff</p><h1>Capri Blu Sorrento</h1><p class="subtitle">Visualizzazione settimanale in sola lettura.</p></div>
+      <div class="week-box"><p class="week-label" id="weekLabel">Caricamento...</p><p class="updated" id="updatedLabel"></p></div>
     </section>
-
     <p class="notice">Possibili variazioni. Per modifiche o conferme rivolgersi al responsabile.</p>
-
-    <section class="table-card">
-      <div class="table-scroll">
-        <table aria-label="Turni settimanali">
-          <thead>
-            <tr>
-              <th>Staff</th>
-              <th>Lunedì</th>
-              <th>Martedì</th>
-              <th>Mercoledì</th>
-              <th>Giovedì</th>
-              <th>Venerdì</th>
-              <th>Sabato</th>
-              <th>Domenica</th>
-            </tr>
-          </thead>
-          <tbody id="scheduleBody">
-            <tr><td colspan="8">Caricamento turni...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
+    <div id="sectionsWrap"></div>
     <p class="status" id="statusText">I dati vengono letti dal salvataggio ufficiale GitHub.</p>
   </main>
 
   <script>
-    const SAVE_URL = "https://raw.githubusercontent.com/CapriBlu/Turni-Capri-Blu-Sorrento/main/save/turni-attuali.json";
-    const days = [
-      ["lunedi", "Lunedì"],
-      ["martedi", "Martedì"],
-      ["mercoledi", "Mercoledì"],
-      ["giovedi", "Giovedì"],
-      ["venerdi", "Venerdì"],
-      ["sabato", "Sabato"],
-      ["domenica", "Domenica"]
-    ];
-
-    const scheduleBody = document.getElementById("scheduleBody");
-    const weekLabel = document.getElementById("weekLabel");
-    const updatedLabel = document.getElementById("updatedLabel");
-    const statusText = document.getElementById("statusText");
-
-    function escapeHtml(value) {
-      return String(value ?? "").replace(/[&<>'"]/g, (char) => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        "'": "&#039;",
-        '"': "&quot;"
-      }[char]));
-    }
-
-    function isWorking(value) {
-      const clean = String(value || "").trim().toLowerCase();
-      return clean && clean !== "riposo" && clean !== "riposto" && clean !== "-" && clean !== "—" && clean !== "vuoto";
-    }
-
-    function slotType(value, fallback) {
-      if (!isWorking(value)) return "riposo";
-      return fallback;
-    }
-
-    function renderSlot(value, type) {
-      const text = isWorking(value) ? value : "Riposo";
-      return `<span class="slot ${type}">${escapeHtml(text)}</span>`;
-    }
-
-    function renderShift(shift) {
-      const pranzo = shift?.pranzo || "Riposo";
-      const sera = shift?.sera || "Riposo";
-      const hasPranzo = isWorking(pranzo);
-      const hasSera = isWorking(sera);
-
-      if (hasPranzo && hasSera) {
-        return `<div class="shift">${renderSlot(pranzo, "pranzo")}${renderSlot(sera, "sera")}</div>`;
-      }
-
-      if (hasPranzo) return `<div class="shift">${renderSlot(pranzo, "pranzo")}</div>`;
-      if (hasSera) return `<div class="shift">${renderSlot(sera, "sera")}</div>`;
-      return `<div class="shift">${renderSlot("Riposo", "riposo")}</div>`;
-    }
-
-    function formatWeek(week) {
-      return week ? week.replace("-W", " · Settimana ") : "Settimana corrente";
-    }
-
-    function formatDate(iso) {
-      if (!iso) return "";
-      const date = new Date(iso);
-      if (Number.isNaN(date.getTime())) return "";
-      return "Aggiornato: " + date.toLocaleString("it-IT", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-    }
-
-    function pickStaff(snapshot) {
-      const week = snapshot.currentWeek || snapshot.lastPublishedWeek || "";
-      const weekly = snapshot.weeklyStaff || {};
-      return {
-        week,
-        staff: Array.isArray(weekly[week]) && weekly[week].length ? weekly[week] : (Array.isArray(snapshot.staff) ? snapshot.staff : [])
-      };
-    }
-
-    function renderTable(staff) {
-      if (!staff.length) {
-        scheduleBody.innerHTML = `<tr><td colspan="8" class="error">Nessun turno pubblicato.</td></tr>`;
-        return;
-      }
-
-      scheduleBody.innerHTML = staff.map((person) => `
-        <tr>
-          <td>${escapeHtml(person.nome || "Staff")}</td>
-          ${days.map(([key]) => `<td>${renderShift(person.turni?.[key])}</td>`).join("")}
-        </tr>
-      `).join("");
-    }
-
-    async function loadSchedule() {
-      try {
-        const response = await fetch(SAVE_URL + "?v=" + Date.now(), { cache: "no-store" });
-        if (!response.ok) throw new Error("HTTP " + response.status);
-        const snapshot = await response.json();
-        const picked = pickStaff(snapshot);
-        weekLabel.textContent = formatWeek(picked.week);
-        updatedLabel.textContent = formatDate(snapshot.savedAt);
-        renderTable(picked.staff);
-        statusText.textContent = "Pagina sola lettura: i collaboratori possono solo visualizzare i turni.";
-      } catch (error) {
-        console.error(error);
-        weekLabel.textContent = "Errore";
-        scheduleBody.innerHTML = `<tr><td colspan="8" class="error">Non riesco a caricare i turni da GitHub.</td></tr>`;
-        statusText.textContent = "Controllare che il file save/turni-attuali.json sia presente e aggiornato.";
-      }
-    }
-
+    const SAVE_URL='https://raw.githubusercontent.com/CapriBlu/Turni-Capri-Blu-Sorrento/main/save/turni-attuali.json';
+    const days=[['lunedi','Lunedì'],['martedi','Martedì'],['mercoledi','Mercoledì'],['giovedi','Giovedì'],['venerdi','Venerdì'],['sabato','Sabato'],['domenica','Domenica']];
+    const kitchenSections=[{title:'Pizzeria',people:['LUCA','MARIO','IGOR','CRISTIAN','PIETRO']},{title:'Cucina / Lavaggio',people:['ANTONINO','Lavapiatti','AJITH','DIEGO','Saja']}];
+    const wrap=document.getElementById('sectionsWrap'),weekLabel=document.getElementById('weekLabel'),updatedLabel=document.getElementById('updatedLabel'),statusText=document.getElementById('statusText');
+    function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));}
+    function working(v){const c=String(v||'').trim().toLowerCase();return c&&c!=='riposo'&&c!=='riposto'&&c!=='off'&&c!=='-'&&c!=='—'&&c!=='vuoto';}
+    function classKitchen(v){const c=String(v||'').trim().toLowerCase();if(!c||c==='off'||c==='riposo')return'riposo';if(c==='m')return'pranzo';if(c==='s'||c==='12/chius')return'sera';if(c==='m/s')return'spezzato';return'sera';}
+    function slot(v,t){const text=working(v)?v:(t==='riposo'?'Riposo':'Off');return `<span class="shift-time ${t}">${esc(text)}</span>`;}
+    function salaShift(shift){const p=shift?.pranzo||'Riposo',s=shift?.sera||'Riposo',hp=working(p),hs=working(s);if(hp&&hs)return `<div class="shift-cell two-fields">${slot(p,'pranzo')}${slot(s,'sera')}</div>`;if(hp)return `<div class="shift-cell one-field">${slot(p,'pranzo')}</div>`;if(hs)return `<div class="shift-cell one-field">${slot(s,'sera')}</div>`;return `<div class="shift-cell one-field">${slot('Riposo','riposo')}</div>`;}
+    function kitchenShift(v){return `<div class="shift-cell one-field">${slot(v||'Off',classKitchen(v))}</div>`;}
+    function table(title,rows,open=true,kitchen=false){const body=rows.length?rows.map(r=>`<tr><td class="${kitchen?'kitchen-name':''}">${esc(r.name)}</td>${days.map(([k])=>`<td class="${!kitchen&&working(r.turni?.[k]?.pranzo)&&working(r.turni?.[k]?.sera)?'day-spezzato':''}">${kitchen?kitchenShift(r.turni?.[k]):salaShift(r.turni?.[k])}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="8" class="empty">Nessun turno pubblicato.</td></tr>`;return `<details class="section-card" ${open?'open':''}><summary>${esc(title)}</summary><div class="section-inner"><div class="table-scroll"><table class="shift-table"><thead><tr><th>Staff</th>${days.map(d=>`<th>${d[1]}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></div></div></details>`;}
+    function formatWeek(w){return w?w.replace('-W',' · Settimana '):'Settimana corrente';}
+    function formatDate(iso){const d=new Date(iso||'');return Number.isNaN(d.getTime())?'':'Aggiornato: '+d.toLocaleString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+    function pickStaff(s){const week=s.currentWeek||s.lastPublishedWeek||'';const weekly=s.weeklyStaff||{};return{week,staff:Array.isArray(weekly[week])&&weekly[week].length?weekly[week]:(Array.isArray(s.staff)?s.staff:[])};}
+    function pickKitchen(s,week){const src=s.kitchenWeekly?.[week]||s.kitchenMonthlyPublished?.[week]||{};return kitchenSections.map(sec=>({title:sec.title,rows:sec.people.map(name=>({name,turni:src[name]||{}}))}));}
+    async function loadSchedule(){try{const res=await fetch(SAVE_URL+'?v='+Date.now(),{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);const snap=await res.json();const sala=pickStaff(snap);weekLabel.textContent=formatWeek(sala.week);updatedLabel.textContent=formatDate(snap.savedAt);const kitchens=pickKitchen(snap,sala.week);wrap.innerHTML=table('Sala',sala.staff.map(p=>({name:p.nome||'Staff',turni:p.turni||{}})),true,false)+kitchens.map(k=>table(k.title,k.rows,false,true)).join('');statusText.textContent='Pagina sola lettura: Sala, Pizzeria e Cucina / Lavaggio.';}catch(e){console.error(e);weekLabel.textContent='Errore';wrap.innerHTML='<details class="section-card" open><summary>Errore</summary><div class="section-inner"><p class="empty">Non riesco a caricare i turni da GitHub.</p></div></details>';statusText.textContent='Controllare il file save/turni-attuali.json.';}}
     loadSchedule();
   </script>
 </body>
