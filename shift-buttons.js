@@ -42,9 +42,41 @@ function syncFastChoices() {
   syncQuickTimes();
 }
 
+function stablePersonKey(person, index) {
+  if (!person) return "";
+  if (person.id) return String(person.id);
+  return `${String(person.nome || "Staff").trim().toLowerCase()}::${index}`;
+}
+
+function resolveActivePersonIndex() {
+  if (!activeEdit) return -1;
+
+  if (activeEdit.personKey) {
+    const byKey = staff.findIndex((person, index) => stablePersonKey(person, index) === activeEdit.personKey);
+    if (byKey >= 0) return byKey;
+  }
+
+  if (activeEdit.personName) {
+    const byName = staff.findIndex((person) => person.nome === activeEdit.personName);
+    if (byName >= 0) return byName;
+  }
+
+  const fallback = Number(activeEdit.personIndex);
+  return Number.isInteger(fallback) && fallback >= 0 && fallback < staff.length ? fallback : -1;
+}
+
 function openShiftMenu(personIndex, dayKey) {
-  activeEdit = { personIndex, dayKey };
-  const person = staff[personIndex];
+  const safeIndex = Number(personIndex);
+  const person = staff[safeIndex];
+  if (!person || !person.turni || !person.turni[dayKey]) return;
+
+  activeEdit = {
+    personIndex: safeIndex,
+    personKey: stablePersonKey(person, safeIndex),
+    personName: person.nome,
+    dayKey
+  };
+
   const dayLabel = days.find((day) => day.key === dayKey)?.label || dayKey;
   const shift = person.turni[dayKey];
 
@@ -157,7 +189,10 @@ function createFastShiftEditor() {
   document.getElementById("saveShiftBtn").addEventListener("click", () => {
     if (!activeEdit) return;
 
-    const { personIndex, dayKey } = activeEdit;
+    const personIndex = resolveActivePersonIndex();
+    if (personIndex < 0 || !staff[personIndex]) return;
+
+    const { dayKey } = activeEdit;
     const pranzoStatus = document.getElementById("pranzoStatus").value;
     const pranzoTime = document.getElementById("pranzoTime").value.trim();
     const seraStatus = document.getElementById("seraStatus").value;
