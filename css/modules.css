@@ -1,13 +1,7 @@
-/*
-  Capri Blu Turni - CSS modules loader
-  --------------------------------------------------
-  Punto unico per caricare i CSS modulari attivi.
-*/
-
 @import url("../monthly-fix.css?v=1");
 @import url("../shift-buttons.css?v=2");
-@import url("../requests.css?v=1");
-@import url("../requests-panel.css?v=1");
+@import url("modules/requests.css?v=1");
+@import url("modules/requests-panel.css?v=1");
 @import url("../autosave-session.css?v=2");
 @import url("../top-sync-buttons.css?v=1");
 @import url("../top-menus.css?v=1");
