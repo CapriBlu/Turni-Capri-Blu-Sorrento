@@ -1,5 +1,4 @@
-const summaryToggleKey = 'capriBluPresenzeRiepilogoApertoV2';
-const summaryColumnCount = 7;
+const summaryToggleKey = 'capriBluPresenzeRiepilogoApertoV3';
 const summaryLabels = ['P', 'F', 'Fer', 'MAL', 'Ass', 'Rit', 'Min'];
 
 function countRow(row) {
@@ -64,17 +63,7 @@ function renderSummaryPanel() {
   const body = document.getElementById('summaryPanelBody');
   const rows = collectSummaryRows();
   body.innerHTML = rows.map(({ section, name, totals }) => `
-    <tr>
-      <td>${section}</td>
-      <td>${name}</td>
-      <td>${totals.p}</td>
-      <td>${totals.f}</td>
-      <td>${totals.fer}</td>
-      <td>${totals.mal}</td>
-      <td>${totals.ass}</td>
-      <td>${totals.rit}</td>
-      <td>${totals.min}</td>
-    </tr>
+    <tr><td>${section}</td><td>${name}</td><td>${totals.p}</td><td>${totals.f}</td><td>${totals.fer}</td><td>${totals.mal}</td><td>${totals.ass}</td><td>${totals.rit}</td><td>${totals.min}</td></tr>
   `).join('');
 }
 
@@ -92,9 +81,11 @@ function closeSummaryPanel() {
 }
 
 function placeSummaryButton() {
-  const topCard = document.querySelector('.top-card');
-  const bar = document.querySelector('.presenze-top-left-controls') || topCard;
-  if (!bar) return false;
+  const panel = document.getElementById('presenzeTopMenuPanel');
+  const toolbar = document.querySelector('.toolbar');
+  const target = panel || toolbar;
+  if (!target) return false;
+
   let btn = document.getElementById('summaryToggleBtn');
   if (!btn) {
     btn = document.createElement('button');
@@ -104,14 +95,15 @@ function placeSummaryButton() {
     btn.textContent = 'Riepilogo';
     btn.addEventListener('click', openSummaryPanel);
   }
-  if (btn.parentElement !== bar) bar.appendChild(btn);
+
+  if (btn.parentElement !== target) target.appendChild(btn);
   return true;
 }
 
 function setupSummaryToggle() {
   placeSummaryButton();
-  setTimeout(placeSummaryButton, 50);
-  setTimeout(placeSummaryButton, 250);
+  setTimeout(placeSummaryButton, 80);
+  setTimeout(placeSummaryButton, 300);
 }
 
 setupSummaryToggle();
