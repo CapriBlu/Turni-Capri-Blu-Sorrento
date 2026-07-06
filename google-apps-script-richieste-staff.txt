@@ -1,0 +1,23 @@
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Richieste');
+  if (!sheet) sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet('Richieste');
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['Invio', 'Reparto', 'Nome', 'Tipo', 'Data richiesta', 'Messaggio', 'Stato']);
+  }
+
+  var data = JSON.parse(e.postData.contents || '{}');
+  sheet.appendRow([
+    new Date(),
+    data.reparto || '',
+    data.nome || '',
+    data.tipo || '',
+    data.data || '',
+    data.messaggio || '',
+    'Nuova'
+  ]);
+
+  return ContentService
+    .createTextOutput(JSON.stringify({ ok: true }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
