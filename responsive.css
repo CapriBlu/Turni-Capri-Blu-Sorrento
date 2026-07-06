@@ -15,6 +15,7 @@
   --mobile-page-padding: 6px;
   --tablet-table-width: 980px;
   --mobile-table-width: 740px;
+  --table-zoom: 1;
 }
 
 /* Base di sicurezza: evita elementi più larghi del viewport */
@@ -36,6 +37,59 @@ canvas {
 .requests-list-wrap {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
+}
+
+/* Barra zoom tabella */
+.table-zoom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin: 6px 0;
+}
+
+.zoom-label {
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: #073b7a;
+}
+
+.table-zoom-bar button,
+.zoom-value {
+  min-height: 30px;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.table-zoom-bar button {
+  border: 1px solid rgba(6, 27, 58, 0.14);
+  background: #fff;
+  color: #073b7a;
+  cursor: pointer;
+}
+
+.table-zoom-bar button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.zoom-value {
+  min-width: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef6ff;
+  color: #073b7a;
+}
+
+.table-card {
+  --zoom-table-width: calc(var(--mobile-table-width) * var(--table-zoom));
+}
+
+.table-card .shift-table {
+  transform-origin: top left;
 }
 
 /* Tablet: manteniamo la vista Excel, ma più stabile e leggibile */
@@ -78,35 +132,114 @@ canvas {
 
   .top-card {
     display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: 8px !important;
-    padding: 8px !important;
+    grid-template-columns: 1fr auto !important;
+    gap: 6px !important;
+    padding: 6px 7px !important;
+    align-items: start !important;
   }
 
-  .top-card-main,
-  .week-box,
-  .top-sync-actions,
+  .top-card-main {
+    min-width: 0;
+  }
+
+  .top-card-main .eyebrow,
+  .top-card-main .subtitle {
+    display: none !important;
+  }
+
+  .top-card-main h1 {
+    margin: 0 !important;
+    font-size: 0.98rem !important;
+    line-height: 1.05 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .week-box {
+    width: auto !important;
+    min-width: 128px !important;
+    padding: 4px 6px !important;
+    border-radius: 10px !important;
+  }
+
+  .week-box label {
+    display: none !important;
+  }
+
+  .week-box input {
+    min-height: 28px !important;
+    padding: 3px 5px !important;
+    font-size: 0.72rem !important;
+  }
+
+  .week-range {
+    display: none !important;
+  }
+
+  .top-sync-actions {
+    grid-column: 1 / -1;
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px !important;
+    margin-top: 4px;
+  }
+
+  .top-sync-actions button {
+    min-height: 30px !important;
+    padding: 5px 7px !important;
+    font-size: 0.68rem !important;
+    border-radius: 999px !important;
+  }
+
   .toolbar,
   .legend {
     width: 100%;
-  }
-
-  .top-sync-actions,
-  .toolbar,
-  .legend {
     display: flex;
     flex-wrap: wrap;
-    gap: 5px !important;
+    gap: 4px !important;
   }
 
-  .top-sync-actions button,
   .toolbar button,
   .monthly-link,
   .autosave-status,
   .save-source-status {
-    min-height: 34px !important;
-    padding: 6px 9px !important;
-    font-size: 0.74rem !important;
+    min-height: 30px !important;
+    padding: 5px 7px !important;
+    font-size: 0.68rem !important;
+  }
+
+  .top-left-controls {
+    gap: 5px !important;
+  }
+
+  .top-tools-menu-btn,
+  .top-legend-menu-btn {
+    min-height: 30px !important;
+    padding: 5px 8px !important;
+    font-size: 0.68rem !important;
+  }
+
+  .top-status-wrap {
+    display: none !important;
+  }
+
+  .table-zoom-bar {
+    justify-content: space-between;
+    gap: 4px;
+    margin: 5px 0;
+  }
+
+  .zoom-label {
+    font-size: 0.68rem;
+  }
+
+  .table-zoom-bar button,
+  .zoom-value {
+    min-height: 28px;
+    padding: 4px 8px;
+    font-size: 0.68rem;
   }
 
   .table-card,
@@ -119,29 +252,29 @@ canvas {
   }
 
   .shift-table {
-    min-width: var(--mobile-table-width) !important;
+    min-width: var(--zoom-table-width) !important;
   }
 
   .shift-table th {
-    font-size: 0.66rem !important;
+    font-size: calc(0.66rem * var(--table-zoom)) !important;
   }
 
   .shift-table th small {
-    font-size: 0.52rem !important;
+    font-size: calc(0.52rem * var(--table-zoom)) !important;
   }
 
   .shift-table td:first-child {
-    min-width: 92px !important;
-    max-width: 92px !important;
-    font-size: 0.73rem !important;
+    min-width: calc(92px * var(--table-zoom)) !important;
+    max-width: calc(92px * var(--table-zoom)) !important;
+    font-size: calc(0.73rem * var(--table-zoom)) !important;
   }
 
   .shift-cell {
-    min-width: 72px !important;
+    min-width: calc(72px * var(--table-zoom)) !important;
   }
 
   .shift-time {
-    font-size: 0.72rem !important;
+    font-size: calc(0.72rem * var(--table-zoom)) !important;
     letter-spacing: -0.02em;
   }
 
@@ -192,15 +325,15 @@ canvas {
   }
 
   .shift-table td:first-child {
-    min-width: 86px !important;
-    max-width: 86px !important;
+    min-width: calc(86px * var(--table-zoom)) !important;
+    max-width: calc(86px * var(--table-zoom)) !important;
   }
 
   .shift-cell {
-    min-width: 68px !important;
+    min-width: calc(68px * var(--table-zoom)) !important;
   }
 
   .shift-time {
-    font-size: 0.68rem !important;
+    font-size: calc(0.68rem * var(--table-zoom)) !important;
   }
 }
