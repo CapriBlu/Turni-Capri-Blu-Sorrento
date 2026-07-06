@@ -103,9 +103,52 @@
   display: grid;
 }
 
-.archive-submenu-link {
+.archive-submenu-link,
+.archive-month-link {
   background: #fffdf4 !important;
   color: #795200 !important;
+}
+
+.archive-nested-btn {
+  border: 1px solid rgba(121, 82, 0, 0.12) !important;
+}
+
+.archive-months-panel {
+  display: none;
+  grid-template-columns: 1fr;
+  gap: 5px;
+  margin: 4px 0 4px 14px;
+  padding-left: 8px;
+  border-left: 3px solid #9bdc9f;
+}
+
+.archive-months-panel.open {
+  display: grid;
+}
+
+.archive-month-link {
+  min-height: 34px !important;
+  padding: 8px 10px !important;
+  border-radius: 10px !important;
+}
+
+.archive-month-link.current-archive-month {
+  background: #d9f7df !important;
+  color: #0a5b20 !important;
+  border: 1px solid #7bd493 !important;
+  animation: archive-current-month-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes archive-current-month-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 rgba(10, 91, 32, 0);
+    transform: scale(1);
+  }
+
+  50% {
+    box-shadow: 0 0 16px rgba(10, 91, 32, 0.35);
+    transform: scale(1.025);
+  }
 }
 
 .top-tools-menu-panel .send-monthly-btn {
