@@ -6,6 +6,101 @@ const kitchenMainSections = [
   { title: "Cucina / Lavaggio", people: ["ANTONINO", "Lavapiatti", "AJITH", "DIEGO", "Saja"] }
 ];
 
+const kitchenDefaultWeeks = {
+  "2026-W28": {
+    "LUCA": {
+      "lunedi": "M/S",
+      "martedi": "M/S",
+      "mercoledi": "M/S",
+      "giovedi": "Off",
+      "venerdi": "M/S",
+      "sabato": "M/S",
+      "domenica": "S"
+    },
+    "MARIO": {
+      "lunedi": "S",
+      "martedi": "Off",
+      "mercoledi": "S",
+      "giovedi": "M/S",
+      "venerdi": "M/S",
+      "sabato": "S",
+      "domenica": "M/S"
+    },
+    "IGOR": {
+      "lunedi": "Off",
+      "martedi": "S",
+      "mercoledi": "M/S",
+      "giovedi": "M/S",
+      "venerdi": "S",
+      "sabato": "M/S",
+      "domenica": "M/S"
+    },
+    "CRISTIAN": {
+      "lunedi": "",
+      "martedi": "",
+      "mercoledi": "",
+      "giovedi": "S",
+      "venerdi": "",
+      "sabato": "S",
+      "domenica": "S"
+    },
+    "PIETRO": {
+      "lunedi": "Pietro",
+      "martedi": "Pietro",
+      "mercoledi": "",
+      "giovedi": "",
+      "venerdi": "",
+      "sabato": "",
+      "domenica": ""
+    },
+    "ANTONINO": {
+      "lunedi": "M",
+      "martedi": "M",
+      "mercoledi": "Off",
+      "giovedi": "M",
+      "venerdi": "M",
+      "sabato": "M",
+      "domenica": "M"
+    },
+    "Lavapiatti": {
+      "lunedi": "Off",
+      "martedi": "M/S",
+      "mercoledi": "M/S",
+      "giovedi": "M/S",
+      "venerdi": "M/S",
+      "sabato": "M/S",
+      "domenica": "M/S"
+    },
+    "AJITH": {
+      "lunedi": "S",
+      "martedi": "S",
+      "mercoledi": "S",
+      "giovedi": "Off",
+      "venerdi": "S",
+      "sabato": "S",
+      "domenica": "S"
+    },
+    "DIEGO": {
+      "lunedi": "M/S",
+      "martedi": "S",
+      "mercoledi": "M/S",
+      "giovedi": "M/S",
+      "venerdi": "Off",
+      "sabato": "S",
+      "domenica": "S"
+    },
+    "Saja": {
+      "lunedi": "Off",
+      "martedi": "12/chius",
+      "mercoledi": "M/S",
+      "giovedi": "12/chius",
+      "venerdi": "12/chius",
+      "sabato": "12/chius",
+      "domenica": "12/chius"
+    }
+  }
+};
+
 function kitchenBlankWeekData() {
   const data = {};
   kitchenMainSections.forEach((section) => {
@@ -23,10 +118,18 @@ function kitchenCurrentWeekKey() {
   return kitchenWeekStoragePrefixMain + weekInput.value;
 }
 
+function hasKitchenValues(data) {
+  return Object.values(data || {}).some((row) => {
+    return Object.values(row || {}).some((value) => String(value || "").trim() !== "");
+  });
+}
+
 function readKitchenMainData() {
   const saved = localStorage.getItem(kitchenCurrentWeekKey());
+  const defaultData = kitchenDefaultWeeks[weekInput.value] || kitchenBlankWeekData();
   const parsed = safeJsonParse(saved, {}, kitchenCurrentWeekKey());
-  const data = Object.assign(kitchenBlankWeekData(), parsed || {});
+  const base = hasKitchenValues(parsed) ? parsed : defaultData;
+  const data = Object.assign(kitchenBlankWeekData(), base || {});
   kitchenMainSections.forEach((section) => {
     section.people.forEach((name) => {
       data[name] = Object.assign(kitchenBlankWeekData()[name], data[name] || {});
