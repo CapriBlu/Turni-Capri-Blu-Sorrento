@@ -1,6 +1,9 @@
 const sessionBackupKey = "capriBluAutoSessionBackupV1";
 const publishedWeekPrefix = "capriBluTurniStaffPublishedWeekV1-";
 const lastPublishedWeekKey = "capriBluUltimaSettimanaInviata";
+const kitchenWeekPrefix = "capriBluTurniCucinaWeekV1-";
+const kitchenPublishedWeekPrefix = "capriBluTurniCucinaPublishedWeekV1-";
+const kitchenSelectedWeekKey = "capriBluTurniCucinaWeekSelectedV1";
 
 function readJsonFromStorage(key, fallback) {
   try {
@@ -14,6 +17,8 @@ function readJsonFromStorage(key, fallback) {
 function getSessionSnapshot() {
   const weeklyStaff = {};
   const monthlyPublished = {};
+  const kitchenWeekly = {};
+  const kitchenMonthlyPublished = {};
 
   for (let index = 0; index < localStorage.length; index += 1) {
     const key = localStorage.key(index);
@@ -25,6 +30,14 @@ function getSessionSnapshot() {
     if (key && key.startsWith(publishedWeekPrefix)) {
       monthlyPublished[key.replace(publishedWeekPrefix, "")] = readJsonFromStorage(key, []);
     }
+
+    if (key && key.startsWith(kitchenWeekPrefix)) {
+      kitchenWeekly[key.replace(kitchenWeekPrefix, "")] = readJsonFromStorage(key, {});
+    }
+
+    if (key && key.startsWith(kitchenPublishedWeekPrefix)) {
+      kitchenMonthlyPublished[key.replace(kitchenPublishedWeekPrefix, "")] = readJsonFromStorage(key, {});
+    }
   }
 
   weeklyStaff[weekInput.value] = staff;
@@ -32,13 +45,16 @@ function getSessionSnapshot() {
   return {
     app: "Capri Blu Turni",
     saveType: "official",
-    version: 2,
+    version: 3,
     savedAt: new Date().toISOString(),
     currentWeek: weekInput.value,
+    kitchenCurrentWeek: localStorage.getItem(kitchenSelectedWeekKey) || weekInput.value,
     lastPublishedWeek: localStorage.getItem(lastPublishedWeekKey) || "",
     staff,
     weeklyStaff,
     monthlyPublished,
+    kitchenWeekly,
+    kitchenMonthlyPublished,
     requests
   };
 }
@@ -110,6 +126,22 @@ function restoreSession(snapshot) {
     Object.entries(snapshot.monthlyPublished).forEach(([week, weekStaff]) => {
       localStorage.setItem(publishedWeekPrefix + week, JSON.stringify(normalizeStaff(weekStaff)));
     });
+  }
+
+  if (snapshot.kitchenWeekly) {
+    Object.entries(snapshot.kitchenWeekly).forEach(([week, weekData]) => {
+      localStorage.setItem(kitchenWeekPrefix + week, JSON.stringify(weekData || {}));
+    });
+  }
+
+  if (snapshot.kitchenMonthlyPublished) {
+    Object.entries(snapshot.kitchenMonthlyPublished).forEach(([week, weekData]) => {
+      localStorage.setItem(kitchenPublishedWeekPrefix + week, JSON.stringify(weekData || {}));
+    });
+  }
+
+  if (snapshot.kitchenCurrentWeek) {
+    localStorage.setItem(kitchenSelectedWeekKey, snapshot.kitchenCurrentWeek);
   }
 
   if (snapshot.lastPublishedWeek) {
