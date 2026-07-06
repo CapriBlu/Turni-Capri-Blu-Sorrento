@@ -1,0 +1,37 @@
+.table-card {
+  --zoom-table-width: 740px;
+  --zoom-name-width: 92px;
+  --zoom-cell-width: 72px;
+  --zoom-th-font: 0.66rem;
+  --zoom-th-small-font: 0.52rem;
+  --zoom-name-font: 0.73rem;
+  --zoom-time-font: 0.72rem;
+}
+
+@media (max-width: 760px) {
+  .table-card .shift-table {
+    min-width: var(--zoom-table-width) !important;
+  }
+
+  .table-card .shift-table th {
+    font-size: var(--zoom-th-font) !important;
+  }
+
+  .table-card .shift-table th small {
+    font-size: var(--zoom-th-small-font) !important;
+  }
+
+  .table-card .shift-table td:first-child {
+    min-width: var(--zoom-name-width) !important;
+    max-width: var(--zoom-name-width) !important;
+    font-size: var(--zoom-name-font) !important;
+  }
+
+  .table-card .shift-cell {
+    min-width: var(--zoom-cell-width) !important;
+  }
+
+  .table-card .shift-time {
+    font-size: var(--zoom-time-font) !important;
+  }
+}
