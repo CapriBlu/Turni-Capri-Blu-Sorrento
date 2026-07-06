@@ -1,0 +1,206 @@
+/*
+  Capri Blu Turni - Responsive layer
+  --------------------------------------------------
+  Questo file va caricato per ultimo.
+  Qui centralizziamo SOLO correzioni mobile/tablet,
+  evitando di aggiungere nuove regole sparse nei CSS storici.
+
+  Breakpoint usati:
+  - desktop: oltre 1100px
+  - tablet: 761px - 1100px
+  - mobile: fino a 760px
+*/
+
+:root {
+  --mobile-page-padding: 6px;
+  --tablet-table-width: 980px;
+  --mobile-table-width: 740px;
+}
+
+/* Base di sicurezza: evita elementi più larghi del viewport */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+/* Migliora lo scroll tabella su touch */
+.table-scroll,
+.requests-list-wrap {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+/* Tablet: manteniamo la vista Excel, ma più stabile e leggibile */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .page {
+    padding: 10px !important;
+  }
+
+  .top-card {
+    gap: 10px !important;
+  }
+
+  .shift-table {
+    min-width: var(--tablet-table-width) !important;
+  }
+
+  .shift-table td:first-child {
+    min-width: 104px !important;
+    max-width: 104px !important;
+  }
+
+  .shift-cell {
+    min-width: 86px !important;
+  }
+
+  .shift-time {
+    font-size: 0.76rem !important;
+  }
+
+  .request-form {
+    grid-template-columns: 1fr 150px 130px 1.2fr auto !important;
+  }
+}
+
+/* Mobile: pagina compatta, tabella scrollabile e comandi più ordinati */
+@media (max-width: 760px) {
+  .page {
+    padding: var(--mobile-page-padding) !important;
+  }
+
+  .top-card {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    padding: 8px !important;
+  }
+
+  .top-card-main,
+  .week-box,
+  .top-sync-actions,
+  .toolbar,
+  .legend {
+    width: 100%;
+  }
+
+  .top-sync-actions,
+  .toolbar,
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px !important;
+  }
+
+  .top-sync-actions button,
+  .toolbar button,
+  .monthly-link,
+  .autosave-status,
+  .save-source-status {
+    min-height: 34px !important;
+    padding: 6px 9px !important;
+    font-size: 0.74rem !important;
+  }
+
+  .table-card,
+  .requests-card {
+    border-radius: 10px !important;
+  }
+
+  .table-scroll {
+    border-radius: 8px !important;
+  }
+
+  .shift-table {
+    min-width: var(--mobile-table-width) !important;
+  }
+
+  .shift-table th {
+    font-size: 0.66rem !important;
+  }
+
+  .shift-table th small {
+    font-size: 0.52rem !important;
+  }
+
+  .shift-table td:first-child {
+    min-width: 92px !important;
+    max-width: 92px !important;
+    font-size: 0.73rem !important;
+  }
+
+  .shift-cell {
+    min-width: 72px !important;
+  }
+
+  .shift-time {
+    font-size: 0.72rem !important;
+    letter-spacing: -0.02em;
+  }
+
+  .request-form {
+    grid-template-columns: 1fr !important;
+  }
+
+  .requests-head {
+    display: grid !important;
+    gap: 4px !important;
+  }
+
+  .requests-table {
+    min-width: 520px;
+  }
+
+  .shift-editor,
+  .shift-editor.fast-editor,
+  .note-popup,
+  .requests-panel-modal {
+    width: 100% !important;
+    max-height: 94vh !important;
+    border-radius: 16px !important;
+  }
+
+  .editor-backdrop,
+  .note-popup-backdrop,
+  .requests-panel-backdrop {
+    padding: 8px !important;
+    align-items: stretch !important;
+  }
+
+  .editor-actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .editor-actions button {
+    width: 100% !important;
+  }
+}
+
+/* Telefoni molto stretti: ulteriore compattezza senza rompere la tabella */
+@media (max-width: 380px) {
+  :root {
+    --mobile-page-padding: 4px;
+    --mobile-table-width: 710px;
+  }
+
+  .shift-table td:first-child {
+    min-width: 86px !important;
+    max-width: 86px !important;
+  }
+
+  .shift-cell {
+    min-width: 68px !important;
+  }
+
+  .shift-time {
+    font-size: 0.68rem !important;
+  }
+}
