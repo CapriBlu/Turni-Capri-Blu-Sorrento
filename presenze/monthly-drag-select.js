@@ -134,6 +134,18 @@ function mEmpty() {
   renderTable();
 }
 
+function mApplyValue(value) {
+  const cells = mCells();
+  if (!cells.length) return;
+  const data = mRead();
+  cells.forEach((cell) => {
+    if (!value) delete data[mKey(cell)];
+    else data[mKey(cell)] = { value, minutes: 0 };
+  });
+  mSave(data, cells.length + " celle impostate: " + (value || "Vuoto"));
+  renderTable();
+}
+
 function mHideMenu() {
   if (mMenu) mMenu.classList.remove("open");
 }
@@ -142,7 +154,7 @@ function mShowMenu(x, y) {
   if (!mMenu) {
     mMenu = document.createElement("div");
     mMenu.className = "monthly-context-menu";
-    mMenu.innerHTML = '<button data-a="copy">Copia</button><button data-a="paste">Incolla</button><button data-a="clear">Svuota</button>';
+    mMenu.innerHTML = '<button data-a="set" data-v="P">P - Presenza</button><button data-a="set" data-v="F">F - Festa</button><button data-a="set" data-v="Fer">Fer - Ferie</button><button data-a="set" data-v="MAL">MAL - Malattia</button><button data-a="set" data-v="Ass">Ass - Assenza</button><button data-a="copy">Copia</button><button data-a="paste">Incolla</button><button data-a="clear">Svuota</button>';
     document.body.appendChild(mMenu);
     mMenu.addEventListener("click", (e) => {
       const b = e.target.closest("button[data-a]");
@@ -150,6 +162,7 @@ function mShowMenu(x, y) {
       e.preventDefault();
       e.stopPropagation();
       mHideMenu();
+      if (b.dataset.a === "set") mApplyValue(b.dataset.v || "");
       if (b.dataset.a === "copy") mCopy();
       if (b.dataset.a === "paste") mPaste();
       if (b.dataset.a === "clear") mEmpty();
