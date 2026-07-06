@@ -1,0 +1,41 @@
+.shift-section-row td,
+.kitchen-section-row td {
+  position: static !important;
+  max-width: none !important;
+  background: linear-gradient(180deg, #073b7a, #0b63b6) !important;
+  color: white !important;
+  padding: 0 !important;
+}
+
+.shift-section-toggle {
+  width: 100%;
+  min-height: 38px;
+  border: 0;
+  background: transparent;
+  color: white;
+  text-align: left;
+  padding: 9px 12px;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.shift-section-toggle:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.section-arrow {
+  display: inline-block;
+  width: 22px;
+  font-size: 1rem;
+}
+
+.section-hidden {
+  display: none !important;
+}
+
+.shift-section-row.collapsed td,
+.kitchen-section-row.collapsed td {
+  background: linear-gradient(180deg, #0b4ca2, #062e72) !important;
+}
