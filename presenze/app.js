@@ -15,17 +15,23 @@ const defaultPresenceStaffNames = [
 ];
 
 const kitchenStaffNames = [
-  "Pizzeria 1",
-  "Pizzeria 2",
-  "Cucina 1",
-  "Cucina 2",
-  "Lavapiatti"
+  "LUCA",
+  "MARIO",
+  "IGOR",
+  "CRISTIAN",
+  "PIETRO",
+  "ANTONINO",
+  "Lavapiatti",
+  "AJITH",
+  "DIEGO",
+  "Saja"
 ];
 
 const departments = {
   sala: {
     label: "Sala",
     storagePrefix: "capriBluPresenzeMensili-",
+    publishedPrefix: "capriBluTurniStaffPublishedWeekV1-",
     copiedKey: "capriBluPresenzeCopiaV1",
     automatic: true,
     getNames: () => window.CapriBluStaff?.getStaffNames() || defaultPresenceStaffNames.slice()
@@ -33,8 +39,9 @@ const departments = {
   cucina: {
     label: "Cucina / Pizzeria",
     storagePrefix: "capriBluPresenzeMensiliCucina-",
+    publishedPrefix: "capriBluTurniCucinaPublishedWeekV1-",
     copiedKey: "capriBluPresenzeCopiaCucinaV1",
-    automatic: false,
+    automatic: true,
     getNames: () => kitchenStaffNames.slice()
   }
 };
@@ -54,7 +61,6 @@ const classMap = {
   "P+Rit": "cell-rit"
 };
 
-const publishedWeekStoragePrefix = "capriBluTurniStaffPublishedWeekV1-";
 const requestsKey = "capriBluRichiesteStaffV1";
 
 const monthInput = document.getElementById("monthInput");
@@ -152,7 +158,7 @@ function getISOWeekString(date) {
 function isWorking(value) {
   if (!value) return false;
   const clean = String(value).trim().toLowerCase();
-  return clean !== "" && clean !== "riposo" && clean !== "riposto" && clean !== "-" && clean !== "—" && clean !== "vuoto";
+  return clean !== "" && clean !== "riposo" && clean !== "riposto" && clean !== "off" && clean !== "-" && clean !== "—" && clean !== "vuoto";
 }
 
 function normalizeRequestType(type) {
@@ -162,7 +168,7 @@ function normalizeRequestType(type) {
 }
 
 function autoValueFromRequests(name, dateISO) {
-  if (!currentDepartment().automatic) return "";
+  if (activeDepartment !== "sala") return "";
 
   const requests = readRequests();
   const request = requests.find((item) => item.name === name && item.date === dateISO);
@@ -175,26 +181,38 @@ function autoValueFromRequests(name, dateISO) {
   return "";
 }
 
-function autoValueFromShift(name, date) {
-  if (!currentDepartment().automatic) return "";
+function autoValueFromKitchenShift(name, dayKey, kitchenData) {
+  const value = kitchenData?.[name]?.[dayKey] || "";
+  if (!value) return "";
+  return isWorking(value) ? "P" : "F";
+}
 
-  const weekValue = getISOWeekString(date);
-  const key = publishedWeekStoragePrefix + weekValue;
-  const saved = localStorage.getItem(key);
-  if (!saved) return "";
-
-  const staff = safeJsonParse(saved, [], key);
-  const person = staff.find((item) => item.nome === name);
+function autoValueFromSalaShift(name, dayKey, staff) {
+  const person = Array.isArray(staff) ? staff.find((item) => item.nome === name) : null;
   if (!person) return "";
 
-  const dayIndex = (date.getDay() || 7) - 1;
-  const dayKey = dayKeys[dayIndex];
   const shift = person.turni?.[dayKey];
   if (!shift) return "";
 
   const hasPranzo = isWorking(shift.pranzo || shift.apertura);
   const hasSera = isWorking(shift.sera);
   return hasPranzo || hasSera ? "P" : "F";
+}
+
+function autoValueFromShift(name, date) {
+  if (!currentDepartment().automatic) return "";
+
+  const weekValue = getISOWeekString(date);
+  const key = currentDepartment().publishedPrefix + weekValue;
+  const saved = localStorage.getItem(key);
+  if (!saved) return "";
+
+  const data = safeJsonParse(saved, activeDepartment === "sala" ? [] : {}, key);
+  const dayIndex = (date.getDay() || 7) - 1;
+  const dayKey = dayKeys[dayIndex];
+
+  if (activeDepartment === "cucina") return autoValueFromKitchenShift(name, dayKey, data);
+  return autoValueFromSalaShift(name, dayKey, data);
 }
 
 function automaticValue(name, date) {
