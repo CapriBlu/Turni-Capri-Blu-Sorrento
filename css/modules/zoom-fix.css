@@ -38,7 +38,9 @@
 
 @media (max-width: 760px) {
   .table-card .shift-table {
+    width: var(--zoom-table-width) !important;
     min-width: var(--zoom-table-width) !important;
+    table-layout: fixed !important;
   }
 
   .table-card .shift-table th {
@@ -49,17 +51,36 @@
     font-size: var(--zoom-th-small-font) !important;
   }
 
+  .table-card .shift-table th:first-child,
   .table-card .shift-table td:first-child {
+    width: var(--zoom-name-width) !important;
     min-width: var(--zoom-name-width) !important;
     max-width: var(--zoom-name-width) !important;
+  }
+
+  .table-card .shift-table td:first-child {
     font-size: var(--zoom-name-font) !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .table-card .shift-table th:not(:first-child),
+  .table-card .shift-table td:not(:first-child) {
+    width: var(--zoom-cell-width) !important;
+    min-width: var(--zoom-cell-width) !important;
+    max-width: var(--zoom-cell-width) !important;
   }
 
   .table-card .shift-cell {
-    min-width: var(--zoom-cell-width) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
   }
 
   .table-card .shift-time {
     font-size: var(--zoom-time-font) !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
