@@ -35,7 +35,6 @@
 
     <section class="toolbar" aria-label="Strumenti tabella">
       <a href="presenze/" class="monthly-link">Presenze mensili</a>
-      <a href="cucina/" class="monthly-link">Turni Cucina/Pizzeria</a>
       <button id="sendMonthlyBtn" type="button" class="send-monthly-btn">Invia al mensile</button>
       <button id="addPersonBtn" type="button">Aggiungi persona</button>
       <button id="downloadOfficialSaveBtn" type="button" class="session-btn">Scarica JSON</button>
@@ -49,10 +48,10 @@
     </section>
 
     <section class="legend" aria-label="Legenda colori">
-      <span><i class="dot pranzo"></i> Pranzo</span>
-      <span><i class="dot cena"></i> Sera</span>
-      <span><i class="dot spezzato"></i> Spezzato</span>
-      <span><i class="dot riposo"></i> Riposo</span>
+      <span><i class="dot pranzo"></i> Pranzo / M</span>
+      <span><i class="dot cena"></i> Sera / S</span>
+      <span><i class="dot spezzato"></i> Spezzato / M-S</span>
+      <span><i class="dot riposo"></i> Riposo / Off</span>
       <span><i class="dot richiesta"></i> Richiesta</span>
     </section>
 
@@ -122,6 +121,7 @@
   <script src="request-notes.js?v=14"></script>
   <script src="request-edit.js?v=1"></script>
   <script src="publish-monthly.js?v=14"></script>
+  <script src="kitchen-main-integration.js?v=1"></script>
   <script src="autosave-session.js?v=3"></script>
   <script src="official-save.js?v=4"></script>
   <script src="github-sync.js?v=1"></script>
