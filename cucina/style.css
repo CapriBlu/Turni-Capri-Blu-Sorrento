@@ -148,6 +148,7 @@ input, button, .link-btn {
   min-width: 900px;
   border-collapse: collapse;
   table-layout: fixed;
+  user-select: none;
 }
 
 .kitchen-table th,
@@ -194,11 +195,108 @@ input, button, .link-btn {
 .shift-cell {
   cursor: pointer;
   font-weight: 950;
+  touch-action: none;
 }
 
-.shift-cell:hover {
+.shift-cell:hover,
+.shift-cell.selected-cell,
+.shift-cell.multi-selected {
   outline: 3px solid #f5c542;
   outline-offset: -3px;
+}
+
+.shift-cell.multi-selected {
+  box-shadow: inset 0 0 0 999px rgba(245, 197, 66, .18) !important;
+}
+
+.kitchen-menu-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(5, 20, 45, .48);
+  backdrop-filter: blur(3px);
+}
+
+.kitchen-menu-backdrop.open {
+  display: flex;
+}
+
+.kitchen-menu-panel {
+  width: min(560px, 96vw);
+  padding: 20px;
+  border-radius: 24px;
+  background: #ffffff;
+  border: 3px solid #0b63b6;
+  box-shadow: 0 22px 70px rgba(0, 35, 90, .35);
+  text-align: center;
+}
+
+.kitchen-menu-panel h2 {
+  margin: 0;
+  color: #073b7a;
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+}
+
+.kitchen-menu-panel p {
+  margin: 6px 0 16px;
+  color: #45627f;
+  font-weight: 800;
+}
+
+.kitchen-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.kitchen-menu-grid button {
+  min-height: 74px;
+  border: 0;
+  border-radius: 18px;
+  font-size: 1.3rem;
+  font-weight: 950;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(0, 45, 100, .13);
+}
+
+.kitchen-menu-grid button small {
+  font-size: .78rem;
+  font-weight: 900;
+}
+
+.menu-m { background: #d9f7df; color: #0a5b20; }
+.menu-s { background: #e7ecff; color: #243b9b; }
+.menu-ms { background: #fff1bf; color: #745000; }
+.menu-off { background: #eef3f8; color: #12305a; }
+.menu-chius { background: #ffd49a; color: #743800; }
+.menu-empty { background: #f4f6f8; color: #12305a; }
+
+.kitchen-menu-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.kitchen-menu-actions button {
+  background: #fff7db;
+  color: #795200;
+  border-color: #e9c34d;
+}
+
+.kitchen-menu-close {
+  margin-top: 12px;
+  width: 100%;
+  border: 0;
+  border-radius: 16px;
+  background: #073b7a;
+  color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
 }
 
 @media (max-width: 760px) {
@@ -207,7 +305,7 @@ input, button, .link-btn {
 }
 
 @media print {
-  .top-card, .toolbar, .legend { display: none; }
+  .top-card, .toolbar, .legend, .kitchen-menu-backdrop { display: none; }
   .page { padding: 0; }
   .kitchen-table { min-width: 100%; }
 }
