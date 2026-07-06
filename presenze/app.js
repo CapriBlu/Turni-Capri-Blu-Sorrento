@@ -78,7 +78,7 @@ function toggleSection(key) {
 }
 
 function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#039;", '"': "&quot;" }[char]));
+  return String(value ?? "").replace(/[&<>'\"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#039;", '\"': "&quot;" }[char]));
 }
 function escapeAttr(value) { return escapeHtml(value).replace(/`/g, "&#096;"); }
 
@@ -191,22 +191,20 @@ function renderTable() {
   const oldSelectedKey = selectedCell ? getCellKey(selectedCell) : "";
   let html = "<thead><tr><th>Staff</th>";
   for (let day = 1; day <= totalDays; day++) html += "<th><span class='day-number'>" + day + "</span><span class='day-name'>" + dayLabel(year, month, day) + "</span></th>";
-  html += "<th>P</th><th>F</th><th>Fer</th><th>MAL</th><th>Ass</th><th>Rit</th><th>Min</th></tr></thead><tbody>";
+  html += "</tr></thead><tbody>";
   presenceSections.forEach((section) => {
     const closed = isSectionCollapsed(section.key);
     const names = section.getNames();
-    html += "<tr class='section-row " + (closed ? "is-closed" : "") + "' data-section='" + escapeAttr(section.key) + "'><td colspan='" + (totalDays + 8) + "'><button type='button' class='section-toggle' aria-expanded='" + (!closed) + "'><span>" + escapeHtml(section.title) + "</span><small>" + names.length + " persone</small></button></td></tr>";
+    html += "<tr class='section-row " + (closed ? "is-closed" : "") + "' data-section='" + escapeAttr(section.key) + "'><td colspan='" + (totalDays + 1) + "'><button type='button' class='section-toggle' aria-expanded='" + (!closed) + "'><span>" + escapeHtml(section.title) + "</span><small>" + names.length + " persone</small></button></td></tr>";
     names.forEach((name) => {
-      const counts = { presenze: 0, feste: 0, ferie: 0, malattia: 0, assenze: 0, ritardi: 0, minuti: 0 };
       html += "<tr class='department-row " + (closed ? "hidden-section" : "") + "' data-parent-section='" + escapeAttr(section.key) + "'><td>" + escapeHtml(name) + "</td>";
       for (let day = 1; day <= totalDays; day++) {
         const info = finalCellInfo(name, day, new Date(year, month - 1, day), manualData, section);
-        addCount(counts, info.value, info.minutes);
         const cls = classMap[info.value] || "";
         const manualClass = info.manual ? " manual-cell" : "";
         html += "<td class='presence-cell " + cls + manualClass + "' data-name='" + escapeAttr(name) + "' data-day='" + day + "' data-value='" + escapeAttr(info.value) + "' data-minutes='" + info.minutes + "'>" + displayValue(info.value, info.minutes) + "</td>";
       }
-      html += "<td class='total-cell'>" + counts.presenze + "</td><td class='total-cell'>" + counts.feste + "</td><td class='total-cell'>" + counts.ferie + "</td><td class='total-cell'>" + counts.malattia + "</td><td class='total-cell'>" + counts.assenze + "</td><td class='total-cell'>" + counts.ritardi + "</td><td class='total-cell'>" + counts.minuti + "</td></tr>";
+      html += "</tr>";
     });
   });
   table.innerHTML = html + "</tbody>";
