@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Presenze mensili - Capri Blu</title>
-  <link rel="stylesheet" href="style.css?v=12" />
+  <link rel="stylesheet" href="style.css?v=13" />
   <link rel="stylesheet" href="monthly-context-menu.css?v=1" />
   <link rel="stylesheet" href="monthly-archive.css?v=3" />
   <link rel="stylesheet" href="presenze-tools-menu.css?v=1" />
@@ -31,12 +31,13 @@
       <button id="resetBtn" type="button">Reset mese</button>
     </section>
 
-    <section class="legend">
-      <span class="p">P</span><b>Presenza</b>
-      <span class="f">F</span><b>Festa</b>
-      <span class="fer">Fer</span><b>Ferie</b>
-      <span class="mal">MAL</span><b>Malattia</b>
-      <span class="rit">P+Rit</span><b>Ritardo</b>
+    <section class="legend" aria-label="Legenda presenze">
+      <div class="legend-item"><span class="p">P</span><b>Presenza</b></div>
+      <div class="legend-item"><span class="f">F</span><b>Festa</b></div>
+      <div class="legend-item"><span class="fer">Fer</span><b>Ferie</b></div>
+      <div class="legend-item"><span class="mal">MAL</span><b>Malattia</b></div>
+      <div class="legend-item"><span class="ass">Ass</span><b>Assenza</b></div>
+      <div class="legend-item"><span class="rit">P+Rit</span><b>Presenza con ritardo</b></div>
     </section>
 
     <section class="table-card">
@@ -47,7 +48,7 @@
   </main>
 
   <script src="../staff-data.js?v=1"></script>
-  <script src="app.js?v=12"></script>
+  <script src="app.js?v=13"></script>
   <script src="monthly-drag-select.js?v=4"></script>
   <script src="monthly-archive.js?v=3"></script>
   <script src="presenze-tools-menu.js?v=1"></script>
