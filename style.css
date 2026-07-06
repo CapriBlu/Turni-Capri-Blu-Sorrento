@@ -143,6 +143,39 @@ h2 {
   transform: translateY(-1px);
 }
 
+.undo-redo-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px;
+  border: 1px solid rgba(6, 27, 58, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 8px 18px rgba(6, 27, 58, 0.08);
+}
+
+.toolbar .mini-history-btn {
+  width: 30px !important;
+  min-width: 30px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 0 !important;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50% !important;
+  font-size: 1.02rem !important;
+  line-height: 1 !important;
+  background: #eef6ff !important;
+  color: var(--blue) !important;
+  box-shadow: none !important;
+}
+
+.toolbar .mini-history-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
 .send-monthly-btn {
   background: #fff7db !important;
   color: #795200 !important;
@@ -628,6 +661,19 @@ h2 {
   .editor-grid,
   .fast-shift-grid { grid-template-columns: 1fr; }
   .quick-time-row { grid-template-columns: repeat(3, 1fr); }
+
+  .undo-redo-controls {
+    order: -10;
+    gap: 3px;
+  }
+
+  .toolbar .mini-history-btn {
+    width: 28px !important;
+    min-width: 28px !important;
+    height: 28px !important;
+    min-height: 28px !important;
+    font-size: 0.94rem !important;
+  }
 }
 
 @media print {
