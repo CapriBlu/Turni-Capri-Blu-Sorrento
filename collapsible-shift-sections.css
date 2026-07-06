@@ -39,3 +39,27 @@
 .kitchen-section-row.collapsed td {
   background: linear-gradient(180deg, #0b4ca2, #062e72) !important;
 }
+
+.staff-header-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.quick-add-person-btn {
+  float: right;
+  width: 26px;
+  height: 26px;
+  border: 1px solid rgba(255,255,255,.45);
+  border-radius: 50%;
+  background: rgba(255,255,255,.18);
+  color: #ffffff;
+  font-size: 1.1rem;
+  line-height: 1;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.quick-add-person-btn:hover {
+  background: rgba(255,255,255,.32);
+}
