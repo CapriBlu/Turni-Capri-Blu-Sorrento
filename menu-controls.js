@@ -20,4 +20,15 @@ window.addEventListener('DOMContentLoaded', function () {
   if (sync) group.appendChild(sync);
 
   panel.insertBefore(group, panel.firstChild);
+
+  if (!document.querySelector('#staffMessagesBtn')) {
+    var btn = document.createElement('button');
+    btn.id = 'staffMessagesBtn';
+    btn.type = 'button';
+    btn.textContent = 'Messaggi personale';
+    btn.addEventListener('click', function () {
+      alert('Finestra Messaggi personale - prova. Qui collegheremo le richieste staff.');
+    });
+    panel.appendChild(btn);
+  }
 });
