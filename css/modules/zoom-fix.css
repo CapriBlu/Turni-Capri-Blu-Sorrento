@@ -25,6 +25,11 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+.table-card .shift-cell.is-selected {
+  outline: 3px solid #ffbf00 !important;
+  outline-offset: -3px;
+}
+
 .table-card .shift-table td[contenteditable="true"] {
   -webkit-user-select: text;
   user-select: text;
