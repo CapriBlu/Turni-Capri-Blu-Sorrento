@@ -45,12 +45,25 @@ function setupTopToolsMenu() {
     panel.appendChild(item);
   });
 
+  const monthNames = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth();
+  const monthlyLinks = monthNames.map((monthName, index) => {
+    const monthNumber = String(index + 1).padStart(2, '0');
+    const monthValue = `${currentYear}-${monthNumber}`;
+    const currentClass = index === currentMonth ? ' current-archive-month' : '';
+    const marker = index === currentMonth ? '🟢 ' : '';
+    return `<a href="presenze/?mese=${monthValue}" class="archive-month-link${currentClass}" data-month="${monthValue}">${marker}${monthName}</a>`;
+  }).join('');
+
   const archiveWrap = document.createElement('div');
   archiveWrap.className = 'archive-submenu-wrap';
   archiveWrap.innerHTML = `
     <button id="archiveSubmenuBtn" type="button" class="archive-submenu-btn" aria-expanded="false">Archivio ▸</button>
     <div id="archiveSubmenuPanel" class="archive-submenu-panel">
-      <a href="presenze/" class="archive-submenu-link">Archivio mensile</a>
+      <button id="monthlyArchiveSubmenuBtn" type="button" class="archive-submenu-link archive-nested-btn" aria-expanded="false">Archivio mensile ▸</button>
+      <div id="monthlyArchiveMonths" class="archive-months-panel">${monthlyLinks}</div>
       <button id="weeklyArchiveBtn" type="button" class="archive-submenu-link">Archivio settimanale</button>
     </div>
   `;
@@ -59,6 +72,15 @@ function setupTopToolsMenu() {
   const weeklyArchiveBtn = document.getElementById('weeklyArchiveBtn');
   weeklyArchiveBtn?.addEventListener('click', () => {
     alert('Archivio settimanale: prossimo passaggio da strutturare.');
+  });
+
+  const monthlyArchiveBtn = document.getElementById('monthlyArchiveSubmenuBtn');
+  const monthlyArchivePanel = document.getElementById('monthlyArchiveMonths');
+  monthlyArchiveBtn?.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const isOpen = monthlyArchivePanel.classList.toggle('open');
+    monthlyArchiveBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
   });
 
   if (legend && legendPanel) {
@@ -80,6 +102,8 @@ function setupTopToolsMenu() {
   function closeArchiveSubmenu() {
     archiveWrap.classList.remove('open');
     document.getElementById('archiveSubmenuBtn')?.setAttribute('aria-expanded', 'false');
+    monthlyArchivePanel?.classList.remove('open');
+    monthlyArchiveBtn?.setAttribute('aria-expanded', 'false');
   }
 
   button.addEventListener('click', (event) => {
