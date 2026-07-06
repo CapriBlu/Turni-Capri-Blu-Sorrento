@@ -40,6 +40,7 @@
     async function loadSchedule(){try{const res=await fetch(SAVE_URL+'?v='+Date.now(),{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);const snap=await res.json();const sala=pickStaff(snap);weekLabel.textContent=formatWeek(sala.week);updatedLabel.textContent=formatDate(snap.savedAt);const kitchens=pickKitchen(snap,sala.week);wrap.innerHTML=table('Sala',sala.staff.map(p=>({name:p.nome||'Staff',turni:p.turni||{}})),true,false)+kitchens.map(k=>table(k.title,k.rows,false,true)).join('');statusText.textContent='Pagina sola lettura: Sala, Pizzeria e Cucina / Lavaggio.';}catch(e){console.error(e);weekLabel.textContent='Errore';wrap.innerHTML='<details class="section-card" open><summary>Errore</summary><div class="section-inner"><p class="empty">Non riesco a caricare i turni da GitHub.</p></div></details>';statusText.textContent='Controllare il file save/turni-attuali.json.';}}
     loadSchedule();
   </script>
-  <script src="settimanale-compact.js?v=1"></script>
+  <script src="staff-requests-endpoint.js?v=1"></script>
+  <script src="settimanale-compact.js?v=2"></script>
 </body>
 </html>
