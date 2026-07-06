@@ -14,43 +14,33 @@ const defaultPresenceStaffNames = [
   "Carmine"
 ];
 
-const kitchenStaffNames = [
-  "LUCA",
-  "MARIO",
-  "IGOR",
-  "CRISTIAN",
-  "PIETRO",
-  "ANTONINO",
-  "Lavapiatti",
-  "AJITH",
-  "DIEGO",
-  "Saja"
-];
-
-const departments = {
-  sala: {
-    label: "Sala",
-    storagePrefix: "capriBluPresenzeMensili-",
-    publishedPrefix: "capriBluTurniStaffPublishedWeekV1-",
-    copiedKey: "capriBluPresenzeCopiaV1",
-    automatic: true,
+const presenceSections = [
+  {
+    key: "sala",
+    title: "Sala",
+    type: "sala",
     getNames: () => window.CapriBluStaff?.getStaffNames() || defaultPresenceStaffNames.slice()
   },
-  cucina: {
-    label: "Cucina / Pizzeria",
-    storagePrefix: "capriBluPresenzeMensiliCucina-",
-    publishedPrefix: "capriBluTurniCucinaPublishedWeekV1-",
-    copiedKey: "capriBluPresenzeCopiaCucinaV1",
-    automatic: true,
-    getNames: () => kitchenStaffNames.slice()
+  {
+    key: "pizzeria",
+    title: "Pizzeria",
+    type: "cucina",
+    getNames: () => ["LUCA", "MARIO", "IGOR", "CRISTIAN", "PIETRO"]
+  },
+  {
+    key: "cucina",
+    title: "Cucina / Lavaggio",
+    type: "cucina",
+    getNames: () => ["ANTONINO", "Lavapiatti", "AJITH", "DIEGO", "Saja"]
   }
-};
+];
 
-const departmentKey = "capriBluPresenzeRepartoV1";
-let activeDepartment = localStorage.getItem(departmentKey) || "sala";
-if (!departments[activeDepartment]) activeDepartment = "sala";
-
-let staffNames = departments[activeDepartment].getNames();
+const monthlyStoragePrefix = "capriBluPresenzeMensili-";
+const oldKitchenMonthlyStoragePrefix = "capriBluPresenzeMensiliCucina-";
+const salaPublishedWeekPrefix = "capriBluTurniStaffPublishedWeekV1-";
+const kitchenPublishedWeekPrefix = "capriBluTurniCucinaPublishedWeekV1-";
+const copiedPresenceKey = "capriBluPresenzeCopiaV1";
+const requestsKey = "capriBluRichiesteStaffV1";
 
 const dayKeys = ["lunedi", "martedi", "mercoledi", "giovedi", "venerdi", "sabato", "domenica"];
 const classMap = {
@@ -61,8 +51,6 @@ const classMap = {
   "P+Rit": "cell-rit"
 };
 
-const requestsKey = "capriBluRichiesteStaffV1";
-
 const monthInput = document.getElementById("monthInput");
 const table = document.getElementById("presenceTable");
 const printBtn = document.getElementById("printBtn");
@@ -71,15 +59,10 @@ const copyBtn = document.getElementById("copyBtn");
 const pasteBtn = document.getElementById("pasteBtn");
 const clearBtn = document.getElementById("clearBtn");
 const autosaveStatus = document.getElementById("autosaveStatus");
-const departmentTabs = document.querySelectorAll(".department-tab");
 let activeCell = null;
 let selectedCell = null;
 let menuBackdrop = null;
 let copiedRecord = null;
-
-function currentDepartment() {
-  return departments[activeDepartment] || departments.sala;
-}
 
 function safeJsonParse(value, fallback, keyToRemove = "") {
   try {
@@ -91,25 +74,25 @@ function safeJsonParse(value, fallback, keyToRemove = "") {
   }
 }
 
-function refreshStaffNames() {
-  staffNames = currentDepartment().getNames();
-}
-
 function currentMonthValue() {
   const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  return year + "-" + month;
+  return now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
 }
 
 function storageKey(month = monthInput.value) {
-  return currentDepartment().storagePrefix + month;
+  return monthlyStoragePrefix + month;
+}
+
+function oldKitchenStorageKey(month = monthInput.value) {
+  return oldKitchenMonthlyStoragePrefix + month;
 }
 
 function readData() {
   const key = storageKey();
-  const saved = localStorage.getItem(key);
-  return safeJsonParse(saved, {}, key);
+  const data = safeJsonParse(localStorage.getItem(key), {}, key);
+  const oldKitchenKey = oldKitchenStorageKey();
+  const oldKitchenData = safeJsonParse(localStorage.getItem(oldKitchenKey), {}, oldKitchenKey);
+  return { ...oldKitchenData, ...data };
 }
 
 function setAutosaveStatus(text) {
@@ -119,18 +102,15 @@ function setAutosaveStatus(text) {
 
 function saveData(data) {
   localStorage.setItem(storageKey(), JSON.stringify(data));
-  setAutosaveStatus(currentDepartment().label + " salvato " + new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }));
+  setAutosaveStatus("Presenze salvate " + new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }));
 }
 
 function readRequests() {
-  const saved = localStorage.getItem(requestsKey);
-  return safeJsonParse(saved, [], requestsKey);
+  return safeJsonParse(localStorage.getItem(requestsKey), [], requestsKey);
 }
 
 function daysInMonth(value) {
-  const parts = value.split("-");
-  const year = Number(parts[0]);
-  const month = Number(parts[1]);
+  const [year, month] = value.split("-").map(Number);
   return new Date(year, month, 0).getDate();
 }
 
@@ -140,10 +120,7 @@ function dayLabel(year, month, day) {
 }
 
 function toISODate(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return year + "-" + month + "-" + day;
+  return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
 }
 
 function getISOWeekString(date) {
@@ -163,21 +140,16 @@ function isWorking(value) {
 
 function normalizeRequestType(type) {
   const clean = String(type || "").toLowerCase();
-  if (clean === "riposo") return "festa";
-  return clean;
+  return clean === "riposo" ? "festa" : clean;
 }
 
-function autoValueFromRequests(name, dateISO) {
-  if (activeDepartment !== "sala") return "";
-
-  const requests = readRequests();
-  const request = requests.find((item) => item.name === name && item.date === dateISO);
+function autoValueFromRequests(name, dateISO, section) {
+  if (section.type !== "sala") return "";
+  const request = readRequests().find((item) => item.name === name && item.date === dateISO);
   if (!request) return "";
-
   const type = normalizeRequestType(request.type);
   if (type === "ferie") return "Fer";
-  if (type === "festa") return "F";
-  if (type === "permesso" || type === "altro") return "F";
+  if (type === "festa" || type === "permesso" || type === "altro") return "F";
   return "";
 }
 
@@ -190,36 +162,34 @@ function autoValueFromKitchenShift(name, dayKey, kitchenData) {
 function autoValueFromSalaShift(name, dayKey, staff) {
   const person = Array.isArray(staff) ? staff.find((item) => item.nome === name) : null;
   if (!person) return "";
-
   const shift = person.turni?.[dayKey];
   if (!shift) return "";
-
   const hasPranzo = isWorking(shift.pranzo || shift.apertura);
   const hasSera = isWorking(shift.sera);
   return hasPranzo || hasSera ? "P" : "F";
 }
 
-function autoValueFromShift(name, date) {
-  if (!currentDepartment().automatic) return "";
-
+function autoValueFromShift(name, date, section) {
   const weekValue = getISOWeekString(date);
-  const key = currentDepartment().publishedPrefix + weekValue;
-  const saved = localStorage.getItem(key);
-  if (!saved) return "";
-
-  const data = safeJsonParse(saved, activeDepartment === "sala" ? [] : {}, key);
   const dayIndex = (date.getDay() || 7) - 1;
   const dayKey = dayKeys[dayIndex];
 
-  if (activeDepartment === "cucina") return autoValueFromKitchenShift(name, dayKey, data);
-  return autoValueFromSalaShift(name, dayKey, data);
+  if (section.type === "cucina") {
+    const key = kitchenPublishedWeekPrefix + weekValue;
+    const data = safeJsonParse(localStorage.getItem(key), {}, key);
+    return autoValueFromKitchenShift(name, dayKey, data);
+  }
+
+  const key = salaPublishedWeekPrefix + weekValue;
+  const staff = safeJsonParse(localStorage.getItem(key), [], key);
+  return autoValueFromSalaShift(name, dayKey, staff);
 }
 
-function automaticValue(name, date) {
+function automaticValue(name, date, section) {
   const dateISO = toISODate(date);
-  const requestValue = autoValueFromRequests(name, dateISO);
+  const requestValue = autoValueFromRequests(name, dateISO, section);
   if (requestValue) return requestValue;
-  return autoValueFromShift(name, date);
+  return autoValueFromShift(name, date, section);
 }
 
 function getManualValue(record) {
@@ -238,15 +208,16 @@ function displayValue(value, minutes) {
   return value;
 }
 
-function finalCellInfo(name, day, date, manualData) {
-  const cellKey = name + "-" + day;
-  const manualRecord = manualData[cellKey];
+function makeCellKey(name, day) {
+  return name + "-" + day;
+}
+
+function finalCellInfo(name, day, date, manualData, section) {
+  const manualRecord = manualData[makeCellKey(name, day)];
   const manualValue = getManualValue(manualRecord);
   const minutes = getManualMinutes(manualRecord);
-
   if (manualValue) return { value: manualValue, minutes, manual: true };
-
-  const auto = automaticValue(name, date);
+  const auto = automaticValue(name, date, section);
   return { value: auto || "", minutes: 0, manual: false };
 }
 
@@ -269,64 +240,48 @@ function selectCell(cell) {
 }
 
 function getCellKey(cell) {
-  return cell.dataset.name + "-" + cell.dataset.day;
+  return makeCellKey(cell.dataset.name, cell.dataset.day);
 }
 
 function getCellRecord(cell) {
   const data = readData();
   const record = data[getCellKey(cell)];
-  if (record) {
-    return typeof record === "string" ? { value: record, minutes: 0 } : record;
-  }
-  const value = cell.dataset.value || "";
-  const minutes = Number(cell.dataset.minutes || 0);
-  return { value, minutes };
-}
-
-function updateDepartmentTabs() {
-  departmentTabs.forEach((button) => {
-    button.classList.toggle("active", button.dataset.department === activeDepartment);
-  });
+  if (record) return typeof record === "string" ? { value: record, minutes: 0 } : record;
+  return { value: cell.dataset.value || "", minutes: Number(cell.dataset.minutes || 0) };
 }
 
 function renderTable() {
-  refreshStaffNames();
-  updateDepartmentTabs();
-
   const manualData = readData();
-  const parts = monthInput.value.split("-");
-  const year = Number(parts[0]);
-  const month = Number(parts[1]);
+  const [year, month] = monthInput.value.split("-").map(Number);
   const totalDays = daysInMonth(monthInput.value);
   const oldSelectedKey = selectedCell ? getCellKey(selectedCell) : "";
 
-  let html = "<thead><tr><th>" + currentDepartment().label + "</th>";
+  let html = "<thead><tr><th>Staff</th>";
   for (let day = 1; day <= totalDays; day++) {
     html += "<th><span class='day-number'>" + day + "</span><span class='day-name'>" + dayLabel(year, month, day) + "</span></th>";
   }
-  html += "<th>P</th><th>F</th><th>Fer</th><th>MAL</th><th>Rit</th><th>Min</th>";
-  html += "</tr></thead><tbody>";
+  html += "<th>P</th><th>F</th><th>Fer</th><th>MAL</th><th>Rit</th><th>Min</th></tr></thead><tbody>";
 
-  staffNames.forEach((name) => {
-    const counts = { presenze: 0, feste: 0, ferie: 0, malattia: 0, ritardi: 0, minuti: 0 };
-    html += "<tr><td>" + name + "</td>";
-
-    for (let day = 1; day <= totalDays; day++) {
-      const date = new Date(year, month - 1, day);
-      const info = finalCellInfo(name, day, date, manualData);
-      addCount(counts, info.value, info.minutes);
-      const cls = classMap[info.value] || "";
-      const manualClass = info.manual ? " manual-cell" : "";
-      html += "<td class='presence-cell " + cls + manualClass + "' data-name='" + name + "' data-day='" + day + "' data-value='" + info.value + "' data-minutes='" + info.minutes + "'>" + displayValue(info.value, info.minutes) + "</td>";
-    }
-
-    html += "<td class='total-cell'>" + counts.presenze + "</td>";
-    html += "<td class='total-cell'>" + counts.feste + "</td>";
-    html += "<td class='total-cell'>" + counts.ferie + "</td>";
-    html += "<td class='total-cell'>" + counts.malattia + "</td>";
-    html += "<td class='total-cell'>" + counts.ritardi + "</td>";
-    html += "<td class='total-cell'>" + counts.minuti + "</td>";
-    html += "</tr>";
+  presenceSections.forEach((section) => {
+    html += "<tr class='section-row'><td colspan='" + (totalDays + 7) + "'>" + section.title + "</td></tr>";
+    section.getNames().forEach((name) => {
+      const counts = { presenze: 0, feste: 0, ferie: 0, malattia: 0, ritardi: 0, minuti: 0 };
+      html += "<tr><td>" + name + "</td>";
+      for (let day = 1; day <= totalDays; day++) {
+        const date = new Date(year, month - 1, day);
+        const info = finalCellInfo(name, day, date, manualData, section);
+        addCount(counts, info.value, info.minutes);
+        const cls = classMap[info.value] || "";
+        const manualClass = info.manual ? " manual-cell" : "";
+        html += "<td class='presence-cell " + cls + manualClass + "' data-name='" + name + "' data-day='" + day + "' data-value='" + info.value + "' data-minutes='" + info.minutes + "'>" + displayValue(info.value, info.minutes) + "</td>";
+      }
+      html += "<td class='total-cell'>" + counts.presenze + "</td>";
+      html += "<td class='total-cell'>" + counts.feste + "</td>";
+      html += "<td class='total-cell'>" + counts.ferie + "</td>";
+      html += "<td class='total-cell'>" + counts.malattia + "</td>";
+      html += "<td class='total-cell'>" + counts.ritardi + "</td>";
+      html += "<td class='total-cell'>" + counts.minuti + "</td></tr>";
+    });
   });
 
   html += "</tbody>";
@@ -362,30 +317,17 @@ function createMenu() {
       <button type="button" id="presenceMenuClose" class="presence-menu-close">Annulla</button>
     </div>
   `;
-
   document.body.appendChild(menuBackdrop);
-
-  menuBackdrop.addEventListener("click", (event) => {
-    if (event.target === menuBackdrop) closePresenceMenu();
-  });
-
+  menuBackdrop.addEventListener("click", (event) => { if (event.target === menuBackdrop) closePresenceMenu(); });
   document.getElementById("presenceMenuClose").addEventListener("click", closePresenceMenu);
-  document.getElementById("presenceCopyBtn").addEventListener("click", () => {
-    if (activeCell) copyCell(activeCell);
-    closePresenceMenu();
-  });
-  document.getElementById("presencePasteBtn").addEventListener("click", () => {
-    if (activeCell) pasteCell(activeCell);
-    closePresenceMenu();
-  });
-
+  document.getElementById("presenceCopyBtn").addEventListener("click", () => { if (activeCell) copyCell(activeCell); closePresenceMenu(); });
+  document.getElementById("presencePasteBtn").addEventListener("click", () => { if (activeCell) pasteCell(activeCell); closePresenceMenu(); });
   menuBackdrop.querySelectorAll("[data-value]").forEach((button) => {
     button.addEventListener("click", () => {
       const cellToSave = activeCell;
       if (!cellToSave) return;
-      const value = button.dataset.value;
       closePresenceMenu();
-      saveCellValue(cellToSave, value);
+      saveCellValue(cellToSave, button.dataset.value);
     });
   });
 }
@@ -395,7 +337,7 @@ function openPresenceMenu(cell) {
   selectCell(cell);
   if (!menuBackdrop) createMenu();
   const subtitle = document.getElementById("presenceMenuSubtitle");
-  if (subtitle) subtitle.textContent = currentDepartment().label + " · " + cell.dataset.name + " - giorno " + cell.dataset.day;
+  if (subtitle) subtitle.textContent = cell.dataset.name + " - giorno " + cell.dataset.day;
   menuBackdrop.classList.add("open");
 }
 
@@ -415,14 +357,12 @@ function saveCellValue(cell, value) {
   const data = readData();
   const key = getCellKey(cell);
   const oldRecord = data[key];
-
   if (!value) {
     delete data[key];
     saveData(data);
     renderTable();
     return;
   }
-
   if (value === "P+Rit") {
     const oldMinutes = getManualMinutes(oldRecord);
     const minutesText = prompt("Quanti minuti di ritardo?", oldMinutes ? String(oldMinutes) : "");
@@ -432,7 +372,6 @@ function saveCellValue(cell, value) {
   } else {
     data[key] = { value, minutes: 0 };
   }
-
   saveData(data);
   renderTable();
 }
@@ -440,16 +379,13 @@ function saveCellValue(cell, value) {
 function copyCell(cell = selectedCell) {
   if (!cell) return;
   copiedRecord = getCellRecord(cell);
-  localStorage.setItem(currentDepartment().copiedKey, JSON.stringify(copiedRecord));
-  setAutosaveStatus("Cella copiata · " + currentDepartment().label);
+  localStorage.setItem(copiedPresenceKey, JSON.stringify(copiedRecord));
+  setAutosaveStatus("Cella copiata");
 }
 
 function pasteCell(cell = selectedCell) {
   if (!cell) return;
-  if (!copiedRecord) {
-    const saved = localStorage.getItem(currentDepartment().copiedKey);
-    copiedRecord = safeJsonParse(saved, null, currentDepartment().copiedKey);
-  }
+  if (!copiedRecord) copiedRecord = safeJsonParse(localStorage.getItem(copiedPresenceKey), null, copiedPresenceKey);
   if (!copiedRecord) return;
   saveCellRecord(cell, { value: copiedRecord.value || "", minutes: Number(copiedRecord.minutes || 0) });
 }
@@ -459,40 +395,20 @@ function clearSelectedCell() {
   saveCellValue(selectedCell, "");
 }
 
-function setDepartment(department) {
-  if (!departments[department]) return;
-  activeDepartment = department;
-  selectedCell = null;
-  copiedRecord = null;
-  localStorage.setItem(departmentKey, activeDepartment);
-  renderTable();
-  setAutosaveStatus("Reparto: " + currentDepartment().label);
-}
-
 window.getPresenceStorageKey = function (month) {
   return storageKey(month || monthInput.value);
 };
-
-window.getPresenceDepartmentLabel = function () {
-  return currentDepartment().label;
-};
-
-window.getPresenceDepartmentKey = function () {
-  return activeDepartment;
-};
+window.getPresenceDepartmentLabel = function () { return "Presenze Staff"; };
+window.getPresenceDepartmentKey = function () { return "all"; };
 
 monthInput.value = localStorage.getItem("capriBluPresenzeMese") || currentMonthValue();
 renderTable();
-setAutosaveStatus("Pronto · " + currentDepartment().label);
+setAutosaveStatus("Pronto");
 
 table.addEventListener("click", (event) => {
   const cell = event.target.closest(".presence-cell");
   if (!cell) return;
   openPresenceMenu(cell);
-});
-
-departmentTabs.forEach((button) => {
-  button.addEventListener("click", () => setDepartment(button.dataset.department));
 });
 
 monthInput.addEventListener("input", () => {
@@ -522,8 +438,8 @@ document.addEventListener("keydown", (event) => {
 });
 
 resetBtn.addEventListener("click", () => {
-  if (!confirm("Cancellare solo le modifiche manuali di questo mese per " + currentDepartment().label + "?")) return;
+  if (!confirm("Cancellare solo le modifiche manuali di questo mese? I dati inviati dai turni resteranno visibili.")) return;
   localStorage.removeItem(storageKey());
   renderTable();
-  setAutosaveStatus("Mese resettato · " + currentDepartment().label);
+  setAutosaveStatus("Mese resettato");
 });
