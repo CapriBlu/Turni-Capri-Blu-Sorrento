@@ -1,0 +1,22 @@
+.summary-toggle-btn {
+  background: #fff7db !important;
+  color: #795200 !important;
+  border-color: #e9c34d !important;
+}
+
+body.summary-collapsed .presence-table th:nth-last-child(-n+7),
+body.summary-collapsed .presence-table td:nth-last-child(-n+7) {
+  display: none;
+}
+
+body.summary-collapsed .presence-table {
+  min-width: 1120px;
+}
+
+body.summary-collapsed .section-row td {
+  border-right: 1px solid #b9cce3;
+}
+
+@media print {
+  .summary-toggle-btn { display: none !important; }
+}
