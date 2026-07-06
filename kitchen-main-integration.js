@@ -1,5 +1,6 @@
 const kitchenWeekStoragePrefixMain = "capriBluTurniCucinaWeekV1-";
 const kitchenPublishedWeekStoragePrefixMain = "capriBluTurniCucinaPublishedWeekV1-";
+const kitchenForceVersionKey = "capriBluKitchenW28ForceVersionV2";
 
 const kitchenMainSections = [
   { title: "Pizzeria", people: ["LUCA", "MARIO", "IGOR", "CRISTIAN", "PIETRO"] },
@@ -8,96 +9,16 @@ const kitchenMainSections = [
 
 const kitchenDefaultWeeks = {
   "2026-W28": {
-    "LUCA": {
-      "lunedi": "M/S",
-      "martedi": "M/S",
-      "mercoledi": "M/S",
-      "giovedi": "Off",
-      "venerdi": "M/S",
-      "sabato": "M/S",
-      "domenica": "S"
-    },
-    "MARIO": {
-      "lunedi": "S",
-      "martedi": "Off",
-      "mercoledi": "S",
-      "giovedi": "M/S",
-      "venerdi": "M/S",
-      "sabato": "S",
-      "domenica": "M/S"
-    },
-    "IGOR": {
-      "lunedi": "Off",
-      "martedi": "S",
-      "mercoledi": "M/S",
-      "giovedi": "M/S",
-      "venerdi": "S",
-      "sabato": "M/S",
-      "domenica": "M/S"
-    },
-    "CRISTIAN": {
-      "lunedi": "",
-      "martedi": "",
-      "mercoledi": "",
-      "giovedi": "S",
-      "venerdi": "",
-      "sabato": "S",
-      "domenica": "S"
-    },
-    "PIETRO": {
-      "lunedi": "Pietro",
-      "martedi": "Pietro",
-      "mercoledi": "",
-      "giovedi": "",
-      "venerdi": "",
-      "sabato": "",
-      "domenica": ""
-    },
-    "ANTONINO": {
-      "lunedi": "M",
-      "martedi": "M",
-      "mercoledi": "Off",
-      "giovedi": "M",
-      "venerdi": "M",
-      "sabato": "M",
-      "domenica": "M"
-    },
-    "Lavapiatti": {
-      "lunedi": "Off",
-      "martedi": "M/S",
-      "mercoledi": "M/S",
-      "giovedi": "M/S",
-      "venerdi": "M/S",
-      "sabato": "M/S",
-      "domenica": "M/S"
-    },
-    "AJITH": {
-      "lunedi": "S",
-      "martedi": "S",
-      "mercoledi": "S",
-      "giovedi": "Off",
-      "venerdi": "S",
-      "sabato": "S",
-      "domenica": "S"
-    },
-    "DIEGO": {
-      "lunedi": "M/S",
-      "martedi": "S",
-      "mercoledi": "M/S",
-      "giovedi": "M/S",
-      "venerdi": "Off",
-      "sabato": "S",
-      "domenica": "S"
-    },
-    "Saja": {
-      "lunedi": "Off",
-      "martedi": "12/chius",
-      "mercoledi": "M/S",
-      "giovedi": "12/chius",
-      "venerdi": "12/chius",
-      "sabato": "12/chius",
-      "domenica": "12/chius"
-    }
+    "LUCA": { "lunedi": "M/S", "martedi": "M/S", "mercoledi": "M/S", "giovedi": "Off", "venerdi": "M/S", "sabato": "M/S", "domenica": "S" },
+    "MARIO": { "lunedi": "S", "martedi": "Off", "mercoledi": "S", "giovedi": "M/S", "venerdi": "M/S", "sabato": "S", "domenica": "M/S" },
+    "IGOR": { "lunedi": "Off", "martedi": "S", "mercoledi": "M/S", "giovedi": "M/S", "venerdi": "S", "sabato": "M/S", "domenica": "M/S" },
+    "CRISTIAN": { "lunedi": "", "martedi": "", "mercoledi": "", "giovedi": "S", "venerdi": "", "sabato": "S", "domenica": "S" },
+    "PIETRO": { "lunedi": "Pietro", "martedi": "Pietro", "mercoledi": "", "giovedi": "", "venerdi": "", "sabato": "", "domenica": "" },
+    "ANTONINO": { "lunedi": "M", "martedi": "M", "mercoledi": "Off", "giovedi": "M", "venerdi": "M", "sabato": "M", "domenica": "M" },
+    "Lavapiatti": { "lunedi": "Off", "martedi": "M/S", "mercoledi": "M/S", "giovedi": "M/S", "venerdi": "M/S", "sabato": "M/S", "domenica": "M/S" },
+    "AJITH": { "lunedi": "S", "martedi": "S", "mercoledi": "S", "giovedi": "Off", "venerdi": "S", "sabato": "S", "domenica": "S" },
+    "DIEGO": { "lunedi": "M/S", "martedi": "S", "mercoledi": "M/S", "giovedi": "M/S", "venerdi": "Off", "sabato": "S", "domenica": "S" },
+    "Saja": { "lunedi": "Off", "martedi": "12/chius", "mercoledi": "M/S", "giovedi": "12/chius", "venerdi": "12/chius", "sabato": "12/chius", "domenica": "12/chius" }
   }
 };
 
@@ -106,9 +27,7 @@ function kitchenBlankWeekData() {
   kitchenMainSections.forEach((section) => {
     section.people.forEach((name) => {
       data[name] = {};
-      days.forEach((day) => {
-        data[name][day.key] = "";
-      });
+      days.forEach((day) => { data[name][day.key] = ""; });
     });
   });
   return data;
@@ -118,18 +37,30 @@ function kitchenCurrentWeekKey() {
   return kitchenWeekStoragePrefixMain + weekInput.value;
 }
 
-function hasKitchenValues(data) {
-  return Object.values(data || {}).some((row) => {
-    return Object.values(row || {}).some((value) => String(value || "").trim() !== "");
-  });
+function kitchenPublishedWeekKey() {
+  return kitchenPublishedWeekStoragePrefixMain + weekInput.value;
+}
+
+function copyKitchenWeekData(data) {
+  return JSON.parse(JSON.stringify(data || {}));
+}
+
+function forceKitchenW28IfNeeded() {
+  if (weekInput.value !== "2026-W28") return;
+  const currentVersion = localStorage.getItem(kitchenForceVersionKey);
+  if (currentVersion === "2") return;
+  const data = copyKitchenWeekData(kitchenDefaultWeeks["2026-W28"]);
+  localStorage.setItem(kitchenCurrentWeekKey(), JSON.stringify(data));
+  localStorage.setItem(kitchenPublishedWeekKey(), JSON.stringify(data));
+  localStorage.setItem(kitchenForceVersionKey, "2");
 }
 
 function readKitchenMainData() {
+  forceKitchenW28IfNeeded();
   const saved = localStorage.getItem(kitchenCurrentWeekKey());
   const defaultData = kitchenDefaultWeeks[weekInput.value] || kitchenBlankWeekData();
-  const parsed = safeJsonParse(saved, {}, kitchenCurrentWeekKey());
-  const base = hasKitchenValues(parsed) ? parsed : defaultData;
-  const data = Object.assign(kitchenBlankWeekData(), base || {});
+  const parsed = safeJsonParse(saved, defaultData, kitchenCurrentWeekKey());
+  const data = Object.assign(kitchenBlankWeekData(), parsed || defaultData || {});
   kitchenMainSections.forEach((section) => {
     section.people.forEach((name) => {
       data[name] = Object.assign(kitchenBlankWeekData()[name], data[name] || {});
@@ -140,6 +71,7 @@ function readKitchenMainData() {
 
 function saveKitchenMainData(data) {
   localStorage.setItem(kitchenCurrentWeekKey(), JSON.stringify(data));
+  if (weekInput.value === "2026-W28") localStorage.setItem(kitchenForceVersionKey, "2");
 }
 
 function kitchenShiftClass(value) {
@@ -173,18 +105,12 @@ function renderKitchenRowsInMainTable() {
       const row = document.createElement("tr");
       row.className = "kitchen-person-row";
       row.innerHTML = `<td class="kitchen-name-cell">${escapeHtml(name)}</td>`;
-
       days.forEach((day) => {
         const value = data[name]?.[day.key] || "";
         const td = document.createElement("td");
-        td.innerHTML = `
-          <button class="shift-cell kitchen-shift-cell one-field" type="button" data-kitchen="true" data-name="${escapeHtml(name)}" data-day="${day.key}" aria-label="Modifica turno ${escapeHtml(name)} ${day.label}">
-            ${kitchenCellContent(value)}
-          </button>
-        `;
+        td.innerHTML = `<button class="shift-cell kitchen-shift-cell one-field" type="button" data-kitchen="true" data-name="${escapeHtml(name)}" data-day="${day.key}" aria-label="Modifica turno ${escapeHtml(name)} ${day.label}">${kitchenCellContent(value)}</button>`;
         row.appendChild(td);
       });
-
       scheduleBody.appendChild(row);
     });
   });
@@ -207,23 +133,9 @@ function normalizeKitchenValue(value) {
   return clean;
 }
 
-function saveKitchenCell(cell, value) {
-  const name = cell.dataset.name;
-  const dayKey = cell.dataset.day;
-  if (!name || !dayKey) return;
-
-  const data = readKitchenMainData();
-  if (!data[name]) data[name] = {};
-  data[name][dayKey] = normalizeKitchenValue(value);
-  saveKitchenMainData(data);
-  renderTable();
-  prepareRequestBadges?.();
-}
-
 function applyKitchenValueToSelected(value) {
   const cells = selectedShiftCells.filter((cell) => cell.dataset.kitchen === "true");
   if (!cells.length) return;
-
   const data = readKitchenMainData();
   cells.forEach((cell) => {
     const name = cell.dataset.name;
@@ -231,7 +143,6 @@ function applyKitchenValueToSelected(value) {
     if (!data[name]) data[name] = {};
     data[name][dayKey] = normalizeKitchenValue(value);
   });
-
   saveKitchenMainData(data);
   renderTable();
   prepareRequestBadges?.();
@@ -245,17 +156,10 @@ function showKitchenContextMenu(x, y) {
   hideShiftContextMenu();
   shiftContextMenu = document.createElement("div");
   shiftContextMenu.className = "shift-context-menu kitchen-context-menu";
-  shiftContextMenu.style.position = "fixed";
-  shiftContextMenu.style.left = x + "px";
-  shiftContextMenu.style.top = y + "px";
-  shiftContextMenu.style.zIndex = "99998";
-  shiftContextMenu.style.minWidth = "205px";
-  shiftContextMenu.style.padding = "6px";
-  shiftContextMenu.style.border = "1px solid #b8d7ff";
-  shiftContextMenu.style.borderRadius = "12px";
-  shiftContextMenu.style.background = "#ffffff";
-  shiftContextMenu.style.boxShadow = "0 14px 32px rgba(0, 34, 79, 0.22)";
-
+  Object.assign(shiftContextMenu.style, {
+    position: "fixed", left: x + "px", top: y + "px", zIndex: "99998", minWidth: "205px", padding: "6px",
+    border: "1px solid #b8d7ff", borderRadius: "12px", background: "#ffffff", boxShadow: "0 14px 32px rgba(0, 34, 79, 0.22)"
+  });
   shiftContextMenu.appendChild(createKitchenMenuButton("M - Mattina", "M"));
   shiftContextMenu.appendChild(createKitchenMenuButton("S - Sera", "S"));
   shiftContextMenu.appendChild(createKitchenMenuButton("M/S - Spezzato", "M/S"));
@@ -264,11 +168,7 @@ function showKitchenContextMenu(x, y) {
   shiftContextMenu.appendChild(createKitchenMenuButton("Vuoto / Off", "Off"));
   shiftContextMenu.appendChild(createMenuButton("Copia selezione", copySelectedCellsFromMenu));
   shiftContextMenu.appendChild(createMenuButton("Incolla", pasteSelectedCellsFromMenu));
-  shiftContextMenu.appendChild(createMenuButton("Deseleziona", () => {
-    clearSelectedShiftCell();
-    anchorShiftCell = null;
-  }));
-
+  shiftContextMenu.appendChild(createMenuButton("Deseleziona", () => { clearSelectedShiftCell(); anchorShiftCell = null; }));
   document.body.appendChild(shiftContextMenu);
   const rect = shiftContextMenu.getBoundingClientRect();
   shiftContextMenu.style.left = Math.max(8, Math.min(x, window.innerWidth - rect.width - 8)) + "px";
@@ -277,11 +177,7 @@ function showKitchenContextMenu(x, y) {
 
 const originalShowShiftContextMenuForKitchen = showShiftContextMenu;
 showShiftContextMenu = function (x, y) {
-  const hasKitchenSelected = selectedShiftCells.some((cell) => cell.dataset.kitchen === "true");
-  if (hasKitchenSelected) {
-    showKitchenContextMenu(x, y);
-    return;
-  }
+  if (selectedShiftCells.some((cell) => cell.dataset.kitchen === "true")) return showKitchenContextMenu(x, y);
   originalShowShiftContextMenuForKitchen(x, y);
 };
 
@@ -297,39 +193,19 @@ openShiftMenu = function (personIndex, dayKey) {
   originalOpenShiftMenuForKitchen(personIndex, dayKey);
 };
 
-const originalShiftFromPastedTextForKitchen = shiftFromPastedText;
-shiftFromPastedText = function (value) {
-  const startCell = getTopLeftSelectedShiftCell();
-  if (startCell?.dataset.kitchen === "true") {
-    return normalizeKitchenValue(value);
-  }
-  return originalShiftFromPastedTextForKitchen(value);
-};
-
 const originalApplyPastedTextToShiftsForKitchen = applyPastedTextToShifts;
 applyPastedTextToShifts = function (text) {
   const startCell = getTopLeftSelectedShiftCell();
-  if (!startCell?.dataset.kitchen) {
-    originalApplyPastedTextToShiftsForKitchen(text);
-    return;
-  }
-
+  if (!startCell?.dataset.kitchen) return originalApplyPastedTextToShiftsForKitchen(text);
   const start = getCellPosition(startCell);
-  if (!start) {
-    showCopyNotice("Seleziona una cella prima di incollare");
-    return;
-  }
-
+  if (!start) return showCopyNotice("Seleziona una cella prima di incollare");
   const rows = String(text || "").replace(/\r/g, "").split("\n").filter((row, index, list) => !(index === list.length - 1 && row === "")).map((row) => row.split("\t"));
   const data = readKitchenMainData();
   let changed = 0;
-
   rows.forEach((rowValues, rowOffset) => {
     rowValues.forEach((value, colOffset) => {
-      const rowIndex = start.row + rowOffset;
-      const colIndex = start.col + colOffset;
-      const row = document.getElementById("shiftTable")?.rows[rowIndex];
-      const cell = row?.cells[colIndex]?.querySelector(".kitchen-shift-cell");
+      const row = document.getElementById("shiftTable")?.rows[start.row + rowOffset];
+      const cell = row?.cells[start.col + colOffset]?.querySelector(".kitchen-shift-cell");
       if (!cell) return;
       const name = cell.dataset.name;
       const dayKey = cell.dataset.day;
@@ -338,12 +214,7 @@ applyPastedTextToShifts = function (text) {
       changed += 1;
     });
   });
-
-  if (!changed) {
-    showCopyNotice("Nessun turno cucina incollato");
-    return;
-  }
-
+  if (!changed) return showCopyNotice("Nessun turno cucina incollato");
   saveKitchenMainData(data);
   renderTable();
   selectedShiftCells = [];
@@ -353,10 +224,9 @@ applyPastedTextToShifts = function (text) {
 
 function publishKitchenMainToMonthly() {
   const data = readKitchenMainData();
-  localStorage.setItem(kitchenPublishedWeekStoragePrefixMain + weekInput.value, JSON.stringify(data));
+  localStorage.setItem(kitchenPublishedWeekKey(), JSON.stringify(data));
 }
 
-const oldSendMonthlyButton = document.getElementById("sendMonthlyBtn");
-oldSendMonthlyButton?.addEventListener("click", publishKitchenMainToMonthly, true);
-
+document.getElementById("sendMonthlyBtn")?.addEventListener("click", publishKitchenMainToMonthly, true);
+forceKitchenW28IfNeeded();
 renderKitchenRowsInMainTable();
