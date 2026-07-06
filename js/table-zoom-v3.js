@@ -24,7 +24,7 @@ window.addEventListener('DOMContentLoaded', function () {
   };
 
   var zoom = parseFloat(localStorage.getItem(key));
-  if (!isFinite(zoom)) zoom = 1;
+  if (!isFinite(zoom)) zoom = 0.90;
 
   function clamp(value) {
     return Math.max(min, Math.min(max, value));
@@ -49,6 +49,7 @@ window.addEventListener('DOMContentLoaded', function () {
     table.style.transformOrigin = '';
     table.style.webkitTransformOrigin = '';
 
+    card.style.setProperty('--table-zoom', String(zoom));
     card.style.setProperty('--zoom-table-width', px(base.tableWidth * zoom));
     card.style.setProperty('--zoom-name-width', px(base.nameWidth * zoom));
     card.style.setProperty('--zoom-cell-width', px(base.cellWidth * zoom));
@@ -74,7 +75,7 @@ window.addEventListener('DOMContentLoaded', function () {
   };
 
   reset.onclick = function () {
-    zoom = 1;
+    zoom = 0.90;
     apply();
   };
 
