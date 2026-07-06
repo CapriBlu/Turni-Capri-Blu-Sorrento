@@ -14,9 +14,10 @@ const salaPublishedWeekPrefix = "capriBluTurniStaffPublishedWeekV1-";
 const kitchenPublishedWeekPrefix = "capriBluTurniCucinaPublishedWeekV1-";
 const copiedPresenceKey = "capriBluPresenzeCopiaV1";
 const requestsKey = "capriBluRichiesteStaffV1";
+const collapsedSectionsKey = "capriBluPresenzeRepartiChiusiV1";
 
 const dayKeys = ["lunedi", "martedi", "mercoledi", "giovedi", "venerdi", "sabato", "domenica"];
-const classMap = { "P": "cell-p", "F": "cell-f", "Fer": "cell-fer", "MAL": "cell-mal", "P+Rit": "cell-rit" };
+const classMap = { "P": "cell-p", "F": "cell-f", "Fer": "cell-fer", "MAL": "cell-mal", "Ass": "cell-ass", "P+Rit": "cell-rit" };
 
 const monthInput = document.getElementById("monthInput");
 const table = document.getElementById("presenceTable");
@@ -61,14 +62,25 @@ function readData() {
   return { ...oldKitchenData, ...data };
 }
 
-function setAutosaveStatus(text) {
-  if (autosaveStatus) autosaveStatus.textContent = text;
-}
-
+function setAutosaveStatus(text) { if (autosaveStatus) autosaveStatus.textContent = text; }
 function saveData(data) {
   localStorage.setItem(storageKey(), JSON.stringify(data));
   setAutosaveStatus("Presenze salvate " + new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }));
 }
+
+function readCollapsedSections() { return safeJsonParse(localStorage.getItem(collapsedSectionsKey), {}, collapsedSectionsKey); }
+function isSectionCollapsed(key) { return readCollapsedSections()[key] === true; }
+function toggleSection(key) {
+  const collapsed = readCollapsedSections();
+  collapsed[key] = !collapsed[key];
+  localStorage.setItem(collapsedSectionsKey, JSON.stringify(collapsed));
+  renderTable();
+}
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#039;", '"': "&quot;" }[char]));
+}
+function escapeAttr(value) { return escapeHtml(value).replace(/`/g, "&#096;"); }
 
 function readRequests() { return safeJsonParse(localStorage.getItem(requestsKey), [], requestsKey); }
 function daysInMonth(value) { const [year, month] = value.split("-").map(Number); return new Date(year, month, 0).getDate(); }
@@ -155,6 +167,7 @@ function addCount(counts, value, minutes) {
   if (value === "F") counts.feste += 1;
   if (value === "Fer") counts.ferie += 1;
   if (value === "MAL") counts.malattia += 1;
+  if (value === "Ass") counts.assenze += 1;
   if (value === "P+Rit") { counts.presenze += 1; counts.ritardi += 1; counts.minuti += Number(minutes || 0); }
 }
 
@@ -178,20 +191,22 @@ function renderTable() {
   const oldSelectedKey = selectedCell ? getCellKey(selectedCell) : "";
   let html = "<thead><tr><th>Staff</th>";
   for (let day = 1; day <= totalDays; day++) html += "<th><span class='day-number'>" + day + "</span><span class='day-name'>" + dayLabel(year, month, day) + "</span></th>";
-  html += "<th>P</th><th>F</th><th>Fer</th><th>MAL</th><th>Rit</th><th>Min</th></tr></thead><tbody>";
+  html += "<th>P</th><th>F</th><th>Fer</th><th>MAL</th><th>Ass</th><th>Rit</th><th>Min</th></tr></thead><tbody>";
   presenceSections.forEach((section) => {
-    html += "<tr class='section-row'><td colspan='" + (totalDays + 7) + "'>" + section.title + "</td></tr>";
-    section.getNames().forEach((name) => {
-      const counts = { presenze: 0, feste: 0, ferie: 0, malattia: 0, ritardi: 0, minuti: 0 };
-      html += "<tr><td>" + name + "</td>";
+    const closed = isSectionCollapsed(section.key);
+    const names = section.getNames();
+    html += "<tr class='section-row " + (closed ? "is-closed" : "") + "' data-section='" + escapeAttr(section.key) + "'><td colspan='" + (totalDays + 8) + "'><button type='button' class='section-toggle' aria-expanded='" + (!closed) + "'><span>" + escapeHtml(section.title) + "</span><small>" + names.length + " persone</small></button></td></tr>";
+    names.forEach((name) => {
+      const counts = { presenze: 0, feste: 0, ferie: 0, malattia: 0, assenze: 0, ritardi: 0, minuti: 0 };
+      html += "<tr class='department-row " + (closed ? "hidden-section" : "") + "' data-parent-section='" + escapeAttr(section.key) + "'><td>" + escapeHtml(name) + "</td>";
       for (let day = 1; day <= totalDays; day++) {
         const info = finalCellInfo(name, day, new Date(year, month - 1, day), manualData, section);
         addCount(counts, info.value, info.minutes);
         const cls = classMap[info.value] || "";
         const manualClass = info.manual ? " manual-cell" : "";
-        html += "<td class='presence-cell " + cls + manualClass + "' data-name='" + name + "' data-day='" + day + "' data-value='" + info.value + "' data-minutes='" + info.minutes + "'>" + displayValue(info.value, info.minutes) + "</td>";
+        html += "<td class='presence-cell " + cls + manualClass + "' data-name='" + escapeAttr(name) + "' data-day='" + day + "' data-value='" + escapeAttr(info.value) + "' data-minutes='" + info.minutes + "'>" + displayValue(info.value, info.minutes) + "</td>";
       }
-      html += "<td class='total-cell'>" + counts.presenze + "</td><td class='total-cell'>" + counts.feste + "</td><td class='total-cell'>" + counts.ferie + "</td><td class='total-cell'>" + counts.malattia + "</td><td class='total-cell'>" + counts.ritardi + "</td><td class='total-cell'>" + counts.minuti + "</td></tr>";
+      html += "<td class='total-cell'>" + counts.presenze + "</td><td class='total-cell'>" + counts.feste + "</td><td class='total-cell'>" + counts.ferie + "</td><td class='total-cell'>" + counts.malattia + "</td><td class='total-cell'>" + counts.assenze + "</td><td class='total-cell'>" + counts.ritardi + "</td><td class='total-cell'>" + counts.minuti + "</td></tr>";
     });
   });
   table.innerHTML = html + "</tbody>";
@@ -206,7 +221,7 @@ function createMenu() {
   menuBackdrop = document.createElement("div");
   menuBackdrop.id = "presenceMenuBackdrop";
   menuBackdrop.className = "presence-menu-backdrop";
-  menuBackdrop.innerHTML = `<div class="presence-menu-panel" role="dialog" aria-modal="true"><h2>Seleziona presenza</h2><p id="presenceMenuSubtitle">Scegli una voce per questa casella</p><div class="presence-menu-grid"><button type="button" data-value="P" class="menu-p">P<br><small>Presenza</small></button><button type="button" data-value="F" class="menu-f">F<br><small>Festa</small></button><button type="button" data-value="Fer" class="menu-fer">Fer<br><small>Ferie</small></button><button type="button" data-value="MAL" class="menu-mal">MAL<br><small>Malattia</small></button><button type="button" data-value="P+Rit" class="menu-rit">P+Rit<br><small>Ritardo</small></button><button type="button" data-value="" class="menu-empty">Vuoto<br><small>Cancella</small></button></div><div class="presence-menu-actions"><button type="button" id="presenceCopyBtn">Copia</button><button type="button" id="presencePasteBtn">Incolla</button></div><button type="button" id="presenceMenuClose" class="presence-menu-close">Annulla</button></div>`;
+  menuBackdrop.innerHTML = `<div class="presence-menu-panel" role="dialog" aria-modal="true"><h2>Seleziona presenza</h2><p id="presenceMenuSubtitle">Scegli una voce per questa casella</p><div class="presence-menu-grid"><button type="button" data-value="P" class="menu-p">P<br><small>Presenza</small></button><button type="button" data-value="F" class="menu-f">F<br><small>Festa</small></button><button type="button" data-value="Fer" class="menu-fer">Fer<br><small>Ferie</small></button><button type="button" data-value="MAL" class="menu-mal">MAL<br><small>Malattia</small></button><button type="button" data-value="Ass" class="menu-ass">Ass<br><small>Assenza</small></button><button type="button" data-value="P+Rit" class="menu-rit">P+Rit<br><small>Ritardo</small></button><button type="button" data-value="" class="menu-empty">Vuoto<br><small>Cancella</small></button></div><div class="presence-menu-actions"><button type="button" id="presenceCopyBtn">Copia</button><button type="button" id="presencePasteBtn">Incolla</button></div><button type="button" id="presenceMenuClose" class="presence-menu-close">Annulla</button></div>`;
   document.body.appendChild(menuBackdrop);
   menuBackdrop.addEventListener("click", (event) => { if (event.target === menuBackdrop) closePresenceMenu(); });
   document.getElementById("presenceMenuClose").addEventListener("click", closePresenceMenu);
@@ -256,7 +271,12 @@ localStorage.setItem("capriBluPresenzeMese", monthInput.value);
 renderTable();
 setAutosaveStatus(monthFromUrl() ? "Aperto archivio " + monthInput.value : "Pronto");
 
-table.addEventListener("click", (event) => { const cell = event.target.closest(".presence-cell"); if (cell) openPresenceMenu(cell); });
+table.addEventListener("click", (event) => {
+  const sectionRow = event.target.closest(".section-row");
+  if (sectionRow) { toggleSection(sectionRow.dataset.section); return; }
+  const cell = event.target.closest(".presence-cell");
+  if (cell) openPresenceMenu(cell);
+});
 monthInput.addEventListener("input", () => { localStorage.setItem("capriBluPresenzeMese", monthInput.value); renderTable(); });
 copyBtn?.addEventListener("click", () => copyCell());
 pasteBtn?.addEventListener("click", () => pasteCell());
