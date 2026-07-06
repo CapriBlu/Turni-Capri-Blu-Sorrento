@@ -4,14 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sala Capri Blu Sorrento</title>
-
-  <!-- Base storica del progetto -->
   <link rel="stylesheet" href="style.css?v=16" />
-
-  <!-- Layout compatto legacy: accorpa compact.css + ultra-compact.css -->
   <link rel="stylesheet" href="legacy-compact.css?v=1" />
-
-  <!-- Moduli esistenti: mantenuti separati per area funzionale -->
   <link rel="stylesheet" href="monthly-fix.css?v=1" />
   <link rel="stylesheet" href="shift-buttons.css?v=2" />
   <link rel="stylesheet" href="requests.css?v=1" />
@@ -20,8 +14,6 @@
   <link rel="stylesheet" href="top-sync-buttons.css?v=1" />
   <link rel="stylesheet" href="top-menus.css?v=1" />
   <link rel="stylesheet" href="sections.css?v=1" />
-
-  <!-- Livello di manutenzione: nuove regole mobile/tablet solo qui -->
   <link rel="stylesheet" href="responsive.css?v=2" />
   <link rel="stylesheet" href="mobile-menu-controls.css?v=1" />
   <link rel="stylesheet" href="archive-menu-fix.css?v=1" />
@@ -39,14 +31,12 @@
           <button id="loadOfficialSaveBtn" type="button">Carica da GitHub</button>
         </div>
       </div>
-
       <div class="week-box">
         <label for="weekInput">Settimana</label>
         <input id="weekInput" type="week" />
         <p id="weekRange" class="week-range"></p>
       </div>
     </section>
-
     <section class="toolbar" aria-label="Strumenti tabella">
       <a href="presenze/" class="monthly-link">Presenze mensili</a>
       <button id="sendMonthlyBtn" type="button" class="send-monthly-btn">Invia al mensile</button>
@@ -59,7 +49,6 @@
       <button id="printBtn" type="button">Stampa</button>
       <button id="resetBtn" type="button">Reset</button>
     </section>
-
     <section class="legend" aria-label="Legenda colori">
       <span><i class="dot pranzo"></i> Pranzo / M</span>
       <span><i class="dot cena"></i> Sera / S</span>
@@ -67,76 +56,28 @@
       <span><i class="dot riposo"></i> Riposo / Off</span>
       <span><i class="dot richiesta"></i> Richiesta</span>
     </section>
-
     <section class="table-zoom-bar" aria-label="Zoom tabella turni">
       <span class="zoom-label">Zoom tabella</span>
       <div class="zoom-actions">
-        <button id="zoomOutBtn" type="button" aria-label="Riduci zoom tabella">−</button>
+        <button id="zoomOutBtn" type="button" aria-label="Riduci zoom tabella">-</button>
         <span id="zoomValue" class="zoom-value">100%</span>
         <button id="zoomInBtn" type="button" aria-label="Aumenta zoom tabella">+</button>
         <button id="zoomResetBtn" type="button">Reset</button>
       </div>
     </section>
-
-    <section class="table-card">
-      <div class="table-scroll">
-        <table class="shift-table" id="shiftTable">
-          <thead>
-            <tr>
-              <th>Staff</th>
-              <th data-day-header="lunedi">Lunedì</th>
-              <th data-day-header="martedi">Martedì</th>
-              <th data-day-header="mercoledi">Mercoledì</th>
-              <th data-day-header="giovedi">Giovedì</th>
-              <th data-day-header="venerdi">Venerdì</th>
-              <th data-day-header="sabato">Sabato</th>
-              <th data-day-header="domenica">Domenica</th>
-            </tr>
-          </thead>
-          <tbody id="scheduleBody"></tbody>
-        </table>
-      </div>
-    </section>
-
+    <section class="table-card"><div class="table-scroll"><table class="shift-table" id="shiftTable"><thead><tr><th>Staff</th><th data-day-header="lunedi">Lunedi</th><th data-day-header="martedi">Martedi</th><th data-day-header="mercoledi">Mercoledi</th><th data-day-header="giovedi">Giovedi</th><th data-day-header="venerdi">Venerdi</th><th data-day-header="sabato">Sabato</th><th data-day-header="domenica">Domenica</th></tr></thead><tbody id="scheduleBody"></tbody></table></div></section>
     <section class="requests-card">
-      <div class="requests-head">
-        <div>
-          <p class="eyebrow dark">Richiesta</p>
-          <h2>Richiesta</h2>
-        </div>
-        <p>La richiesta compare nella settimana selezionata.</p>
-      </div>
-
+      <div class="requests-head"><div><p class="eyebrow dark">Richiesta</p><h2>Richiesta</h2></div><p>La richiesta compare nella settimana selezionata.</p></div>
       <div class="request-form">
         <select id="requestName" aria-label="Nome dipendente"></select>
         <input id="requestDate" type="date" aria-label="Data richiesta" />
-        <select id="requestType" aria-label="Tipo richiesta">
-          <option value="Ferie">Ferie</option>
-          <option value="Riposo">Festa</option>
-          <option value="Permesso">Permesso</option>
-          <option value="Altro">Altro</option>
-        </select>
+        <select id="requestType" aria-label="Tipo richiesta"><option value="Ferie">Ferie</option><option value="Riposo">Festa</option><option value="Permesso">Permesso</option><option value="Altro">Altro</option></select>
         <input id="requestNote" type="text" placeholder="Nota" aria-label="Nota richiesta" />
         <button id="addRequestBtn" type="button">Aggiungi</button>
       </div>
-
-      <div class="requests-list-wrap">
-        <table class="requests-table">
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Data</th>
-              <th>Tipo</th>
-              <th>Nota</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="requestsBody"></tbody>
-        </table>
-      </div>
+      <div class="requests-list-wrap"><table class="requests-table"><thead><tr><th>Nome</th><th>Data</th><th>Tipo</th><th>Nota</th><th></th></tr></thead><tbody id="requestsBody"></tbody></table></div>
     </section>
   </main>
-
   <script src="staff-data.js?v=1"></script>
   <script src="script.js?v=17"></script>
   <script src="request-render.js?v=3"></script>
@@ -145,14 +86,14 @@
   <script src="request-edit.js?v=1"></script>
   <script src="publish-monthly.js?v=14"></script>
   <script src="kitchen-main-integration.js?v=1"></script>
-  <script src="sections-ui.js?v=1"></script>
-  <script src="requests-panel-ui.js?v=1"></script>
-  <script src="top-menu-ui.js?v=1"></script>
-  <script src="menu-controls.js?v=1"></script>
-  <script src="archive-menu-fix.js?v=1"></script>
+  <script src="js/sections-ui.js?v=1"></script>
+  <script src="js/requests-panel-ui.js?v=1"></script>
+  <script src="js/top-menu-ui.js?v=1"></script>
+  <script src="js/menu-controls.js?v=1"></script>
+  <script src="js/archive-menu-fix.js?v=1"></script>
   <script src="autosave-session.js?v=3"></script>
   <script src="official-save.js?v=4"></script>
   <script src="github-sync.js?v=1"></script>
-  <script src="table-zoom-v3.js?v=1"></script>
+  <script src="js/table-zoom-v3.js?v=1"></script>
 </body>
 </html>
