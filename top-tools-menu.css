@@ -12,7 +12,8 @@
 }
 
 .top-tools-menu,
-.top-legend-menu {
+.top-legend-menu,
+.archive-submenu-wrap {
   position: relative;
 }
 
@@ -79,6 +80,32 @@
 .top-tools-menu-panel button:hover {
   background: #e4f0ff;
   transform: none;
+}
+
+.archive-submenu-wrap {
+  width: 100%;
+}
+
+.archive-submenu-btn {
+  background: #fff7db !important;
+  color: #795200 !important;
+}
+
+.archive-submenu-panel {
+  display: none;
+  gap: 6px;
+  margin: 6px 0 2px 14px;
+  padding-left: 8px;
+  border-left: 3px solid #e9c34d;
+}
+
+.archive-submenu-wrap.open .archive-submenu-panel {
+  display: grid;
+}
+
+.archive-submenu-link {
+  background: #fffdf4 !important;
+  color: #795200 !important;
 }
 
 .top-tools-menu-panel .send-monthly-btn {
