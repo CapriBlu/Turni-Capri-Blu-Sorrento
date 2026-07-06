@@ -1,0 +1,89 @@
+.request-badge,
+.request-pill {
+  cursor: pointer;
+}
+
+.has-request {
+  background: transparent !important;
+}
+
+.has-request .shift-cell {
+  position: relative !important;
+  border-width: 1px !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    0 0 0 1px rgba(0, 0, 0, 0.03) !important;
+}
+
+.shift-cell.request-festa {
+  background: rgba(216, 248, 223, 0.78) !important;
+  border-color: rgba(123, 212, 147, 0.9) !important;
+}
+
+.shift-cell.request-festa .shift-time {
+  color: #13722f !important;
+}
+
+.shift-cell.request-ferie {
+  background: #063b78 !important;
+  border-color: #031f44 !important;
+}
+
+.shift-cell.request-ferie .shift-time {
+  color: white !important;
+}
+
+.shift-cell.request-altro {
+  background: #1f8fd6 !important;
+  border-color: #0b63b6 !important;
+}
+
+.shift-cell.request-altro .shift-time {
+  color: white !important;
+}
+
+.shift-cell.request-festa .shift-time,
+.shift-cell.request-ferie .shift-time,
+.shift-cell.request-altro .shift-time {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.request-dot {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ffd400;
+  border: 1px solid #d7a800;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55);
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.request-inline {
+  display: none !important;
+}
+
+.request-pill.ferie {
+  color: white !important;
+  background: #063b78 !important;
+  border-color: #031f44 !important;
+}
+
+.request-pill.riposo,
+.request-pill.festa {
+  color: #13722f !important;
+  background: rgba(216, 248, 223, 0.78) !important;
+  border-color: rgba(123, 212, 147, 0.9) !important;
+}
+
+.request-pill.permesso,
+.request-pill.altro {
+  color: white !important;
+  background: #1f8fd6 !important;
+  border-color: #0b63b6 !important;
+}
