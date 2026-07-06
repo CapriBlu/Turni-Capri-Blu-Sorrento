@@ -1,0 +1,29 @@
+/*
+  Capri Blu Turni - Archive menu fix
+  --------------------------------------------------
+  Rende l'archivio più comodo su mobile:
+  - lista mesi/settimane scrollabile;
+  - mese corrente evidenziato e tenuto in alto via JS.
+*/
+
+.archive-months-panel,
+.archive-weeks-panel {
+  max-height: 260px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.archive-month-link.current-archive-month,
+.archive-week-link.current-archive-week {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+@media (max-width: 760px) {
+  .archive-months-panel,
+  .archive-weeks-panel {
+    max-height: 210px;
+  }
+}
