@@ -8,6 +8,11 @@
   --zoom-time-font: 0.72rem;
 }
 
+.shift-cell:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 @media (max-width: 760px) {
   .table-card .shift-table {
     width: var(--zoom-table-width) !important;
