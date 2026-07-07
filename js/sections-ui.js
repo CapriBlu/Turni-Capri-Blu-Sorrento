@@ -1,10 +1,9 @@
 /*
   Capri Blu Turni - Sections UI
   --------------------------------------------------
-  Gestisce:
-  - sezioni Sala/Cucina/Pizzeria espandibili;
-  - pulsante rapido aggiungi persona nella colonna Staff;
-  - aggiunta persona da menu contestuale sulla colonna nomi.
+  Gestisce solo:
+  - apertura/chiusura sezioni già renderizzate da script.js;
+  - pulsante rapido aggiungi persona nella colonna Staff.
 */
 
 (function () {
@@ -24,45 +23,6 @@
 
   function getScheduleBody() {
     return document.getElementById("scheduleBody") || window.scheduleBody;
-  }
-
-  function insertSalaHeader() {
-    const body = getScheduleBody();
-    if (!body || body.querySelector('.shift-section-row[data-section="sala"]')) return;
-
-    const header = document.createElement("tr");
-    header.className = "shift-section-row";
-    header.dataset.section = "sala";
-    header.innerHTML = '<td colspan="8"><button type="button" class="shift-section-toggle" data-section="sala"><span class="section-arrow">▾</span> Sala</button></td>';
-    body.insertBefore(header, body.firstChild);
-
-    let row = header.nextElementSibling;
-    while (row && !row.classList.contains("kitchen-section-row") && !row.classList.contains("shift-section-row")) {
-      row.dataset.sectionGroup = "sala";
-      row = row.nextElementSibling;
-    }
-  }
-
-  function normalizeKitchenHeaders() {
-    const body = getScheduleBody();
-    if (!body) return;
-
-    body.querySelectorAll(".kitchen-section-row").forEach((row) => {
-      const text = row.textContent.trim().toLowerCase();
-      const isPizzeria = text.includes("pizzeria");
-      const title = isPizzeria ? "Pizzeria" : "Cucina / Lavaggio";
-      const section = isPizzeria ? "pizzeria" : "cucina";
-
-      row.classList.add("shift-section-row");
-      row.dataset.section = section;
-      row.innerHTML = `<td colspan="8"><button type="button" class="shift-section-toggle" data-section="${section}"><span class="section-arrow">▾</span> ${title}</button></td>`;
-
-      let next = row.nextElementSibling;
-      while (next && !next.classList.contains("kitchen-section-row") && !next.classList.contains("shift-section-row")) {
-        next.dataset.sectionGroup = section;
-        next = next.nextElementSibling;
-      }
-    });
   }
 
   function applyCollapsedSections() {
@@ -85,19 +45,13 @@
     });
   }
 
-  function setupSections() {
-    insertSalaHeader();
-    normalizeKitchenHeaders();
-    applyCollapsedSections();
-  }
-
   function patchRenderTable() {
     if (typeof window.renderTable !== "function" || window.renderTable.__sectionsPatched) return;
 
     const originalRenderTable = window.renderTable;
     window.renderTable = function patchedRenderTable() {
       originalRenderTable.apply(this, arguments);
-      setupSections();
+      applyCollapsedSections();
     };
     window.renderTable.__sectionsPatched = true;
   }
@@ -135,31 +89,11 @@
     });
   }
 
-  function setupNameContextMenu() {
-    const body = getScheduleBody();
-    if (!body || body.__nameContextReady) return;
-
-    body.addEventListener("contextmenu", (event) => {
-      const nameCell = event.target.closest('td[data-field="nome"], .kitchen-name-cell');
-      if (!nameCell) return;
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      if (confirm("Aggiungere una nuova persona?")) {
-        if (typeof window.addPerson === "function") window.addPerson();
-      }
-    });
-
-    body.__nameContextReady = true;
-  }
-
   function init() {
     patchRenderTable();
-    setupSections();
+    applyCollapsedSections();
     setupSectionClicks();
     injectAddPersonButton();
-    setupNameContextMenu();
   }
 
   if (document.readyState === "loading") {
