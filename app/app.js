@@ -73,6 +73,7 @@ function setupTabs(){
     });
   });
 }
+function shiftButtonClass(value){var v=String(value).toLowerCase();if(v==='riposo'||v==='off')return ' is-rest-option';if(v.indexOf('/')>-1||v.indexOf(':')>-1||v.indexOf('cena')>-1||v.indexOf('pranzo')>-1)return ' is-special-option';return ''}
 function applyShift(value){
   if(!activeCell)return;
   activeCell.querySelector('.shift-value').textContent=value;
@@ -87,11 +88,11 @@ function openShiftEditor(cell){
   var title=document.getElementById('shiftEditorTitle');
   var options=document.getElementById('shiftOptions');
   var custom=document.getElementById('customShiftInput');
-  title.textContent=dep.title+' - '+cell.dataset.person+' - '+cell.dataset.day;
+  title.textContent=dep.title+' · '+cell.dataset.person+' · '+cell.dataset.day;
   options.innerHTML='';
   dep.values.forEach(function(value){
     var btn=document.createElement('button');
-    btn.className='shift-option-btn';
+    btn.className='shift-option-btn'+shiftButtonClass(value);
     btn.type='button';
     btn.textContent=value;
     btn.addEventListener('click',function(){applyShift(value)});
@@ -110,9 +111,11 @@ function closeShiftEditor(){
 function setupShiftEditor(){
   var close=document.getElementById('closeShiftEditorBtn');
   var save=document.getElementById('saveCustomShiftBtn');
+  var clear=document.getElementById('clearShiftBtn');
   var editor=document.getElementById('shiftEditor');
   if(close)close.addEventListener('click',closeShiftEditor);
   if(save)save.addEventListener('click',function(){var input=document.getElementById('customShiftInput');applyShift((input.value||'Riposo').trim()||'Riposo')});
+  if(clear)clear.addEventListener('click',function(){applyShift('Riposo')});
   if(editor)editor.addEventListener('click',function(event){if(event.target===editor)closeShiftEditor()});
 }
 function setupCellTap(){
