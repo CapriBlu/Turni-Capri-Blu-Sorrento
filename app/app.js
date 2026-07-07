@@ -6,9 +6,12 @@ var departments=[
 ];
 var storeName='capriBluAppTurniByWeekV1';
 var weekStoreName='capriBluAppCurrentWeekV1';
+var requestStoreName='capriBluAppRequestsV1';
 var allData={};
+var requests=[];
 var activeCell=null;
 try{allData=JSON.parse(localStorage.getItem(storeName)||'{}')}catch(e){allData={}}
+try{requests=JSON.parse(localStorage.getItem(requestStoreName)||'[]')}catch(e){requests=[]}
 function currentWeek(){var input=document.getElementById('weekInput');return input&&input.value?input.value:'no-week'}
 function weekData(){var key=currentWeek();if(!allData[key])allData[key]={};return allData[key]}
 function cellKey(dep,person,day){return dep+'_'+person+'_'+day}
@@ -115,9 +118,14 @@ function setupCopyPreviousWeek(){
     if(s){s.textContent='Copiata '+previous}
   });
 }
+function saveRequests(){localStorage.setItem(requestStoreName,JSON.stringify(requests));var s=document.getElementById('saveStatus');if(s){s.textContent='Richieste salvate'}}
+function setupRequestPeople(){var select=document.getElementById('requestPerson');if(!select)return;var names=[];departments.forEach(function(dep){dep.people.forEach(function(name){if(names.indexOf(name)<0)names.push(name)})});select.innerHTML=names.map(function(name){return '<option>'+name+'</option>'}).join('')}
+function renderRequests(){var list=document.getElementById('requestsList');if(!list)return;if(!requests.length){list.innerHTML='<div class="panel-card">Nessuna richiesta salvata.</div>';return}list.innerHTML='';requests.slice().reverse().forEach(function(item){var card=document.createElement('div');card.className='request-card';card.innerHTML='<strong>'+item.person+' - '+item.type+'</strong><div class="request-meta">'+item.date+' - '+item.status+'</div><p class="request-note">'+(item.note||'')+'</p><button class="mini-btn" type="button" data-id="'+item.id+'">Rimuovi</button>';list.appendChild(card)})}
+function setupRequests(){setupRequestPeople();renderRequests();var add=document.getElementById('addRequestBtn');var list=document.getElementById('requestsList');if(add)add.addEventListener('click',function(){var person=document.getElementById('requestPerson').value;var type=document.getElementById('requestType').value;var date=document.getElementById('requestDate').value||'-';var note=document.getElementById('requestNote').value.trim();requests.push({id:Date.now(),person:person,type:type,date:date,note:note,status:'in attesa'});document.getElementById('requestNote').value='';saveRequests();renderRequests()});if(list)list.addEventListener('click',function(event){var btn=event.target.closest('.mini-btn');if(!btn)return;requests=requests.filter(function(item){return String(item.id)!==String(btn.dataset.id)});saveRequests();renderRequests()})}
 setupTabs();
 setupWeek();
 renderSchedule();
 setupCellTap();
 setupShiftEditor();
 setupCopyPreviousWeek();
+setupRequests();
