@@ -22,10 +22,8 @@ const monthInput = document.getElementById("monthInput");
 const table = document.getElementById("presenceTable");
 const printBtn = document.getElementById("printBtn");
 const resetBtn = document.getElementById("resetBtn");
-const clearBtn = document.getElementById("clearBtn");
 const autosaveStatus = document.getElementById("autosaveStatus");
 let activeCell = null;
-let selectedCell = null;
 let menuBackdrop = null;
 
 function safeJsonParse(value, fallback, keyToRemove = "") {
@@ -148,6 +146,7 @@ function getManualValue(record) { return !record ? "" : typeof record === "strin
 function getManualMinutes(record) { return !record || typeof record === "string" ? 0 : Number(record.minutes || 0); }
 function displayValue(value, minutes) { return value === "P+Rit" && minutes > 0 ? "P+Rit " + minutes + "m" : value; }
 function makeCellKey(name, day) { return name + "-" + day; }
+function getCellKey(cell) { return makeCellKey(cell.dataset.name, cell.dataset.day); }
 
 function finalCellInfo(name, day, date, manualData, section) {
   const manualRecord = manualData[makeCellKey(name, day)];
@@ -167,19 +166,10 @@ function addCount(counts, value, minutes) {
   if (value === "P+Rit") { counts.presenze += 1; counts.ritardi += 1; counts.minuti += Number(minutes || 0); }
 }
 
-function selectCell(cell) {
-  if (selectedCell) selectedCell.classList.remove("selected-cell");
-  selectedCell = cell;
-  if (selectedCell) selectedCell.classList.add("selected-cell");
-}
-
-function getCellKey(cell) { return makeCellKey(cell.dataset.name, cell.dataset.day); }
-
 function renderTable() {
   const manualData = readData();
   const [year, month] = monthInput.value.split("-").map(Number);
   const totalDays = daysInMonth(monthInput.value);
-  const oldSelectedKey = selectedCell ? getCellKey(selectedCell) : "";
   let html = "<thead><tr><th>Staff</th>";
   for (let day = 1; day <= totalDays; day++) html += "<th><span class='day-number'>" + day + "</span><span class='day-name'>" + dayLabel(year, month, day) + "</span></th>";
   html += "</tr></thead><tbody>";
@@ -199,18 +189,13 @@ function renderTable() {
     });
   });
   table.innerHTML = html + "</tbody>";
-  if (oldSelectedKey) {
-    const [name, day] = oldSelectedKey.split("-");
-    const restored = table.querySelector(`.presence-cell[data-name="${CSS.escape(name)}"][data-day="${CSS.escape(day)}"]`);
-    if (restored) selectCell(restored);
-  }
 }
 
 function createMenu() {
   menuBackdrop = document.createElement("div");
   menuBackdrop.id = "presenceMenuBackdrop";
   menuBackdrop.className = "presence-menu-backdrop";
-  menuBackdrop.innerHTML = `<div class="presence-menu-panel" role="dialog" aria-modal="true"><h2>Seleziona presenza</h2><p id="presenceMenuSubtitle">Scegli una voce per questa casella</p><div class="presence-menu-grid"><button type="button" data-value="P" class="menu-p">P<br><small>Presenza</small></button><button type="button" data-value="F" class="menu-f">F<br><small>Festa</small></button><button type="button" data-value="Fer" class="menu-fer">Fer<br><small>Ferie</small></button><button type="button" data-value="MAL" class="menu-mal">MAL<br><small>Malattia</small></button><button type="button" data-value="Ass" class="menu-ass">Ass<br><small>Assenza</small></button><button type="button" data-value="P+Rit" class="menu-rit">P+Rit<br><small>Ritardo</small></button><button type="button" data-value="" class="menu-empty">Vuoto<br><small>Cancella</small></button></div><button type="button" id="presenceMenuClose" class="presence-menu-close">Annulla</button></div>`;
+  menuBackdrop.innerHTML = `<div class="presence-menu-panel" role="dialog" aria-modal="true"><h2>Scegli presenza</h2><p id="presenceMenuSubtitle">Scegli una voce per questa casella</p><div class="presence-menu-grid"><button type="button" data-value="P" class="menu-p">P<br><small>Presenza</small></button><button type="button" data-value="F" class="menu-f">F<br><small>Festa</small></button><button type="button" data-value="Fer" class="menu-fer">Fer<br><small>Ferie</small></button><button type="button" data-value="MAL" class="menu-mal">MAL<br><small>Malattia</small></button><button type="button" data-value="Ass" class="menu-ass">Ass<br><small>Assenza</small></button><button type="button" data-value="P+Rit" class="menu-rit">P+Rit<br><small>Ritardo</small></button><button type="button" data-value="" class="menu-empty">Vuoto<br><small>Cancella</small></button></div><button type="button" id="presenceMenuClose" class="presence-menu-close">Annulla</button></div>`;
   document.body.appendChild(menuBackdrop);
   menuBackdrop.addEventListener("click", (event) => { if (event.target === menuBackdrop) closePresenceMenu(); });
   document.getElementById("presenceMenuClose").addEventListener("click", closePresenceMenu);
@@ -223,7 +208,6 @@ function createMenu() {
 
 function openPresenceMenu(cell) {
   activeCell = cell;
-  selectCell(cell);
   if (!menuBackdrop) createMenu();
   const subtitle = document.getElementById("presenceMenuSubtitle");
   if (subtitle) subtitle.textContent = cell.dataset.name + " - giorno " + cell.dataset.day;
@@ -244,7 +228,6 @@ function saveCellValue(cell, value) {
   saveData(data);
   renderTable();
 }
-function clearSelectedCell() { if (selectedCell) saveCellValue(selectedCell, ""); }
 
 window.getPresenceStorageKey = (month) => storageKey(month || monthInput.value);
 window.getPresenceDepartmentLabel = () => "Presenze Staff";
@@ -262,7 +245,6 @@ table.addEventListener("click", (event) => {
   if (cell) openPresenceMenu(cell);
 });
 monthInput.addEventListener("input", () => { localStorage.setItem("capriBluPresenzeMese", monthInput.value); renderTable(); });
-clearBtn?.addEventListener("click", clearSelectedCell);
 printBtn.addEventListener("click", () => window.print());
 resetBtn.addEventListener("click", () => {
   if (!confirm("Cancellare solo le modifiche manuali di questo mese? I dati inviati dai turni resteranno visibili.")) return;
