@@ -12,9 +12,11 @@ function currentWeek(){var input=document.getElementById('weekInput');return inp
 function weekData(){var key=currentWeek();if(!allData[key])allData[key]={};return allData[key]}
 function cellKey(dep,person,day){return dep+'_'+person+'_'+day}
 function cellValue(dep,person,day){return weekData()[cellKey(dep,person,day)]||'Riposo'}
-function saveCell(dep,person,day,value){weekData()[cellKey(dep,person,day)]=value;localStorage.setItem(storeName,JSON.stringify(allData));localStorage.setItem(weekStoreName,currentWeek());var s=document.getElementById('saveStatus');if(s){s.textContent='Salvato '+currentWeek()}}
+function saveAll(){localStorage.setItem(storeName,JSON.stringify(allData));localStorage.setItem(weekStoreName,currentWeek())}
+function saveCell(dep,person,day,value){weekData()[cellKey(dep,person,day)]=value;saveAll();var s=document.getElementById('saveStatus');if(s){s.textContent='Salvato '+currentWeek()}}
 function depByKey(key){return departments.find(function(dep){return dep.key===key})}
 function thisWeek(){var d=new Date();var day=d.getDay()||7;d.setDate(d.getDate()+4-day);var y=new Date(d.getFullYear(),0,1);var w=Math.ceil((((d-y)/86400000)+1)/7);return d.getFullYear()+'-W'+String(w).padStart(2,'0')}
+function previousWeek(value){var parts=value.split('-W');var year=Number(parts[0]);var week=Number(parts[1]);week=week-1;if(week<1){year=year-1;week=52}return year+'-W'+String(week).padStart(2,'0')}
 function setupWeek(){var input=document.getElementById('weekInput');if(!input)return;input.value=localStorage.getItem(weekStoreName)||thisWeek();updateWeekLabel();input.addEventListener('change',function(){localStorage.setItem(weekStoreName,input.value);updateWeekLabel();renderSchedule()})}
 function updateWeekLabel(){var label=document.getElementById('weekRange');if(label)label.textContent='Settimana '+currentWeek()}
 
@@ -62,7 +64,23 @@ function setupCellTap(){
     saveCell(cell.dataset.dep,cell.dataset.person,cell.dataset.day,next);
   });
 }
+function setupCopyPreviousWeek(){
+  var btn=document.getElementById('copyPreviousWeekBtn');
+  if(!btn)return;
+  btn.addEventListener('click',function(){
+    var current=currentWeek();
+    var previous=previousWeek(current);
+    if(!allData[previous]){alert('Nessun turno trovato nella settimana '+previous);return}
+    if(!confirm('Copiare i turni da '+previous+' a '+current+'?'))return;
+    allData[current]=JSON.parse(JSON.stringify(allData[previous]));
+    saveAll();
+    renderSchedule();
+    var s=document.getElementById('saveStatus');
+    if(s){s.textContent='Copiata '+previous}
+  });
+}
 setupTabs();
 setupWeek();
 renderSchedule();
 setupCellTap();
+setupCopyPreviousWeek();
