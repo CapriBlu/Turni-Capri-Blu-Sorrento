@@ -10,10 +10,18 @@
 </head>
 <body>
   <main class="app-shell">
-    <header class="app-header">
-      <p class="eyebrow">Capri Blu Sorrento</p>
-      <h1>Turni Staff</h1>
-      <span id="saveStatus" class="save-status">Locale</span>
+    <header class="app-header dashboard-header">
+      <div class="top-toolbar">
+        <button class="toolbar-pill" type="button">☰ Menu</button>
+        <button class="toolbar-pill" type="button">Legenda</button>
+        <span class="status-pill">Dati ufficiali caricati</span>
+        <span id="saveStatus" class="save-status status-pill">Salvato automaticamente</span>
+      </div>
+      <div class="title-block">
+        <p class="eyebrow">TURNI STAFF</p>
+        <h1>Sala Capri Blu Sorrento</h1>
+        <p class="subtitle">Possibili variazioni.</p>
+      </div>
     </header>
 
     <section class="week-card">
@@ -29,11 +37,14 @@
     </nav>
 
     <section id="turniView" class="view active-view">
-      <h2>Turni settimana</h2>
+      <div class="section-heading">
+        <h2>Turni settimana</h2>
+        <span class="zoom-label">Zoom tabella 90%</span>
+      </div>
       <button id="copyPreviousWeekBtn" class="action-btn" type="button">Copia settimana precedente</button>
       <button id="sendWeekToMonthlyBtn" class="action-btn secondary-action" type="button">Invia settimana al mensile</button>
       <div id="weeklyMonthlyStatus" class="weekly-monthly-status">Non ancora inviata al mensile.</div>
-      <div id="scheduleSections" class="sections-list"></div>
+      <div id="scheduleSections" class="sections-list compact-table"></div>
     </section>
 
     <section id="richiesteView" class="view">
@@ -80,5 +91,6 @@
   <script src="app.js?v=1"></script>
   <script src="weekly-monthly.js?v=1"></script>
   <script src="monthly.js?v=1"></script>
+  <script src="theme.js?v=1"></script>
 </body>
 </html>
