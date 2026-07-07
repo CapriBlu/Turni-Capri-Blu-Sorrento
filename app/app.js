@@ -4,6 +4,7 @@ var departments=[
   {key:'pizzeria',title:'Pizzeria',people:['LUCA','MARIO','IGOR','CRISTIAN','PIETRO']},
   {key:'cucina',title:'Cucina / Lavaggio',people:['ANTONINO','Lavapiatti','AJITH','DIEGO','Saja']}
 ];
+var values=['Riposo','M','S','M/S','A','P','P/S','12/chius','10','12','15:30','16','17','19'];
 
 function renderSchedule(){
   var root=document.getElementById('scheduleSections');
@@ -24,7 +25,6 @@ function renderSchedule(){
     root.appendChild(card);
   });
 }
-
 function setupTabs(){
   document.querySelectorAll('.tab-btn').forEach(function(btn){
     btn.addEventListener('click',function(){
@@ -36,15 +36,16 @@ function setupTabs(){
     });
   });
 }
-
 function setupCellTap(){
   document.getElementById('scheduleSections').addEventListener('click',function(event){
     var cell=event.target.closest('.shift-btn');
     if(!cell)return;
-    alert(cell.dataset.person+' - '+cell.dataset.day);
+    var current=cell.querySelector('.shift-value').textContent;
+    var next=prompt('Turno '+cell.dataset.person+' '+cell.dataset.day+'\n'+values.join(', '),current);
+    if(next===null)return;
+    cell.querySelector('.shift-value').textContent=next.trim()||'Riposo';
   });
 }
-
 setupTabs();
 renderSchedule();
 setupCellTap();
