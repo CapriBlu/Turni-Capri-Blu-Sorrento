@@ -12,7 +12,7 @@
   <main class="app-shell">
     <header class="app-header dashboard-header">
       <div class="top-toolbar">
-        <button class="toolbar-pill" type="button">☰ Menu</button>
+        <button id="mainMenuBtn" class="toolbar-pill" type="button">☰ Menu</button>
         <button class="toolbar-pill" type="button">Legenda</button>
         <span class="status-pill">Dati ufficiali caricati</span>
         <span id="saveStatus" class="save-status status-pill">Salvato automaticamente</span>
@@ -86,11 +86,26 @@
     </div>
   </div>
 
+  <div id="mainMenuPanel" class="main-menu-panel" aria-hidden="true">
+    <div class="main-menu-card">
+      <div class="main-menu-head">
+        <strong>Menu rapido</strong>
+        <button id="closeMainMenuBtn" class="menu-close-btn" type="button">×</button>
+      </div>
+      <button class="main-menu-item" type="button" data-menu-view="turni">Turni settimana</button>
+      <button class="main-menu-item" type="button" data-menu-view="richieste">Richieste staff</button>
+      <button class="main-menu-item" type="button" data-menu-view="mensile">Riepilogo mensile</button>
+      <button id="menuCopyWeekBtn" class="main-menu-item" type="button">Copia settimana precedente</button>
+      <button id="menuSendMonthlyBtn" class="main-menu-item primary-menu-item" type="button">Invia settimana al mensile</button>
+    </div>
+  </div>
+
   <script src="data-model.js?v=1"></script>
   <script src="storage.js?v=1"></script>
   <script src="app.js?v=1"></script>
   <script src="weekly-monthly.js?v=1"></script>
   <script src="monthly.js?v=1"></script>
   <script src="theme.js?v=1"></script>
+  <script src="menu.js?v=1"></script>
 </body>
 </html>
