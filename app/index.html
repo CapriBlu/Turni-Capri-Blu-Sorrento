@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#063f7a">
+  <title>Capri Blu Turni App</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="app.css?v=1">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <p class="eyebrow">Capri Blu Sorrento</p>
+      <h1>Turni Staff</h1>
+      <span id="saveStatus" class="save-status">Locale</span>
+    </header>
+
+    <section class="week-card">
+      <label for="weekInput">Settimana</label>
+      <input id="weekInput" type="week">
+      <p id="weekRange" class="week-range">-</p>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab-btn active" type="button" data-view="turni">Turni</button>
+      <button class="tab-btn" type="button" data-view="richieste">Richieste</button>
+      <button class="tab-btn" type="button" data-view="mensile">Mensile</button>
+    </nav>
+
+    <section id="turniView" class="view active-view">
+      <h2>Turni settimana</h2>
+      <div id="scheduleSections" class="sections-list"></div>
+    </section>
+
+    <section id="richiesteView" class="view">
+      <h2>Richieste</h2>
+      <div id="requestPanel" class="panel-card">Modulo richieste in preparazione.</div>
+    </section>
+
+    <section id="mensileView" class="view">
+      <h2>Mensile</h2>
+      <div id="monthlySummary" class="panel-card">Pubblicazione mensile in preparazione.</div>
+    </section>
+  </main>
+
+  <script src="data-model.js?v=1"></script>
+  <script src="storage.js?v=1"></script>
+  <script src="app.js?v=1"></script>
+</body>
+</html>
