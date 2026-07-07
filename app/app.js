@@ -5,6 +5,12 @@ var departments=[
   {key:'cucina',title:'Cucina / Lavaggio',people:['ANTONINO','Lavapiatti','AJITH','DIEGO','Saja']}
 ];
 var values=['Riposo','M','S','M/S','A','P','P/S','12/chius','10','12','15:30','16','17','19'];
+var storeName='capriBluAppTurniV1';
+var saved={};
+try{saved=JSON.parse(localStorage.getItem(storeName)||'{}')}catch(e){saved={}}
+function cellKey(person,day){return person+'_'+day}
+function cellValue(person,day){return saved[cellKey(person,day)]||'Riposo'}
+function saveCell(person,day,value){saved[cellKey(person,day)]=value;localStorage.setItem(storeName,JSON.stringify(saved));var s=document.getElementById('saveStatus');if(s){s.textContent='Salvato'}}
 
 function renderSchedule(){
   var root=document.getElementById('scheduleSections');
@@ -17,7 +23,7 @@ function renderSchedule(){
     dep.people.forEach(function(person){
       html+='<div class="employee-row"><div class="employee-name">'+person+'</div><div class="days-grid">';
       days.forEach(function(day){
-        html+='<button class="shift-btn" type="button" data-person="'+person+'" data-day="'+day[0]+'"><span class="shift-day">'+day[1]+'</span><span class="shift-value">Riposo</span></button>';
+        html+='<button class="shift-btn" type="button" data-person="'+person+'" data-day="'+day[0]+'"><span class="shift-day">'+day[1]+'</span><span class="shift-value">'+cellValue(person,day[0])+'</span></button>';
       });
       html+='</div></div>';
     });
@@ -43,7 +49,9 @@ function setupCellTap(){
     var current=cell.querySelector('.shift-value').textContent;
     var next=prompt('Turno '+cell.dataset.person+' '+cell.dataset.day+'\n'+values.join(', '),current);
     if(next===null)return;
-    cell.querySelector('.shift-value').textContent=next.trim()||'Riposo';
+    next=next.trim()||'Riposo';
+    cell.querySelector('.shift-value').textContent=next;
+    saveCell(cell.dataset.person,cell.dataset.day,next);
   });
 }
 setupTabs();
