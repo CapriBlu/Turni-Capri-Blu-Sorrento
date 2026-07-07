@@ -145,6 +145,13 @@ function saveStaff() {
   syncStaffNames();
 }
 
+function requestTypeClass(type) {
+  const clean = String(type || "").trim().toLowerCase();
+  if (clean === "ferie") return "request-ferie";
+  if (clean === "festa" || clean === "riposo") return "request-festa";
+  return "request-altro";
+}
+
 function renderTable() {
   scheduleBody.innerHTML = "";
 
@@ -160,9 +167,13 @@ function renderTable() {
       const isSplit = hasPranzo && hasSera;
       const dateISO = getDateISOForDay(dayIndex);
       const cellRequests = getRequestsFor(person.nome, dateISO);
+      const firstRequest = cellRequests[0];
+      const requestClass = firstRequest ? requestTypeClass(firstRequest.type) : "";
+      const requestNote = firstRequest?.note ? escapeHtml(firstRequest.note) : "Nessuna nota";
+      const requestDot = firstRequest ? `<span class="request-dot" aria-hidden="true"></span>` : "";
 
       if (isSplit) td.classList.add("day-spezzato");
-      if (cellRequests.length) td.classList.add("has-request");
+      if (firstRequest) td.classList.add("has-request", requestClass);
 
       let cellContent;
       if (isSplit) {
@@ -177,8 +188,9 @@ function renderTable() {
       }
 
       td.innerHTML = `
-        <button class="shift-cell ${isSplit ? "two-fields" : "one-field"}" type="button" data-person="${personIndex}" data-day="${day.key}" aria-label="Modifica turno ${escapeHtml(person.nome)} ${day.label}">
+        <button class="shift-cell ${isSplit ? "two-fields" : "one-field"} ${requestClass}" type="button" data-person="${personIndex}" data-day="${day.key}" title="${requestNote}" aria-label="Modifica turno ${escapeHtml(person.nome)} ${day.label}">
           ${cellContent}
+          ${requestDot}
         </button>
       `;
 
