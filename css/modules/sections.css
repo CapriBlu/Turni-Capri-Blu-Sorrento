@@ -1,5 +1,4 @@
-.shift-section-row td,
-.kitchen-section-row td {
+.shift-section-row td {
   position: static !important;
   max-width: none !important;
   background: linear-gradient(180deg, #073b7a, #0b63b6) !important;
@@ -35,8 +34,7 @@
   display: none !important;
 }
 
-.shift-section-row.collapsed td,
-.kitchen-section-row.collapsed td {
+.shift-section-row.collapsed td {
   background: linear-gradient(180deg, #0b4ca2, #062e72) !important;
 }
 
