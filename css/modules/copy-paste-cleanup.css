@@ -1,0 +1,16 @@
+/*
+  Pulizia definitiva vecchio modulo copia/incolla celle.
+  Questo file deve restare per ultimo nel loader CSS.
+*/
+
+#cellCopyToolbar,
+.cell-copy-toolbar {
+  display: none !important;
+}
+
+.shift-cell.is-selected,
+.table-card .shift-cell.is-selected {
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+}
