@@ -24,6 +24,11 @@ const days = [
   { key: "domenica", label: "Domenica" }
 ];
 
+const kitchenSections = [
+  { key: "pizzeria", title: "Pizzeria", people: ["LUCA", "MARIO", "IGOR", "CRISTIAN", "PIETRO"] },
+  { key: "cucina", title: "Cucina / Lavaggio", people: ["ANTONINO", "Lavapiatti", "AJITH", "DIEGO", "Saja"] }
+];
+
 const defaultStaff = names.map((nome) => ({
   nome,
   turni: createEmptyWeek()
@@ -31,6 +36,7 @@ const defaultStaff = names.map((nome) => ({
 
 const storageKey = "capriBluTurniStaffV5";
 const weekStoragePrefix = "capriBluTurniStaffWeekV1-";
+const kitchenWeekStoragePrefix = "capriBluTurniCucinaWeekV1-";
 const oldStorageKeys = ["capriBluTurniStaffV4", "capriBluTurniStaffV3", "capriBluTurniStaffV2", "capriBluTurniStaff"];
 const weekKey = "capriBluTurniSettimanaV2";
 const requestsKey = "capriBluRichiesteStaffV1";
@@ -59,8 +65,25 @@ function createEmptyWeek() {
   return turni;
 }
 
+function createEmptyKitchenWeek() {
+  const data = {};
+  kitchenSections.forEach((section) => {
+    section.people.forEach((name) => {
+      data[name] = {};
+      days.forEach((day) => {
+        data[name][day.key] = "Riposo";
+      });
+    });
+  });
+  return data;
+}
+
 function currentWeekStaffKey() {
   return weekStoragePrefix + weekInput.value;
+}
+
+function currentKitchenWeekKey() {
+  return kitchenWeekStoragePrefix + weekInput.value;
 }
 
 function safeJsonParse(value, fallback, keyToRemove = "") {
@@ -98,6 +121,24 @@ function loadStaff() {
   }
 
   return structuredClone(defaultStaff);
+}
+
+function loadKitchenData() {
+  const fallback = createEmptyKitchenWeek();
+  const parsed = safeJsonParse(localStorage.getItem(currentKitchenWeekKey()), fallback, currentKitchenWeekKey());
+  const data = { ...fallback, ...(parsed || {}) };
+
+  kitchenSections.forEach((section) => {
+    section.people.forEach((name) => {
+      data[name] = { ...(fallback[name] || {}), ...(data[name] || {}) };
+    });
+  });
+
+  return data;
+}
+
+function saveKitchenData(data) {
+  localStorage.setItem(currentKitchenWeekKey(), JSON.stringify(data));
 }
 
 function loadRequests() {
@@ -152,11 +193,22 @@ function requestTypeClass(type) {
   return "request-altro";
 }
 
+function renderSectionHeader(sectionKey, title) {
+  const row = document.createElement("tr");
+  row.className = "shift-section-row";
+  row.dataset.section = sectionKey;
+  row.innerHTML = `<td colspan="8"><button type="button" class="shift-section-toggle" data-section="${escapeHtml(sectionKey)}"><span class="section-arrow">▾</span> ${escapeHtml(title)}</button></td>`;
+  scheduleBody.appendChild(row);
+}
+
 function renderTable() {
   scheduleBody.innerHTML = "";
 
+  renderSectionHeader("sala", "Sala");
+
   staff.forEach((person, personIndex) => {
     const row = document.createElement("tr");
+    row.dataset.sectionGroup = "sala";
     row.innerHTML = `<td contenteditable="true" data-person="${personIndex}" data-field="nome">${escapeHtml(person.nome)}</td>`;
 
     days.forEach((day, dayIndex) => {
@@ -199,6 +251,35 @@ function renderTable() {
 
     scheduleBody.appendChild(row);
   });
+
+  renderKitchenSections();
+}
+
+function renderKitchenSections() {
+  const kitchenData = loadKitchenData();
+
+  kitchenSections.forEach((section) => {
+    renderSectionHeader(section.key, section.title);
+
+    section.people.forEach((name) => {
+      const row = document.createElement("tr");
+      row.dataset.sectionGroup = section.key;
+      row.innerHTML = `<td class="kitchen-name-cell">${escapeHtml(name)}</td>`;
+
+      days.forEach((day) => {
+        const value = kitchenData[name]?.[day.key] || "Riposo";
+        const td = document.createElement("td");
+        td.innerHTML = `
+          <button class="shift-cell kitchen-shift-cell one-field" type="button" data-kitchen-section="${escapeHtml(section.key)}" data-name="${escapeHtml(name)}" data-day="${day.key}" aria-label="Modifica turno ${escapeHtml(name)} ${day.label}">
+            <span class="shift-time single ${slotClass(value, "pranzo")}">${escapeHtml(value || "Riposo")}</span>
+          </button>
+        `;
+        row.appendChild(td);
+      });
+
+      scheduleBody.appendChild(row);
+    });
+  });
 }
 
 function slotClass(value, part) {
@@ -209,7 +290,7 @@ function slotClass(value, part) {
 function isWorking(value) {
   if (!value) return false;
   const clean = String(value).trim().toLowerCase();
-  return clean !== "" && clean !== "riposo" && clean !== "riposto" && clean !== "-" && clean !== "—" && clean !== "vuoto";
+  return clean !== "" && clean !== "riposo" && clean !== "riposto" && clean !== "off" && clean !== "-" && clean !== "—" && clean !== "vuoto";
 }
 
 function detectPranzoStatus(value) {
@@ -224,6 +305,34 @@ function detectSeraStatus(value) {
   if (!isWorking(value)) return "riposo";
   if (clean === "cena") return "cena";
   return "sera";
+}
+
+function normalizeKitchenValue(value) {
+  const clean = String(value || "").trim();
+  const lower = clean.toLowerCase();
+
+  if (!clean || lower === "r" || lower === "riposo" || lower === "off" || lower === "-") return "Riposo";
+  if (lower === "m" || lower === "mattina" || lower === "pranzo") return "M";
+  if (lower === "s" || lower === "sera" || lower === "cena") return "S";
+  if (["m/s", "ms", "m-s", "spezzato"].includes(lower)) return "M/S";
+  if (["12/chius", "12 chius", "12/chiusura", "12 chiusura"].includes(lower)) return "12/chius";
+
+  return clean;
+}
+
+function editKitchenCell(cell) {
+  const name = cell.dataset.name;
+  const dayKey = cell.dataset.day;
+  const dayLabel = days.find((day) => day.key === dayKey)?.label || dayKey;
+  const data = loadKitchenData();
+  const current = data[name]?.[dayKey] || "Riposo";
+  const next = window.prompt(`${name} - ${dayLabel}\nValori: M, S, M/S, Riposo, 12/chius`, current);
+
+  if (next === null) return;
+  if (!data[name]) data[name] = {};
+  data[name][dayKey] = normalizeKitchenValue(next);
+  saveKitchenData(data);
+  renderTable();
 }
 
 function openShiftMenu() {
@@ -432,8 +541,14 @@ scheduleBody.addEventListener("click", (event) => {
     return;
   }
 
+  const kitchenCell = event.target.closest(".kitchen-shift-cell");
+  if (kitchenCell) {
+    editKitchenCell(kitchenCell);
+    return;
+  }
+
   const cell = event.target.closest(".shift-cell");
-  if (!cell || cell.classList.contains("kitchen-shift-cell")) return;
+  if (!cell) return;
 
   const personIndex = Number(cell.dataset.person);
   const dayKey = cell.dataset.day;
@@ -471,6 +586,7 @@ document.getElementById("printBtn").addEventListener("click", () => {
 document.getElementById("resetBtn").addEventListener("click", () => {
   localStorage.removeItem(currentWeekStaffKey());
   localStorage.removeItem(storageKey);
+  localStorage.removeItem(currentKitchenWeekKey());
   staff = structuredClone(defaultStaff);
   saveStaff();
   updateWeekHeader();
