@@ -17,6 +17,11 @@ function currentMonthKey(){
   if(!firstDay)return '';
   return firstDay.slice(0,7);
 }
+function normalizePublishedWeeks(raw){
+  var out={};
+  Object.keys(raw).forEach(function(weekKey){out[weekKey]=raw[weekKey].data||raw[weekKey]||{}});
+  return out;
+}
 function countMonthlyShifts(depKey,person,monthKey,data){
   var total=0;
   Object.keys(data).forEach(function(weekKey){
@@ -32,14 +37,22 @@ function countMonthlyShifts(depKey,person,monthKey,data){
 function countMonthlyApprovedRequests(person,monthKey,items){
   return items.filter(function(item){return item.person===person&&item.status==='approvata'&&String(item.date||'').slice(0,7)===monthKey}).length;
 }
+function publishedWeeksForMonth(monthKey,data){
+  return Object.keys(data).filter(function(weekKey){
+    return days.some(function(day){return monthlyDateForWeekDay(weekKey,day[0]).slice(0,7)===monthKey});
+  }).sort();
+}
 function renderMonthlySummary(){
   var root=document.getElementById('monthlySummary');
   if(!root)return;
   var monthKey=currentMonthKey();
   if(!monthKey){root.innerHTML='Seleziona una settimana.';return}
-  var data=readMonthlyJson('capriBluAppTurniByWeekV1','{}');
+  var raw=readMonthlyJson('capriBluAppPublishedMonthlyWeeksV1','{}');
+  var data=normalizePublishedWeeks(raw);
+  var weeks=publishedWeeksForMonth(monthKey,data);
   var items=readMonthlyJson('capriBluAppRequestsV1','[]');
   var html='<div class="monthly-title">Riepilogo '+monthKey+'</div>';
+  html+='<div class="published-weeks">Settimane inviate: '+(weeks.length?weeks.join(', '):'nessuna')+'</div>';
   html+='<div class="monthly-grid monthly-head"><span>Persona</span><span>Turni</span><span>Richieste</span></div>';
   departments.forEach(function(dep){
     html+='<div class="monthly-dep">'+dep.title+'</div>';
