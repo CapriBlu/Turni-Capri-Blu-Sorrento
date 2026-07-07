@@ -36,7 +36,23 @@
 
     <section id="richiesteView" class="view">
       <h2>Richieste</h2>
-      <div id="requestPanel" class="panel-card">Modulo richieste in preparazione.</div>
+      <div id="requestPanel" class="panel-card">
+        <label for="requestPerson">Persona</label>
+        <select id="requestPerson" class="form-input"></select>
+        <label for="requestType">Tipo richiesta</label>
+        <select id="requestType" class="form-input">
+          <option>Riposo</option>
+          <option>Ferie</option>
+          <option>Permesso</option>
+          <option>Altro</option>
+        </select>
+        <label for="requestDate">Giorno</label>
+        <input id="requestDate" class="form-input" type="date">
+        <label for="requestNote">Nota</label>
+        <textarea id="requestNote" class="form-input" rows="3" placeholder="Dettagli richiesta"></textarea>
+        <button id="addRequestBtn" class="action-btn" type="button">Aggiungi richiesta</button>
+      </div>
+      <div id="requestsList" class="requests-list"></div>
     </section>
 
     <section id="mensileView" class="view">
