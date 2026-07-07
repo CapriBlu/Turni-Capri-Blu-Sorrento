@@ -17,12 +17,24 @@
     return JSON.parse(JSON.stringify(value));
   }
 
+  function readKitchenSnapshot() {
+    if (typeof loadKitchenData !== 'function') return null;
+
+    try {
+      return clone(loadKitchenData());
+    } catch (error) {
+      console.warn('Undo/redo: dati cucina non leggibili', error);
+      return null;
+    }
+  }
+
   function makeSnapshot() {
     if (!canUseAppState()) return null;
 
     return {
       staff: clone(staff),
       requests: clone(requests),
+      kitchenData: readKitchenSnapshot(),
       week: document.getElementById('weekInput') ? document.getElementById('weekInput').value : ''
     };
   }
@@ -57,6 +69,9 @@
 
       if (weekValue) {
         localStorage.setItem('capriBluTurniStaffWeekV1-' + weekValue, JSON.stringify(snapshot.staff));
+        if (snapshot.kitchenData) {
+          localStorage.setItem('capriBluTurniCucinaWeekV1-' + weekValue, JSON.stringify(snapshot.kitchenData));
+        }
       }
 
       localStorage.setItem('capriBluTurniStaffV5', JSON.stringify(snapshot.staff));
@@ -172,6 +187,16 @@
         return result;
       };
       saveRequests.__undoRedoHooked = true;
+    }
+
+    if (typeof saveKitchenData === 'function' && !saveKitchenData.__undoRedoHooked) {
+      var originalSaveKitchenData = saveKitchenData;
+      saveKitchenData = function () {
+        var result = originalSaveKitchenData.apply(this, arguments);
+        pushUndoSnapshot();
+        return result;
+      };
+      saveKitchenData.__undoRedoHooked = true;
     }
   }
 
