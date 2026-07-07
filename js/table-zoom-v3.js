@@ -41,8 +41,6 @@ window.addEventListener('DOMContentLoaded', function () {
   function apply() {
     zoom = clamp(Math.round(zoom * 100) / 100);
 
-    // Non usare CSS zoom/transform: su mobile può sfalsare il punto del tocco
-    // e aprire/modificare la riga sbagliata. Ridimensioniamo solo misure e font.
     table.style.zoom = '';
     table.style.transform = '';
     table.style.webkitTransform = '';
