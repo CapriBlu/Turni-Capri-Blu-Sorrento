@@ -98,14 +98,21 @@
   <div id="mainMenuPanel" class="main-menu-panel" aria-hidden="true">
     <div class="main-menu-card">
       <div class="main-menu-head">
-        <strong>Menu rapido</strong>
+        <strong>SETTIMANA E APP</strong>
         <button id="closeMainMenuBtn" class="menu-close-btn" type="button">×</button>
       </div>
-      <button class="main-menu-item" type="button" data-menu-view="turni">Turni settimana</button>
-      <button class="main-menu-item" type="button" data-menu-view="richieste">Richieste staff</button>
-      <button class="main-menu-item" type="button" data-menu-view="mensile">Riepilogo mensile</button>
-      <button id="menuCopyWeekBtn" class="main-menu-item" type="button">Copia settimana precedente</button>
-      <button id="menuSendMonthlyBtn" class="main-menu-item primary-menu-item" type="button">Invia settimana al mensile</button>
+      <div class="menu-week-box">
+        <span>Settimana</span>
+        <strong id="menuWeekLabel">-</strong>
+      </div>
+      <button class="main-menu-item" type="button" data-menu-view="turni">Settimana</button>
+      <button class="main-menu-item" type="button" data-menu-view="richieste">Richieste</button>
+      <button class="main-menu-item" type="button" data-menu-view="mensile">Presenze mensili</button>
+      <button id="menuSendMonthlyBtn" class="main-menu-item menu-warm-item" type="button">Invia al mensile</button>
+      <button id="menuArchiveBtn" class="main-menu-item" type="button">Archivio</button>
+      <button id="menuBackupBtn" class="main-menu-item" type="button">Scarica backup locale</button>
+      <button id="menuPrintBtn" class="main-menu-item" type="button">Stampa</button>
+      <button id="menuMessagesBtn" class="main-menu-item" type="button">Messaggi personale</button>
     </div>
   </div>
 
