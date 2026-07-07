@@ -7,11 +7,14 @@ var departments=[
 var storeName='capriBluAppTurniByWeekV1';
 var weekStoreName='capriBluAppCurrentWeekV1';
 var requestStoreName='capriBluAppRequestsV1';
+var departmentStateStoreName='capriBluAppDepartmentOpenV1';
 var allData={};
 var requests=[];
+var departmentOpenState={};
 var activeCell=null;
 try{allData=JSON.parse(localStorage.getItem(storeName)||'{}')}catch(e){allData={}}
 try{requests=JSON.parse(localStorage.getItem(requestStoreName)||'[]')}catch(e){requests=[]}
+try{departmentOpenState=JSON.parse(localStorage.getItem(departmentStateStoreName)||'{}')}catch(e){departmentOpenState={}}
 function currentWeek(){var input=document.getElementById('weekInput');return input&&input.value?input.value:'no-week'}
 function weekData(){var key=currentWeek();if(!allData[key])allData[key]={};return allData[key]}
 function cellKey(dep,person,day){return dep+'_'+person+'_'+day}
@@ -19,6 +22,8 @@ function cellValue(dep,person,day){return weekData()[cellKey(dep,person,day)]||'
 function saveAll(){localStorage.setItem(storeName,JSON.stringify(allData));localStorage.setItem(weekStoreName,currentWeek())}
 function saveCell(dep,person,day,value){weekData()[cellKey(dep,person,day)]=value;saveAll();var s=document.getElementById('saveStatus');if(s){s.textContent='Salvato '+currentWeek()}}
 function depByKey(key){return departments.find(function(dep){return dep.key===key})}
+function isDepartmentOpen(key){return departmentOpenState[key]!==false}
+function saveDepartmentState(){localStorage.setItem(departmentStateStoreName,JSON.stringify(departmentOpenState))}
 function thisWeek(){var d=new Date();var day=d.getDay()||7;d.setDate(d.getDate()+4-day);var y=new Date(d.getFullYear(),0,1);var w=Math.ceil((((d-y)/86400000)+1)/7);return d.getFullYear()+'-W'+String(w).padStart(2,'0')}
 function previousWeek(value){var parts=value.split('-W');var year=Number(parts[0]);var week=Number(parts[1]);week=week-1;if(week<1){year=year-1;week=52}return year+'-W'+String(week).padStart(2,'0')}
 function setupWeek(){var input=document.getElementById('weekInput');if(!input)return;input.value=localStorage.getItem(weekStoreName)||thisWeek();updateWeekLabel();input.addEventListener('change',function(){localStorage.setItem(weekStoreName,input.value);updateWeekLabel();renderSchedule()})}
@@ -46,9 +51,10 @@ function renderSchedule(){
   if(!root)return;
   root.innerHTML='';
   departments.forEach(function(dep){
+    var open=isDepartmentOpen(dep.key);
     var card=document.createElement('div');
-    card.className='department-card';
-    var html='<button class="department-title" type="button">'+dep.title+'</button>';
+    card.className='department-card'+(open?'':' is-collapsed');
+    var html='<button class="department-title" type="button" data-dep-toggle="'+dep.key+'" aria-expanded="'+open+'">'+dep.title+'</button>';
     dep.people.forEach(function(person){
       html+='<div class="employee-row"><div class="employee-name">'+person+'</div><div class="days-grid">';
       days.forEach(function(day){
@@ -71,6 +77,20 @@ function setupTabs(){
       var view=document.getElementById(btn.dataset.view+'View');
       if(view){view.classList.add('active-view')}
     });
+  });
+}
+function setupDepartmentToggles(){
+  var root=document.getElementById('scheduleSections');
+  if(!root)return;
+  root.addEventListener('click',function(event){
+    var title=event.target.closest('.department-title');
+    if(!title)return;
+    var card=title.closest('.department-card');
+    var key=title.dataset.depToggle;
+    var collapsed=card.classList.toggle('is-collapsed');
+    title.setAttribute('aria-expanded',String(!collapsed));
+    departmentOpenState[key]=!collapsed;
+    saveDepartmentState();
   });
 }
 function shiftButtonClass(value){var v=String(value).toLowerCase();if(v==='riposo'||v==='off')return ' is-rest-option';if(v.indexOf('/')>-1||v.indexOf(':')>-1||v.indexOf('cena')>-1||v.indexOf('pranzo')>-1)return ' is-special-option';return ''}
@@ -182,6 +202,7 @@ function setupRequests(){
 setupTabs();
 setupWeek();
 renderSchedule();
+setupDepartmentToggles();
 setupCellTap();
 setupShiftEditor();
 setupCopyPreviousWeek();
