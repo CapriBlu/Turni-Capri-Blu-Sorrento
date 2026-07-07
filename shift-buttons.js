@@ -212,4 +212,59 @@ function createFastShiftEditor() {
   });
 }
 
+function installDirectTouchShiftEditorFallback() {
+  let touchStart = null;
+
+  document.addEventListener("touchstart", (event) => {
+    const cell = event.target.closest?.("#shiftTable .shift-cell");
+    if (!cell || event.touches.length !== 1) {
+      touchStart = null;
+      return;
+    }
+
+    const touch = event.touches[0];
+    touchStart = {
+      cell,
+      x: touch.clientX,
+      y: touch.clientY,
+      time: Date.now()
+    };
+  }, { capture: true, passive: true });
+
+  document.addEventListener("touchmove", (event) => {
+    if (!touchStart || !event.touches.length) return;
+    const touch = event.touches[0];
+    const dx = Math.abs(touch.clientX - touchStart.x);
+    const dy = Math.abs(touch.clientY - touchStart.y);
+    if (dx > 14 || dy > 14) touchStart = null;
+  }, { capture: true, passive: true });
+
+  document.addEventListener("touchend", (event) => {
+    if (!touchStart) return;
+
+    const { cell, x, y, time } = touchStart;
+    touchStart = null;
+
+    const touch = event.changedTouches && event.changedTouches[0];
+    if (!touch) return;
+
+    const dx = Math.abs(touch.clientX - x);
+    const dy = Math.abs(touch.clientY - y);
+    const elapsed = Date.now() - time;
+
+    if (dx > 14 || dy > 14) return;
+    if (elapsed > 520) return;
+    if (!document.body.contains(cell)) return;
+
+    const personIndex = Number(cell.dataset.person);
+    const dayKey = cell.dataset.day;
+    if (!Number.isFinite(personIndex) || !dayKey) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    openShiftMenu(personIndex, dayKey);
+  }, { capture: true, passive: false });
+}
+
 createFastShiftEditor();
+installDirectTouchShiftEditorFallback();
