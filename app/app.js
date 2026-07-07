@@ -7,6 +7,7 @@ var departments=[
 var storeName='capriBluAppTurniByWeekV1';
 var weekStoreName='capriBluAppCurrentWeekV1';
 var allData={};
+var activeCell=null;
 try{allData=JSON.parse(localStorage.getItem(storeName)||'{}')}catch(e){allData={}}
 function currentWeek(){var input=document.getElementById('weekInput');return input&&input.value?input.value:'no-week'}
 function weekData(){var key=currentWeek();if(!allData[key])allData[key]={};return allData[key]}
@@ -50,18 +51,53 @@ function setupTabs(){
     });
   });
 }
+function applyShift(value){
+  if(!activeCell)return;
+  activeCell.querySelector('.shift-value').textContent=value;
+  saveCell(activeCell.dataset.dep,activeCell.dataset.person,activeCell.dataset.day,value);
+  closeShiftEditor();
+}
+function openShiftEditor(cell){
+  activeCell=cell;
+  var dep=depByKey(cell.dataset.dep);
+  if(!dep)return;
+  var editor=document.getElementById('shiftEditor');
+  var title=document.getElementById('shiftEditorTitle');
+  var options=document.getElementById('shiftOptions');
+  var custom=document.getElementById('customShiftInput');
+  title.textContent=dep.title+' - '+cell.dataset.person+' - '+cell.dataset.day;
+  options.innerHTML='';
+  dep.values.forEach(function(value){
+    var btn=document.createElement('button');
+    btn.className='shift-option-btn';
+    btn.type='button';
+    btn.textContent=value;
+    btn.addEventListener('click',function(){applyShift(value)});
+    options.appendChild(btn);
+  });
+  custom.value=cell.querySelector('.shift-value').textContent;
+  editor.classList.add('open');
+  editor.setAttribute('aria-hidden','false');
+}
+function closeShiftEditor(){
+  var editor=document.getElementById('shiftEditor');
+  editor.classList.remove('open');
+  editor.setAttribute('aria-hidden','true');
+  activeCell=null;
+}
+function setupShiftEditor(){
+  var close=document.getElementById('closeShiftEditorBtn');
+  var save=document.getElementById('saveCustomShiftBtn');
+  var editor=document.getElementById('shiftEditor');
+  if(close)close.addEventListener('click',closeShiftEditor);
+  if(save)save.addEventListener('click',function(){var input=document.getElementById('customShiftInput');applyShift((input.value||'Riposo').trim()||'Riposo')});
+  if(editor)editor.addEventListener('click',function(event){if(event.target===editor)closeShiftEditor()});
+}
 function setupCellTap(){
   document.getElementById('scheduleSections').addEventListener('click',function(event){
     var cell=event.target.closest('.shift-btn');
     if(!cell)return;
-    var dep=depByKey(cell.dataset.dep);
-    if(!dep)return;
-    var current=cell.querySelector('.shift-value').textContent;
-    var next=prompt(dep.title+' - '+cell.dataset.person+' '+cell.dataset.day+'\n'+dep.values.join(', '),current);
-    if(next===null)return;
-    next=next.trim()||'Riposo';
-    cell.querySelector('.shift-value').textContent=next;
-    saveCell(cell.dataset.dep,cell.dataset.person,cell.dataset.day,next);
+    openShiftEditor(cell);
   });
 }
 function setupCopyPreviousWeek(){
@@ -83,4 +119,5 @@ setupTabs();
 setupWeek();
 renderSchedule();
 setupCellTap();
+setupShiftEditor();
 setupCopyPreviousWeek();
