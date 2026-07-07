@@ -240,11 +240,29 @@ body {
   font-size: 15px;
   font-weight: 900;
   letter-spacing: .02em;
+  cursor: pointer;
 }
 
 .department-title:before {
   content: '▾';
   margin-right: 10px;
+}
+
+.department-title:hover {
+  filter: brightness(1.06);
+}
+
+.department-title:focus-visible {
+  outline: 3px solid #f0c13d;
+  outline-offset: -3px;
+}
+
+.department-card.is-collapsed .department-title:before {
+  content: '▸';
+}
+
+.department-card.is-collapsed .employee-row {
+  display: none;
 }
 
 .employee-row {
