@@ -75,13 +75,22 @@
   </main>
 
   <div id="shiftEditor" class="shift-editor" aria-hidden="true">
-    <div class="shift-editor-card">
-      <p id="shiftEditorTitle" class="shift-editor-title">Turno</p>
-      <div id="shiftOptions" class="shift-options"></div>
-      <input id="customShiftInput" class="custom-shift-input" type="text" placeholder="Oppure scrivi un turno">
+    <div class="shift-editor-card shift-menu-card">
+      <div class="shift-menu-head">
+        <div>
+          <p class="shift-menu-label">Selezione turno</p>
+          <p id="shiftEditorTitle" class="shift-editor-title">Turno</p>
+        </div>
+        <button id="closeShiftEditorBtn" class="menu-close-btn" type="button">×</button>
+      </div>
+      <div id="shiftOptions" class="shift-options shift-menu-options"></div>
+      <div class="custom-shift-zone">
+        <label for="customShiftInput">Turno personalizzato</label>
+        <input id="customShiftInput" class="custom-shift-input" type="text" placeholder="Es. 12 00-15 / 19 00">
+      </div>
       <div class="editor-actions">
-        <button id="saveCustomShiftBtn" class="action-btn" type="button">Salva</button>
-        <button id="closeShiftEditorBtn" class="ghost-btn" type="button">Annulla</button>
+        <button id="saveCustomShiftBtn" class="action-btn" type="button">Salva turno scritto</button>
+        <button id="clearShiftBtn" class="ghost-btn" type="button">Riposo</button>
       </div>
     </div>
   </div>
