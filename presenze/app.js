@@ -12,7 +12,6 @@ const monthlyStoragePrefix = "capriBluPresenzeMensili-";
 const oldKitchenMonthlyStoragePrefix = "capriBluPresenzeMensiliCucina-";
 const salaPublishedWeekPrefix = "capriBluTurniStaffPublishedWeekV1-";
 const kitchenPublishedWeekPrefix = "capriBluTurniCucinaPublishedWeekV1-";
-const copiedPresenceKey = "capriBluPresenzeCopiaV1";
 const requestsKey = "capriBluRichiesteStaffV1";
 const collapsedSectionsKey = "capriBluPresenzeRepartiChiusiV1";
 
@@ -23,14 +22,11 @@ const monthInput = document.getElementById("monthInput");
 const table = document.getElementById("presenceTable");
 const printBtn = document.getElementById("printBtn");
 const resetBtn = document.getElementById("resetBtn");
-const copyBtn = document.getElementById("copyBtn");
-const pasteBtn = document.getElementById("pasteBtn");
 const clearBtn = document.getElementById("clearBtn");
 const autosaveStatus = document.getElementById("autosaveStatus");
 let activeCell = null;
 let selectedCell = null;
 let menuBackdrop = null;
-let copiedRecord = null;
 
 function safeJsonParse(value, fallback, keyToRemove = "") {
   try { return value ? JSON.parse(value) : fallback; }
@@ -178,11 +174,6 @@ function selectCell(cell) {
 }
 
 function getCellKey(cell) { return makeCellKey(cell.dataset.name, cell.dataset.day); }
-function getCellRecord(cell) {
-  const record = readData()[getCellKey(cell)];
-  if (record) return typeof record === "string" ? { value: record, minutes: 0 } : record;
-  return { value: cell.dataset.value || "", minutes: Number(cell.dataset.minutes || 0) };
-}
 
 function renderTable() {
   const manualData = readData();
@@ -219,12 +210,10 @@ function createMenu() {
   menuBackdrop = document.createElement("div");
   menuBackdrop.id = "presenceMenuBackdrop";
   menuBackdrop.className = "presence-menu-backdrop";
-  menuBackdrop.innerHTML = `<div class="presence-menu-panel" role="dialog" aria-modal="true"><h2>Seleziona presenza</h2><p id="presenceMenuSubtitle">Scegli una voce per questa casella</p><div class="presence-menu-grid"><button type="button" data-value="P" class="menu-p">P<br><small>Presenza</small></button><button type="button" data-value="F" class="menu-f">F<br><small>Festa</small></button><button type="button" data-value="Fer" class="menu-fer">Fer<br><small>Ferie</small></button><button type="button" data-value="MAL" class="menu-mal">MAL<br><small>Malattia</small></button><button type="button" data-value="Ass" class="menu-ass">Ass<br><small>Assenza</small></button><button type="button" data-value="P+Rit" class="menu-rit">P+Rit<br><small>Ritardo</small></button><button type="button" data-value="" class="menu-empty">Vuoto<br><small>Cancella</small></button></div><div class="presence-menu-actions"><button type="button" id="presenceCopyBtn">Copia</button><button type="button" id="presencePasteBtn">Incolla</button></div><button type="button" id="presenceMenuClose" class="presence-menu-close">Annulla</button></div>`;
+  menuBackdrop.innerHTML = `<div class="presence-menu-panel" role="dialog" aria-modal="true"><h2>Seleziona presenza</h2><p id="presenceMenuSubtitle">Scegli una voce per questa casella</p><div class="presence-menu-grid"><button type="button" data-value="P" class="menu-p">P<br><small>Presenza</small></button><button type="button" data-value="F" class="menu-f">F<br><small>Festa</small></button><button type="button" data-value="Fer" class="menu-fer">Fer<br><small>Ferie</small></button><button type="button" data-value="MAL" class="menu-mal">MAL<br><small>Malattia</small></button><button type="button" data-value="Ass" class="menu-ass">Ass<br><small>Assenza</small></button><button type="button" data-value="P+Rit" class="menu-rit">P+Rit<br><small>Ritardo</small></button><button type="button" data-value="" class="menu-empty">Vuoto<br><small>Cancella</small></button></div><button type="button" id="presenceMenuClose" class="presence-menu-close">Annulla</button></div>`;
   document.body.appendChild(menuBackdrop);
   menuBackdrop.addEventListener("click", (event) => { if (event.target === menuBackdrop) closePresenceMenu(); });
   document.getElementById("presenceMenuClose").addEventListener("click", closePresenceMenu);
-  document.getElementById("presenceCopyBtn").addEventListener("click", () => { if (activeCell) copyCell(activeCell); closePresenceMenu(); });
-  document.getElementById("presencePasteBtn").addEventListener("click", () => { if (activeCell) pasteCell(activeCell); closePresenceMenu(); });
   menuBackdrop.querySelectorAll("[data-value]").forEach((button) => button.addEventListener("click", () => {
     if (!activeCell) return;
     closePresenceMenu();
@@ -241,7 +230,6 @@ function openPresenceMenu(cell) {
   menuBackdrop.classList.add("open");
 }
 function closePresenceMenu() { if (menuBackdrop) menuBackdrop.classList.remove("open"); activeCell = null; }
-function saveCellRecord(cell, record) { const data = readData(); data[getCellKey(cell)] = record; saveData(data); renderTable(); }
 function saveCellValue(cell, value) {
   const data = readData();
   const key = getCellKey(cell);
@@ -256,8 +244,6 @@ function saveCellValue(cell, value) {
   saveData(data);
   renderTable();
 }
-function copyCell(cell = selectedCell) { if (!cell) return; copiedRecord = getCellRecord(cell); localStorage.setItem(copiedPresenceKey, JSON.stringify(copiedRecord)); setAutosaveStatus("Cella copiata"); }
-function pasteCell(cell = selectedCell) { if (!cell) return; if (!copiedRecord) copiedRecord = safeJsonParse(localStorage.getItem(copiedPresenceKey), null, copiedPresenceKey); if (!copiedRecord) return; saveCellRecord(cell, { value: copiedRecord.value || "", minutes: Number(copiedRecord.minutes || 0) }); }
 function clearSelectedCell() { if (selectedCell) saveCellValue(selectedCell, ""); }
 
 window.getPresenceStorageKey = (month) => storageKey(month || monthInput.value);
@@ -276,16 +262,8 @@ table.addEventListener("click", (event) => {
   if (cell) openPresenceMenu(cell);
 });
 monthInput.addEventListener("input", () => { localStorage.setItem("capriBluPresenzeMese", monthInput.value); renderTable(); });
-copyBtn?.addEventListener("click", () => copyCell());
-pasteBtn?.addEventListener("click", () => pasteCell());
 clearBtn?.addEventListener("click", clearSelectedCell);
 printBtn.addEventListener("click", () => window.print());
-document.addEventListener("keydown", (event) => {
-  if (!selectedCell) return;
-  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "c") { event.preventDefault(); copyCell(); }
-  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "v") { event.preventDefault(); pasteCell(); }
-  if (event.key === "Delete" || event.key === "Backspace") { event.preventDefault(); clearSelectedCell(); }
-});
 resetBtn.addEventListener("click", () => {
   if (!confirm("Cancellare solo le modifiche manuali di questo mese? I dati inviati dai turni resteranno visibili.")) return;
   localStorage.removeItem(storageKey());
