@@ -14,3 +14,20 @@
   outline-offset: 0 !important;
   box-shadow: none !important;
 }
+
+/* Mantieni l'effetto hover solo su PC con mouse reale. */
+@media (hover: hover) and (pointer: fine) {
+  .shift-cell:hover {
+    transform: none;
+    box-shadow: 0 0 0 3px rgba(245, 197, 66, 0.26);
+  }
+}
+
+/* Su tablet/telefono il browser può lasciare :hover attaccato dopo il tap. */
+@media (hover: none), (pointer: coarse) {
+  .shift-cell:hover,
+  .table-card .shift-cell:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
