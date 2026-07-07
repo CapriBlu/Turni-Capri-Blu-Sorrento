@@ -2,165 +2,81 @@
 
 Questa è la struttura ordinata della nuova app in `app/`.
 
-Obiettivo principale: mantenere il progetto pulito, leggibile e modificabile senza creare strati inutili come nel vecchio gestionale.
+Obiettivo: mantenere il progetto pulito, leggibile e modificabile senza creare strati inutili.
 
-## Principio operativo
+## Regola base
 
-Da ora in poi ogni modifica deve rispettare questo ordine:
+Ogni modifica deve seguire questo ordine:
 
-1. **Struttura**: dove deve vivere la funzione?
-2. **Dati**: quali chiavi/localStorage usa?
-3. **Grafica**: quale sezione CSS tocca?
-4. **Test**: cosa deve funzionare dopo la modifica?
-5. **Pulizia finale**: ci sono residui, classi non usate o vecchi pulsanti?
+1. Struttura
+2. Dati
+3. Grafica
+4. Test
+5. Pulizia finale
 
-Non si aggiungono funzioni nuove se prima non è chiaro dove inserirle. Ogni aggiunta deve chiudersi con un giro di ordine.
+Ogni aggiunta deve chiudersi con controllo residui: pulsanti vecchi, classi CSS non usate, script non più necessari.
 
 ## File principali
 
 - `app/index.html`  
-  Contiene solo la struttura della pagina, i pannelli principali e l'ordine degli script. Non deve contenere logica pesante.
+  Struttura pagina, pannelli principali e ordine script.
 
 - `app/app.css`  
-  Contiene tutta la grafica della app. È ordinato per sezioni: base, header, navigazione, turni, editor turno, richieste, mensile, menu rapido, tonalità settimana e responsive.
+  Grafica app ordinata per sezioni.
 
 - `app/app.js`  
-  Motore principale: settimane, tabella turni, salvataggio locale, richieste staff e menu selezione turno.
+  Turni settimanali, richieste base, editor turno, salvataggio principale.
 
 - `app/weekly-monthly.js`  
-  Gestisce il pulsante `Invia settimana al mensile`, lo stato della settimana pubblicata e la tonalità visiva della settimana.
+  Invio settimana al mensile, stato settimana pubblicata, tonalità settimana.
 
 - `app/monthly.js`  
-  Genera il riepilogo mensile usando solo le settimane inviate al mensile.
+  Riepilogo mensile dalle settimane inviate.
+
+- `app/archive.js`  
+  Pagina Archivio separata: lista mesi, mese corrente lampeggiante, selezione mese.
 
 - `app/theme.js`  
-  Applica classi visive alle celle: riposo verde, turni speciali evidenziati, celle compilate.
+  Colori automatici delle celle.
 
 - `app/menu.js`  
-  Gestisce il menu rapido in alto.
+  Menu rapido alto, scorciatoie, backup JSON e stampa.
 
 - `app/manifest.webmanifest`  
-  Configurazione PWA/installabile.
+  Configurazione PWA.
 
-## Confini dei file
+## Confini
 
-### `index.html`
-Può contenere:
-- contenitori principali;
-- pulsanti principali;
-- pannelli modali;
-- ordine script.
+- `index.html`: solo struttura e script.
+- `app.css`: solo grafica, senza CSS sparso fuori sezione.
+- `app.js`: cuore turni e richieste.
+- `weekly-monthly.js`: invio settimana al mensile.
+- `monthly.js`: riepilogo mensile.
+- `archive.js`: archivio mensile separato.
+- `theme.js`: classi visive automatiche.
+- `menu.js`: menu rapido e azioni locali semplici.
 
-Non deve contenere:
-- funzioni JavaScript;
-- CSS inline;
-- script residui non usati.
+## LocalStorage
 
-### `app.css`
-Può contenere:
-- stile globale;
-- layout;
-- colori;
-- responsive;
-- sezioni commentate.
+- `capriBluAppTurniByWeekV1`: turni per settimana.
+- `capriBluAppCurrentWeekV1`: settimana selezionata.
+- `capriBluAppRequestsV1`: richieste staff.
+- `capriBluAppPublishedMonthlyWeeksV1`: settimane inviate al mensile.
+- `capriBluAppDepartmentOpenV1`: reparti aperti/chiusi.
+- `capriBluAppArchiveSelectedMonthV1`: mese selezionato in Archivio.
 
-Non deve contenere:
-- regole duplicate;
-- stili casuali in fondo al file;
-- classi non usate.
-
-### `app.js`
-Può contenere:
-- gestione turni settimanali;
-- gestione richieste base;
-- editor selezione turno;
-- salvataggio dati principali.
-
-Non deve contenere:
-- logica mensile avanzata;
-- menu alto;
-- solo grafica.
-
-### `weekly-monthly.js`
-Può contenere:
-- invio della settimana al mensile;
-- stato settimana inviata/non inviata;
-- snapshot della settimana;
-- tonalità visiva per settimana.
-
-### `monthly.js`
-Può contenere:
-- lettura settimane pubblicate;
-- calcoli del riepilogo mensile;
-- render del pannello Mensile.
-
-### `theme.js`
-Può contenere:
-- classi automatiche su celle;
-- differenze visive tra riposo, turni e spezzati.
-
-### `menu.js`
-Può contenere:
-- apertura/chiusura menu rapido;
-- scorciatoie del menu alto;
-- azioni locali semplici come backup JSON e stampa.
-
-## Regole per non stratificare
-
-1. Non creare nuovi file JavaScript se una funzione appartiene chiaramente a un file esistente.
-2. Non lasciare script non usati dentro `index.html`.
-3. Non aggiungere CSS sparso: inserire ogni stile nella sezione corretta di `app.css`.
-4. Prima di aggiungere nuove funzioni, controllare se si può pulire o integrare in modo semplice.
-5. La tabella turni deve restare il cuore della app: richieste e mensile devono collegarsi ad essa, non duplicarla.
-6. Ogni nuova funzione deve avere un solo proprietario: `app.js`, `weekly-monthly.js`, `monthly.js`, `theme.js` oppure `menu.js`.
-7. Se una modifica tocca più di due file, prima va spiegata la ragione.
-8. Dopo ogni modifica strutturale bisogna aggiornare questo documento.
-9. Dopo ogni aggiunta bisogna rimuovere residui: pulsanti vecchi, classi CSS non usate, riferimenti JS non più presenti.
-
-## LocalStorage attuale
-
-- `capriBluAppTurniByWeekV1`  
-  Turni salvati per settimana.
-
-- `capriBluAppCurrentWeekV1`  
-  Ultima settimana selezionata.
-
-- `capriBluAppRequestsV1`  
-  Richieste staff.
-
-- `capriBluAppPublishedMonthlyWeeksV1`  
-  Settimane inviate al mensile.
-
-- `capriBluAppDepartmentOpenV1`  
-  Stato aperto/chiuso dei reparti a tendina.
-
-## Script attuali caricati da index.html
-
-Ordine corretto:
+## Script caricati
 
 ```html
 <script src="app.js?v=1"></script>
 <script src="weekly-monthly.js?v=1"></script>
 <script src="monthly.js?v=1"></script>
+<script src="archive.js?v=1"></script>
 <script src="theme.js?v=1"></script>
 <script src="menu.js?v=1"></script>
 ```
 
-Gli script `data-model.js` e `storage.js` sono stati rimossi perché erano residui non utilizzati.
-
-## Checklist prima di ogni nuovo intervento
-
-Prima di modificare il codice rispondere mentalmente a queste domande:
-
-1. La modifica è strutturale, grafica o funzionale?
-2. Qual è il file proprietario?
-3. Devo toccare `index.html` o basta JS/CSS?
-4. Sto duplicando una logica già esistente?
-5. La modifica funziona su desktop e mobile?
-6. Il salvataggio locale resta compatibile con i dati già presenti?
-7. Dopo la modifica restano nomi, classi o pulsanti inutili?
-
-## Test minimo dopo ogni modifica
+## Test minimo
 
 1. Aprire app.
 2. Cambiare settimana.
@@ -169,4 +85,5 @@ Prima di modificare il codice rispondere mentalmente a queste domande:
 5. Aprire menu alto.
 6. Aprire Richieste.
 7. Aprire Mensile.
-8. Fare refresh pagina e verificare che i dati restino salvati.
+8. Aprire Archivio.
+9. Fare refresh e verificare che i dati restino salvati.
