@@ -12,8 +12,9 @@ Da ora in poi ogni modifica deve rispettare questo ordine:
 2. **Dati**: quali chiavi/localStorage usa?
 3. **Grafica**: quale sezione CSS tocca?
 4. **Test**: cosa deve funzionare dopo la modifica?
+5. **Pulizia finale**: ci sono residui, classi non usate o vecchi pulsanti?
 
-Non si aggiungono funzioni nuove se prima non è chiaro dove inserirle.
+Non si aggiungono funzioni nuove se prima non è chiaro dove inserirle. Ogni aggiunta deve chiudersi con un giro di ordine.
 
 ## File principali
 
@@ -101,7 +102,8 @@ Può contenere:
 ### `menu.js`
 Può contenere:
 - apertura/chiusura menu rapido;
-- scorciatoie del menu alto.
+- scorciatoie del menu alto;
+- azioni locali semplici come backup JSON e stampa.
 
 ## Regole per non stratificare
 
@@ -113,6 +115,7 @@ Può contenere:
 6. Ogni nuova funzione deve avere un solo proprietario: `app.js`, `weekly-monthly.js`, `monthly.js`, `theme.js` oppure `menu.js`.
 7. Se una modifica tocca più di due file, prima va spiegata la ragione.
 8. Dopo ogni modifica strutturale bisogna aggiornare questo documento.
+9. Dopo ogni aggiunta bisogna rimuovere residui: pulsanti vecchi, classi CSS non usate, riferimenti JS non più presenti.
 
 ## LocalStorage attuale
 
@@ -127,6 +130,9 @@ Può contenere:
 
 - `capriBluAppPublishedMonthlyWeeksV1`  
   Settimane inviate al mensile.
+
+- `capriBluAppDepartmentOpenV1`  
+  Stato aperto/chiuso dei reparti a tendina.
 
 ## Script attuali caricati da index.html
 
@@ -152,6 +158,7 @@ Prima di modificare il codice rispondere mentalmente a queste domande:
 4. Sto duplicando una logica già esistente?
 5. La modifica funziona su desktop e mobile?
 6. Il salvataggio locale resta compatibile con i dati già presenti?
+7. Dopo la modifica restano nomi, classi o pulsanti inutili?
 
 ## Test minimo dopo ogni modifica
 
