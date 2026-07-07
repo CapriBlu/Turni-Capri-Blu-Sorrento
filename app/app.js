@@ -120,8 +120,43 @@ function setupCopyPreviousWeek(){
 }
 function saveRequests(){localStorage.setItem(requestStoreName,JSON.stringify(requests));var s=document.getElementById('saveStatus');if(s){s.textContent='Richieste salvate'}}
 function setupRequestPeople(){var select=document.getElementById('requestPerson');if(!select)return;var names=[];departments.forEach(function(dep){dep.people.forEach(function(name){if(names.indexOf(name)<0)names.push(name)})});select.innerHTML=names.map(function(name){return '<option>'+name+'</option>'}).join('')}
-function renderRequests(){var list=document.getElementById('requestsList');if(!list)return;if(!requests.length){list.innerHTML='<div class="panel-card">Nessuna richiesta salvata.</div>';return}list.innerHTML='';requests.slice().reverse().forEach(function(item){var card=document.createElement('div');card.className='request-card';card.innerHTML='<strong>'+item.person+' - '+item.type+'</strong><div class="request-meta">'+item.date+' - '+item.status+'</div><p class="request-note">'+(item.note||'')+'</p><button class="mini-btn" type="button" data-id="'+item.id+'">Rimuovi</button>';list.appendChild(card)})}
-function setupRequests(){setupRequestPeople();renderRequests();var add=document.getElementById('addRequestBtn');var list=document.getElementById('requestsList');if(add)add.addEventListener('click',function(){var person=document.getElementById('requestPerson').value;var type=document.getElementById('requestType').value;var date=document.getElementById('requestDate').value||'-';var note=document.getElementById('requestNote').value.trim();requests.push({id:Date.now(),person:person,type:type,date:date,note:note,status:'in attesa'});document.getElementById('requestNote').value='';saveRequests();renderRequests()});if(list)list.addEventListener('click',function(event){var btn=event.target.closest('.mini-btn');if(!btn)return;requests=requests.filter(function(item){return String(item.id)!==String(btn.dataset.id)});saveRequests();renderRequests()})}
+function renderRequests(){
+  var list=document.getElementById('requestsList');
+  if(!list)return;
+  if(!requests.length){list.innerHTML='<div class="panel-card">Nessuna richiesta salvata.</div>';return}
+  list.innerHTML='';
+  requests.slice().reverse().forEach(function(item){
+    var card=document.createElement('div');
+    card.className='request-card';
+    card.innerHTML='<strong>'+item.person+' - '+item.type+'</strong><div class="request-meta">'+item.date+' - '+item.status+'</div><p class="request-note">'+(item.note||'')+'</p><div class="request-actions"><button class="mini-btn" type="button" data-action="approve" data-id="'+item.id+'">Approva</button><button class="mini-btn" type="button" data-action="reject" data-id="'+item.id+'">Rifiuta</button><button class="mini-btn" type="button" data-action="remove" data-id="'+item.id+'">Rimuovi</button></div>';
+    list.appendChild(card);
+  });
+}
+function updateRequestStatus(id,status){requests=requests.map(function(item){if(String(item.id)===String(id)){item.status=status}return item});saveRequests();renderRequests()}
+function removeRequest(id){requests=requests.filter(function(item){return String(item.id)!==String(id)});saveRequests();renderRequests()}
+function setupRequests(){
+  setupRequestPeople();
+  renderRequests();
+  var add=document.getElementById('addRequestBtn');
+  var list=document.getElementById('requestsList');
+  if(add)add.addEventListener('click',function(){
+    var person=document.getElementById('requestPerson').value;
+    var type=document.getElementById('requestType').value;
+    var date=document.getElementById('requestDate').value||'-';
+    var note=document.getElementById('requestNote').value.trim();
+    requests.push({id:Date.now(),person:person,type:type,date:date,note:note,status:'in attesa'});
+    document.getElementById('requestNote').value='';
+    saveRequests();
+    renderRequests();
+  });
+  if(list)list.addEventListener('click',function(event){
+    var btn=event.target.closest('.mini-btn');
+    if(!btn)return;
+    if(btn.dataset.action==='approve')updateRequestStatus(btn.dataset.id,'approvata');
+    if(btn.dataset.action==='reject')updateRequestStatus(btn.dataset.id,'rifiutata');
+    if(btn.dataset.action==='remove')removeRequest(btn.dataset.id);
+  });
+}
 setupTabs();
 setupWeek();
 renderSchedule();
