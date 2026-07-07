@@ -339,37 +339,6 @@ function openShiftMenu() {
   console.warn("Editor turni non ancora pronto. Verifica shift-buttons.js.");
 }
 
-function createNotePopup() {
-  if (document.getElementById("notePopupBackdrop")) return;
-
-  const popup = document.createElement("div");
-  popup.id = "notePopupBackdrop";
-  popup.className = "note-popup-backdrop";
-  popup.innerHTML = `
-    <div class="note-popup">
-      <h3>Nota richiesta</h3>
-      <p id="notePopupText"></p>
-      <button id="notePopupClose" type="button">Chiudi</button>
-    </div>
-  `;
-  document.body.appendChild(popup);
-
-  popup.addEventListener("click", (event) => {
-    if (event.target === popup) closeNotePopup();
-  });
-
-  document.getElementById("notePopupClose").addEventListener("click", closeNotePopup);
-}
-
-function openNotePopup(note) {
-  document.getElementById("notePopupText").textContent = note || "Nessuna nota";
-  document.getElementById("notePopupBackdrop").classList.add("open");
-}
-
-function closeNotePopup() {
-  document.getElementById("notePopupBackdrop").classList.remove("open");
-}
-
 function populateRequestNames() {
   requestName.innerHTML = staff.map((person) => `<option value="${escapeHtml(person.nome)}">${escapeHtml(person.nome)}</option>`).join("");
 }
@@ -534,13 +503,6 @@ scheduleBody.addEventListener("blur", (event) => {
 }, true);
 
 scheduleBody.addEventListener("click", (event) => {
-  const requestBadge = event.target.closest(".request-badge");
-  if (requestBadge) {
-    event.stopPropagation();
-    openNotePopup(requestBadge.dataset.note || "Nessuna nota");
-    return;
-  }
-
   const kitchenCell = event.target.closest(".kitchen-shift-cell");
   if (kitchenCell) {
     editKitchenCell(kitchenCell);
@@ -598,6 +560,5 @@ document.getElementById("resetBtn").addEventListener("click", () => {
 syncStaffNames();
 updateWeekHeader();
 populateRequestNames();
-createNotePopup();
 renderRequests();
 renderTable();
