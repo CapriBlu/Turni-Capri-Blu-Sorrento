@@ -22,7 +22,10 @@ Ogni aggiunta deve chiudersi con controllo residui: pulsanti vecchi, classi CSS 
   Struttura pagina, pannelli principali e ordine script.
 
 - `app/app.css`  
-  Grafica app ordinata per sezioni.
+  Grafica base desktop e componenti principali. Non deve contenere regole responsive.
+
+- `app/app-responsive.css`  
+  Solo tablet e telefono. Tutte le correzioni mobile/tablet vanno qui.
 
 - `app/app.js`  
   Turni settimanali, richieste base, editor turno, salvataggio principale.
@@ -48,7 +51,8 @@ Ogni aggiunta deve chiudersi con controllo residui: pulsanti vecchi, classi CSS 
 ## Confini
 
 - `index.html`: solo struttura e script.
-- `app.css`: solo grafica, senza CSS sparso fuori sezione.
+- `app.css`: grafica base desktop, senza responsive.
+- `app-responsive.css`: solo tablet e telefono.
 - `app.js`: cuore turni e richieste.
 - `weekly-monthly.js`: invio settimana al mensile.
 - `monthly.js`: riepilogo mensile.
@@ -64,6 +68,13 @@ Ogni aggiunta deve chiudersi con controllo residui: pulsanti vecchi, classi CSS 
 - `capriBluAppPublishedMonthlyWeeksV1`: settimane inviate al mensile.
 - `capriBluAppDepartmentOpenV1`: reparti aperti/chiusi.
 - `capriBluAppArchiveSelectedMonthV1`: mese selezionato in Archivio.
+
+## CSS caricati
+
+```html
+<link rel="stylesheet" href="app.css?v=1">
+<link rel="stylesheet" href="app-responsive.css?v=1">
+```
 
 ## Script caricati
 
@@ -86,4 +97,5 @@ Ogni aggiunta deve chiudersi con controllo residui: pulsanti vecchi, classi CSS 
 6. Aprire Richieste.
 7. Aprire Mensile.
 8. Aprire Archivio.
-9. Fare refresh e verificare che i dati restino salvati.
+9. Provare tablet/telefono.
+10. Fare refresh e verificare che i dati restino salvati.
