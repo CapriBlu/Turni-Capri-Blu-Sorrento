@@ -52,7 +52,6 @@ canvas {
 
 .table-scroll,
 .requests-list-wrap {
-  -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
 }
 
