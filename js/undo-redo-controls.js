@@ -211,8 +211,15 @@
   }
 })();
 
-/* Blocca solo la selezione testo nativa Android/Chrome sulle celle turno. */
+/* Blocca selezione testo nativa Android/Chrome senza bloccare il tap normale. */
 (function () {
+  var tapCandidate = null;
+  var lastBridgeOpenAt = 0;
+
+  function getShiftCell(target) {
+    return target && target.closest ? target.closest('#shiftTable .shift-cell') : null;
+  }
+
   function isShiftCellTarget(target) {
     return target && target.closest && target.closest('#shiftTable .shift-cell, #shiftTable .shift-time');
   }
@@ -227,8 +234,17 @@
   function blockNativeSelection(event) {
     if (!isShiftCellTarget(event.target)) return;
     event.preventDefault();
-    event.stopPropagation();
     clearNativeSelection();
+  }
+
+  function openCellEditor(cell) {
+    if (!cell || !document.body.contains(cell)) return;
+    var personIndex = Number(cell.dataset.person);
+    var dayKey = cell.dataset.day;
+    if (!Number.isFinite(personIndex) || !dayKey) return;
+    if (typeof openShiftMenu !== 'function') return;
+    lastBridgeOpenAt = Date.now();
+    openShiftMenu(personIndex, dayKey);
   }
 
   function injectStyle() {
@@ -241,15 +257,56 @@
 
   function initSelectionGuard() {
     injectStyle();
+
     document.addEventListener('selectstart', blockNativeSelection, true);
     document.addEventListener('contextmenu', blockNativeSelection, true);
     document.addEventListener('dragstart', blockNativeSelection, true);
+
     document.addEventListener('pointerdown', function (event) {
-      if (isShiftCellTarget(event.target)) clearNativeSelection();
+      var cell = getShiftCell(event.target);
+      if (!cell) return;
+      clearNativeSelection();
+      if (event.pointerType === 'mouse') return;
+      tapCandidate = {
+        cell: cell,
+        pointerId: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+        time: Date.now()
+      };
     }, true);
+
+    document.addEventListener('pointermove', function (event) {
+      if (!tapCandidate || tapCandidate.pointerId !== event.pointerId) return;
+      var dx = Math.abs(event.clientX - tapCandidate.x);
+      var dy = Math.abs(event.clientY - tapCandidate.y);
+      if (dx > 14 || dy > 14) tapCandidate = null;
+    }, true);
+
     document.addEventListener('pointerup', function (event) {
       if (isShiftCellTarget(event.target)) clearNativeSelection();
+      if (!tapCandidate || tapCandidate.pointerId !== event.pointerId) return;
+
+      var candidate = tapCandidate;
+      tapCandidate = null;
+      var dx = Math.abs(event.clientX - candidate.x);
+      var dy = Math.abs(event.clientY - candidate.y);
+      var elapsed = Date.now() - candidate.time;
+
+      if (dx > 14 || dy > 14) return;
+      if (elapsed > 650) return;
+
+      setTimeout(function () {
+        if (Date.now() - lastBridgeOpenAt < 80) return;
+        openCellEditor(candidate.cell);
+      }, 0);
     }, true);
+
+    document.addEventListener('click', function (event) {
+      if (!isShiftCellTarget(event.target)) return;
+      clearNativeSelection();
+    }, true);
+
     document.addEventListener('selectionchange', function () {
       try {
         var selection = window.getSelection && window.getSelection();
