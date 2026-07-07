@@ -45,6 +45,18 @@
     </section>
   </main>
 
+  <div id="shiftEditor" class="shift-editor" aria-hidden="true">
+    <div class="shift-editor-card">
+      <p id="shiftEditorTitle" class="shift-editor-title">Turno</p>
+      <div id="shiftOptions" class="shift-options"></div>
+      <input id="customShiftInput" class="custom-shift-input" type="text" placeholder="Oppure scrivi un turno">
+      <div class="editor-actions">
+        <button id="saveCustomShiftBtn" class="action-btn" type="button">Salva</button>
+        <button id="closeShiftEditorBtn" class="ghost-btn" type="button">Annulla</button>
+      </div>
+    </div>
+  </div>
+
   <script src="data-model.js?v=1"></script>
   <script src="storage.js?v=1"></script>
   <script src="app.js?v=1"></script>
