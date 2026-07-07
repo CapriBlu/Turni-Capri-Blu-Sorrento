@@ -2,7 +2,7 @@
 
 Questa roadmap descrive il percorso per trasformare l'attuale sito GitHub Pages in una vera app gestionale per i turni del ristorante.
 
-L'obiettivo non è buttare il lavoro attuale, ma usarlo come prototipo stabile da migrare gradualmente verso una PWA con database, login, ruoli, storico e backup.
+L'obiettivo non è buttare il lavoro attuale, ma usarlo come prototipo stabile da migrare gradualmente verso una PWA con database, login, ruoli, storico, permessi e backup.
 
 ---
 
@@ -17,6 +17,7 @@ Costruire una app installabile su telefono/tablet/computer per gestire:
 - presenze mensili;
 - archivio storico;
 - collaboratori in sola lettura;
+- permessi per ruolo;
 - backup e log modifiche.
 
 Stack consigliato:
@@ -49,6 +50,24 @@ Questa base è utile come prototipo e come riferimento funzionale.
 
 ---
 
+## Documenti creati
+
+| Documento | Fase | Scopo |
+|---|---:|---|
+| `README.md` | 0 | Manuale sito attuale e ricostruzione |
+| `APP_ROADMAP.md` | 1 | Roadmap generale app |
+| `DATABASE_SCHEMA.md` | 2 | Schema database Supabase/PostgreSQL |
+| `APP_SCREENS.md` | 3 | Schermate e flussi mobile |
+| `SUPABASE_SETUP.md` | 4 | Piano setup backend Supabase |
+| `AUTH_ROLES.md` | 5 | Ruoli e permessi |
+| `WEEKLY_SHIFTS_APP.md` | 6 | Turni settimanali nella nuova app |
+| `REQUESTS_WORKFLOW.md` | 7 | Workflow richieste staff |
+| `MONTHLY_PUBLISHING.md` | 8 | Pubblicazione mensile e snapshot |
+| `ARCHIVE_HISTORY.md` | 9 | Archivio storico, export e log |
+| `PWA_INSTALLABLE.md` | 10 | PWA installabile su telefono/tablet |
+
+---
+
 ## Fase 0 — Congelare sito attuale stabile
 
 ### Obiettivo
@@ -57,7 +76,7 @@ Mantenere l'attuale sito funzionante come versione di sicurezza.
 
 ### Stato
 
-Completato come base iniziale.
+Completata.
 
 ### Cosa deve restare stabile
 
@@ -81,20 +100,11 @@ Definire chiaramente cosa vogliamo costruire prima di scrivere codice nuovo.
 
 ### Output
 
-Questo file: `APP_ROADMAP.md`.
-
-### Contenuto
-
-- obiettivo dell'app;
-- ruoli utenti;
-- schermate principali;
-- fasi di sviluppo;
-- migrazione dal sito attuale;
-- rischi e regole di manutenzione.
+`APP_ROADMAP.md`
 
 ### Stato
 
-Avviato.
+Completata come progettazione.
 
 ---
 
@@ -104,13 +114,9 @@ Avviato.
 
 Trasformare localStorage/JSON in tabelle vere.
 
-### Output previsto
+### Output
 
-File:
-
-```txt
-DATABASE_SCHEMA.md
-```
+`DATABASE_SCHEMA.md`
 
 ### Tabelle principali
 
@@ -125,9 +131,9 @@ DATABASE_SCHEMA.md
 - `monthly_presence`
 - `audit_logs`
 
-### Perché è fondamentale
+### Stato
 
-Se il database è fatto bene, l'app resta ordinata. Se il database è confuso, anche l'app diventa difficile da mantenere.
+Completata come progettazione. Da trasformare in SQL quando si crea Supabase.
 
 ---
 
@@ -137,11 +143,15 @@ Se il database è fatto bene, l'app resta ordinata. Se il database è confuso, a
 
 Disegnare le schermate prima di svilupparle.
 
-### Schermate minime
+### Output
+
+`APP_SCREENS.md`
+
+### Schermate previste
 
 1. Login
-2. Dashboard settimana
-3. Tabella turni
+2. Dashboard
+3. Turni settimana
 4. Editor turno
 5. Richieste staff
 6. Pubblicazione mensile
@@ -150,9 +160,9 @@ Disegnare le schermate prima di svilupparle.
 9. Staff e reparti
 10. Impostazioni / backup
 
-### Priorità mobile
+### Stato
 
-L'app deve essere prima di tutto comoda da telefono.
+Completata come progettazione.
 
 ---
 
@@ -162,20 +172,24 @@ L'app deve essere prima di tutto comoda da telefono.
 
 Creare il backend vero.
 
-### Attività
-
-- creare progetto Supabase;
-- creare tabelle;
-- abilitare Auth;
-- configurare Row Level Security;
-- creare seed iniziale reparti/staff;
-- preparare ambiente sviluppo.
-
 ### Output
 
-- progetto Supabase online;
-- schema SQL versionato;
-- variabili `.env` per frontend.
+`SUPABASE_SETUP.md`
+
+### Stato
+
+Progettata. Richiede intervento umano per creare il progetto Supabase reale.
+
+### Intervento richiesto
+
+Serviranno:
+
+- account Supabase;
+- nome progetto;
+- regione;
+- primo utente admin;
+- variabili ambiente;
+- decisione su hosting.
 
 ---
 
@@ -183,44 +197,22 @@ Creare il backend vero.
 
 ### Obiettivo
 
-Sostituire il token GitHub/browser con utenti veri.
+Sostituire token manuali e accessi non controllati con ruoli chiari.
 
-### Ruoli minimi
+### Output
 
-#### Admin
+`AUTH_ROLES.md`
 
-Può fare tutto:
+### Ruoli
 
-- gestire staff;
-- modificare turni;
-- pubblicare mensile;
-- gestire richieste;
-- vedere archivio;
-- gestire utenti.
+- Admin;
+- Manager;
+- Employee;
+- Viewer.
 
-#### Manager
+### Stato
 
-Può:
-
-- modificare turni;
-- gestire richieste;
-- pubblicare mensile;
-- vedere archivio.
-
-#### Collaboratore
-
-Può:
-
-- vedere turni pubblicati;
-- inviare richieste;
-- vedere eventuali note personali.
-
-#### Viewer / solo lettura
-
-Può:
-
-- vedere la settimana pubblicata;
-- non modificare nulla.
+Completata come progettazione. Da implementare con Auth e permessi database.
 
 ---
 
@@ -230,21 +222,13 @@ Può:
 
 Ricostruire la funzione principale dell'attuale sito dentro l'app nuova.
 
-### Funzioni necessarie
+### Output
 
-- selezione settimana;
-- Sala, Pizzeria, Cucina / Lavaggio;
-- celle turno;
-- spezzati;
-- copia settimana precedente;
-- salvataggio automatico;
-- stato modifiche;
-- Undo/Redo se possibile;
-- storico modifiche.
+`WEEKLY_SHIFTS_APP.md`
 
-### Migrazione logica
+### Stato
 
-L'attuale `script.js` serve come riferimento funzionale, ma la nuova app deve leggere/scrivere dal database, non da localStorage.
+Completata come progettazione.
 
 ---
 
@@ -254,23 +238,13 @@ L'attuale `script.js` serve come riferimento funzionale, ma la nuova app deve le
 
 Portare richieste ferie/riposo/permessi nel database.
 
-### Funzioni
+### Output
 
-- collaboratore invia richiesta;
-- manager/admin approva o rifiuta;
-- richiesta appare nella settimana corretta;
-- richiesta appare nella cella turno;
-- storico richieste;
-- note interne.
+`REQUESTS_WORKFLOW.md`
 
-### Stati richiesta
+### Stato
 
-```txt
-pending
-approved
-rejected
-cancelled
-```
+Completata come progettazione.
 
 ---
 
@@ -278,20 +252,15 @@ cancelled
 
 ### Obiettivo
 
-Sostituire `Invia al mensile` con una pubblicazione vera su database.
+Sostituire `Invia al mensile` con pubblicazione vera su database, snapshot e presenze mensili.
 
-### Funzioni
+### Output
 
-- bozza settimana;
-- pubblica settimana;
-- blocca versione pubblicata;
-- crea presenze mensili;
-- aggiorna archivio;
-- avvisa collaboratori.
+`MONTHLY_PUBLISHING.md`
 
-### Regola
+### Stato
 
-La settimana pubblicata deve essere stabile e consultabile anche se la bozza successiva cambia.
+Completata come progettazione.
 
 ---
 
@@ -301,22 +270,13 @@ La settimana pubblicata deve essere stabile e consultabile anche se la bozza suc
 
 Costruire uno storico consultabile senza file manuali.
 
-### Archivio previsto
+### Output
 
-- per settimana;
-- per mese;
-- per reparto;
-- per dipendente;
-- esportazione PDF/Excel/CSV/JSON.
+`ARCHIVE_HISTORY.md`
 
-### Funzioni utili
+### Stato
 
-- cerca dipendente;
-- filtra mese;
-- confronta settimane;
-- totale presenze;
-- note richieste;
-- log modifiche.
+Completata come progettazione.
 
 ---
 
@@ -326,19 +286,13 @@ Costruire uno storico consultabile senza file manuali.
 
 Rendere l'app installabile sul telefono come una app normale.
 
-### Funzioni PWA
+### Output
 
-- icona app Capri Blu;
-- schermata splash;
-- manifest;
-- service worker;
-- cache controllata;
-- funzionamento base anche con rete debole;
-- aggiornamento versione sicuro.
+`PWA_INSTALLABLE.md`
 
-### Nota importante
+### Stato
 
-All'inizio non serve pubblicare su Play Store o App Store. Una PWA installabile basta per lavorare bene nel ristorante.
+Completata come progettazione.
 
 ---
 
@@ -368,11 +322,12 @@ La priorità non è fare subito tutto.
 La priorità è:
 
 1. database corretto;
-2. login corretto;
-3. turni settimanali funzionanti;
-4. pubblicazione mensile;
-5. archivio storico;
-6. estetica e rifiniture.
+2. permessi corretti;
+3. login corretto;
+4. turni settimanali funzionanti;
+5. pubblicazione mensile;
+6. archivio storico;
+7. estetica e rifiniture.
 
 ---
 
@@ -412,6 +367,7 @@ Soluzione: ruoli chiari e Row Level Security.
 - Documentare ogni decisione importante.
 - Testare sempre da telefono.
 - Salvare spesso su GitHub.
+- Non sviluppare funzioni nuove prima di avere permessi chiari.
 
 ---
 
@@ -420,13 +376,25 @@ Soluzione: ruoli chiari e Row Level Security.
 | Fase | Nome | Stato |
 |---|---|---|
 | 0 | Congelare sito attuale stabile | Completata |
-| 1 | Roadmap app | Avviata |
-| 2 | Schema database | Da creare |
-| 3 | Mockup schermate | Da fare |
-| 4 | Progetto Supabase | Da fare |
-| 5 | Login utenti e ruoli | Da fare |
-| 6 | Turni settimanali | Da fare |
-| 7 | Richieste staff | Da fare |
-| 8 | Pubblicazione mensile | Da fare |
-| 9 | Archivio storico | Da fare |
-| 10 | PWA installabile | Da fare |
+| 1 | Roadmap app | Documentata |
+| 2 | Schema database | Documentata |
+| 3 | Mockup schermate | Documentata |
+| 4 | Progetto Supabase | Documentata — richiede setup reale |
+| 5 | Login utenti e ruoli | Documentata |
+| 6 | Turni settimanali | Documentata |
+| 7 | Richieste staff | Documentata |
+| 8 | Pubblicazione mensile | Documentata |
+| 9 | Archivio storico | Documentata |
+| 10 | PWA installabile | Documentata |
+
+---
+
+## Prossimo passaggio reale
+
+Il prossimo passo operativo non è più documentazione: è decidere se creare davvero il progetto Supabase e iniziare lo sviluppo della nuova app.
+
+Prima decisione pratica:
+
+```txt
+Creiamo Supabase ora oppure continuiamo ancora a rifinire il sito GitHub attuale?
+```
