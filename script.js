@@ -51,9 +51,6 @@ let staff = loadStaff();
 let requests = loadRequests();
 let activeEdit = null;
 
-updateWeekHeader();
-populateRequestNames();
-
 function createEmptyWeek() {
   const turni = {};
   days.forEach((day) => {
@@ -104,8 +101,7 @@ function loadStaff() {
 }
 
 function loadRequests() {
-  const saved = localStorage.getItem(requestsKey);
-  return safeJsonParse(saved, [], requestsKey);
+  return safeJsonParse(localStorage.getItem(requestsKey), [], requestsKey);
 }
 
 function saveRequests() {
@@ -154,10 +150,7 @@ function renderTable() {
 
   staff.forEach((person, personIndex) => {
     const row = document.createElement("tr");
-
-    row.innerHTML = `
-      <td contenteditable="true" data-person="${personIndex}" data-field="nome">${person.nome}</td>
-    `;
+    row.innerHTML = `<td contenteditable="true" data-person="${personIndex}" data-field="nome">${escapeHtml(person.nome)}</td>`;
 
     days.forEach((day, dayIndex) => {
       const shift = person.turni[day.key] || { pranzo: "Riposo", sera: "Riposo" };
@@ -171,13 +164,7 @@ function renderTable() {
       if (isSplit) td.classList.add("day-spezzato");
       if (cellRequests.length) td.classList.add("has-request");
 
-      const requestBadges = cellRequests.map((request) => {
-        const noteAttr = request.note ? ` data-note="${escapeHtml(request.note)}"` : " data-note=\"Nessuna nota\"";
-        return `<button class="request-badge ${request.type.toLowerCase()}" type="button"${noteAttr} title="${escapeHtml(request.note || "Nessuna nota")}">${escapeHtml(request.type)}</button>`;
-      }).join("");
-
       let cellContent;
-
       if (isSplit) {
         cellContent = `
           <span class="shift-time ${slotClass(shift.pranzo, "pranzo")}">${escapeHtml(shift.pranzo)}</span>
@@ -190,10 +177,9 @@ function renderTable() {
       }
 
       td.innerHTML = `
-        <button class="shift-cell ${isSplit ? "two-fields" : "one-field"}" type="button" data-person="${personIndex}" data-day="${day.key}" aria-label="Modifica turno ${person.nome} ${day.label}">
+        <button class="shift-cell ${isSplit ? "two-fields" : "one-field"}" type="button" data-person="${personIndex}" data-day="${day.key}" aria-label="Modifica turno ${escapeHtml(person.nome)} ${day.label}">
           ${cellContent}
         </button>
-        ${requestBadges}
       `;
 
       row.appendChild(td);
@@ -228,104 +214,13 @@ function detectSeraStatus(value) {
   return "sera";
 }
 
-function openShiftMenu(personIndex, dayKey) {
-  activeEdit = { personIndex, dayKey };
-  const person = staff[personIndex];
-  const dayLabel = days.find((day) => day.key === dayKey)?.label || dayKey;
-  const shift = person.turni[dayKey];
-
-  document.getElementById("editorTitle").textContent = `${person.nome} - ${dayLabel}`;
-  document.getElementById("pranzoStatus").value = detectPranzoStatus(shift.pranzo);
-  document.getElementById("pranzoTime").value = isWorking(shift.pranzo) && !["Apertura", "Pranzo", "A"].includes(shift.pranzo) ? shift.pranzo : "";
-  document.getElementById("seraStatus").value = detectSeraStatus(shift.sera);
-  document.getElementById("seraTime").value = isWorking(shift.sera) && !["Sera", "Cena", "S"].includes(shift.sera) ? shift.sera : "";
-  document.getElementById("shiftEditorBackdrop").classList.add("open");
-}
-
-function closeShiftMenu() {
-  activeEdit = null;
-  document.getElementById("shiftEditorBackdrop").classList.remove("open");
-}
-
-function createShiftEditor() {
-  const editor = document.createElement("div");
-  editor.id = "shiftEditorBackdrop";
-  editor.className = "editor-backdrop";
-  editor.innerHTML = `
-    <div class="shift-editor wide-editor" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
-      <div class="editor-head">
-        <h2 id="editorTitle">Modifica turno</h2>
-      </div>
-
-      <div class="editor-grid">
-        <div class="editor-panel">
-          <div class="editor-code apertura-code">A</div>
-          <select id="pranzoStatus" aria-label="Stato apertura pranzo">
-            <option value="apertura">Apertura</option>
-            <option value="pranzo">Pranzo</option>
-            <option value="riposo">Riposo</option>
-          </select>
-          <input id="pranzoTime" type="text" placeholder="10:30-15:30" />
-        </div>
-
-        <div class="editor-panel">
-          <div class="editor-code sera-code">S</div>
-          <select id="seraStatus" aria-label="Stato sera cena">
-            <option value="sera">Sera</option>
-            <option value="cena">Cena</option>
-            <option value="riposo">Riposo</option>
-          </select>
-          <input id="seraTime" type="text" placeholder="18:30-23:30" />
-        </div>
-      </div>
-
-      <div class="editor-actions">
-        <button id="clearShiftBtn" type="button" class="secondary-btn">Tutto riposo</button>
-        <button id="cancelShiftBtn" type="button" class="secondary-btn">Annulla</button>
-        <button id="saveShiftBtn" type="button" class="primary-btn">Salva</button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(editor);
-
-  editor.addEventListener("click", (event) => {
-    if (event.target === editor) closeShiftMenu();
-  });
-
-  document.getElementById("cancelShiftBtn").addEventListener("click", closeShiftMenu);
-
-  document.getElementById("clearShiftBtn").addEventListener("click", () => {
-    document.getElementById("pranzoStatus").value = "riposo";
-    document.getElementById("pranzoTime").value = "";
-    document.getElementById("seraStatus").value = "riposo";
-    document.getElementById("seraTime").value = "";
-  });
-
-  document.getElementById("saveShiftBtn").addEventListener("click", () => {
-    if (!activeEdit) return;
-
-    const { personIndex, dayKey } = activeEdit;
-    const pranzoStatus = document.getElementById("pranzoStatus").value;
-    const pranzoTime = document.getElementById("pranzoTime").value.trim();
-    const seraStatus = document.getElementById("seraStatus").value;
-    const seraTime = document.getElementById("seraTime").value.trim();
-
-    const pranzoLabel = pranzoStatus === "apertura" ? "Apertura" : "Pranzo";
-    const seraLabel = seraStatus === "cena" ? "Cena" : "Sera";
-
-    staff[personIndex].turni[dayKey] = {
-      pranzo: pranzoStatus === "riposo" ? "Riposo" : pranzoTime || pranzoLabel,
-      sera: seraStatus === "riposo" ? "Riposo" : seraTime || seraLabel
-    };
-
-    saveStaff();
-    renderTable();
-    closeShiftMenu();
-  });
+function openShiftMenu() {
+  console.warn("Editor turni non ancora pronto. Verifica shift-buttons.js.");
 }
 
 function createNotePopup() {
+  if (document.getElementById("notePopupBackdrop")) return;
+
   const popup = document.createElement("div");
   popup.id = "notePopupBackdrop";
   popup.className = "note-popup-backdrop";
@@ -375,7 +270,7 @@ function renderRequests() {
       row.innerHTML = `
         <td>${escapeHtml(request.name)}</td>
         <td>${formatDateIT(request.date)}</td>
-        <td><span class="request-pill ${request.type.toLowerCase()}" title="${escapeHtml(request.note || "Nessuna nota")}">${escapeHtml(request.type)}</span></td>
+        <td><span class="request-pill ${String(request.type).toLowerCase()}" title="${escapeHtml(request.note || "Nessuna nota")}">${escapeHtml(request.type)}</span></td>
         <td>${escapeHtml(request.note || "")}</td>
         <td><button class="delete-request" type="button" data-index="${originalIndex}">Elimina</button></td>
       `;
@@ -410,7 +305,6 @@ function addPerson() {
   if (typedName === null) return;
 
   const nome = typedName.trim() || "Nuovo staff";
-
   staff.push({
     nome,
     turni: createEmptyWeek()
@@ -507,9 +401,16 @@ scheduleBody.addEventListener("input", (event) => {
     saveStaff();
     populateRequestNames();
     renderRequests();
-    renderTable();
   }
 });
+
+scheduleBody.addEventListener("blur", (event) => {
+  const target = event.target;
+  const personIndex = Number(target.dataset.person);
+
+  if (Number.isNaN(personIndex) || !target.dataset.field) return;
+  renderTable();
+}, true);
 
 scheduleBody.addEventListener("click", (event) => {
   const requestBadge = event.target.closest(".request-badge");
@@ -520,7 +421,7 @@ scheduleBody.addEventListener("click", (event) => {
   }
 
   const cell = event.target.closest(".shift-cell");
-  if (!cell) return;
+  if (!cell || cell.classList.contains("kitchen-shift-cell")) return;
 
   const personIndex = Number(cell.dataset.person);
   const dayKey = cell.dataset.day;
@@ -567,7 +468,8 @@ document.getElementById("resetBtn").addEventListener("click", () => {
 });
 
 syncStaffNames();
-createShiftEditor();
+updateWeekHeader();
+populateRequestNames();
 createNotePopup();
 renderRequests();
 renderTable();
