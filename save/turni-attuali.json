@@ -2,7 +2,7 @@
   "app": "Capri Blu Turni",
   "saveType": "official",
   "version": 3,
-  "savedAt": "2026-07-06T01:12:00.479Z",
+  "savedAt": "2026-07-07T14:04:57.411Z",
   "currentWeek": "2026-W28",
   "kitchenCurrentWeek": "2026-W28",
   "lastPublishedWeek": "2026-W28",
@@ -44,16 +44,16 @@
       "nome": "Rafaele",
       "turni": {
         "lunedi": {
+          "pranzo": "Riposo",
+          "sera": "Sera"
+        },
+        "martedi": {
           "pranzo": "Apertura",
           "sera": "Cena"
         },
-        "martedi": {
-          "pranzo": "Riposo",
-          "sera": "15 30"
-        },
         "mercoledi": {
-          "pranzo": "Riposo",
-          "sera": "15 30"
+          "pranzo": "Apertura",
+          "sera": "Cena"
         },
         "giovedi": {
           "pranzo": "Apertura",
@@ -78,15 +78,15 @@
       "turni": {
         "lunedi": {
           "pranzo": "Riposo",
-          "sera": "15 30"
+          "sera": "Sera"
         },
         "martedi": {
-          "pranzo": "Apertura",
-          "sera": "Cena"
+          "pranzo": "Riposo",
+          "sera": "Sera"
         },
         "mercoledi": {
           "pranzo": "Riposo",
-          "sera": "Riposo"
+          "sera": "Sera"
         },
         "giovedi": {
           "pranzo": "Riposo",
@@ -110,11 +110,11 @@
       "nome": "Rosè",
       "turni": {
         "lunedi": {
-          "pranzo": "9",
-          "sera": "17"
+          "pranzo": "15 30",
+          "sera": "Riposo"
         },
         "martedi": {
-          "pranzo": "Riposo",
+          "pranzo": "15:30",
           "sera": "Riposo"
         },
         "mercoledi": {
@@ -122,12 +122,12 @@
           "sera": "17"
         },
         "giovedi": {
-          "pranzo": "9",
-          "sera": "17"
+          "pranzo": "Riposo",
+          "sera": "Sera"
         },
         "venerdi": {
-          "pranzo": "9",
-          "sera": "17"
+          "pranzo": "Riposo",
+          "sera": "Sera"
         },
         "sabato": {
           "pranzo": "Riposo",
@@ -143,8 +143,8 @@
       "nome": "Shan",
       "turni": {
         "lunedi": {
-          "pranzo": "Riposo",
-          "sera": "17"
+          "pranzo": "15:30",
+          "sera": "Riposo"
         },
         "martedi": {
           "pranzo": "Riposo",
@@ -213,8 +213,8 @@
           "sera": "Riposo"
         },
         "martedi": {
-          "pranzo": "10",
-          "sera": "19"
+          "pranzo": "Riposo",
+          "sera": "Riposo"
         },
         "mercoledi": {
           "pranzo": "12",
@@ -284,7 +284,7 @@
         },
         "mercoledi": {
           "pranzo": "Riposo",
-          "sera": "16"
+          "sera": "Riposo"
         },
         "giovedi": {
           "pranzo": "Riposo",
@@ -438,6 +438,439 @@
     }
   ],
   "weeklyStaff": {
+    "2026-W28": [
+      {
+        "nome": "Pawel",
+        "turni": {
+          "lunedi": {
+            "pranzo": "Riposo",
+            "sera": "Sera"
+          },
+          "martedi": {
+            "pranzo": "Riposo",
+            "sera": "Sera"
+          },
+          "mercoledi": {
+            "pranzo": "Apertura",
+            "sera": "Cena"
+          },
+          "giovedi": {
+            "pranzo": "Riposo",
+            "sera": "Riposo"
+          },
+          "venerdi": {
+            "pranzo": "Apertura",
+            "sera": "Cena"
+          },
+          "sabato": {
+            "pranzo": "Apertura",
+            "sera": "Cena"
+          },
+          "domenica": {
+            "pranzo": "Riposo",
+            "sera": "Sera"
+          }
+        }
+      },
+      {
+        "nome": "Rafaele",
+        "turni": {
+          "lunedi": {
+            "pranzo": "Riposo",
+            "sera": "Sera"
+          },
+          "martedi": {
+            "pranzo": "Apertura",
+            "sera": "Cena"
+          },
+          "mercoledi": {
+            "pranzo": "Apertura",
+            "sera": "Cena"
+          },
+          "giovedi": {
+            "pranzo": "Apertura",
+            "sera": "Cena"
+          },
+          "venerdi": {
+            "pranzo": "Riposo",
+            "sera": "Riposo"
+          },
+          "sabato": {
+            "pranzo": "Riposo",
+            "sera": "15:30"
+          },
+          "domenica": {
+            "pranzo": "Riposo",
+            "sera": "15 30"
+          }
+        }
+      },
+      {
+        "nome": "Gaetano",
+        "turni": {
+          "lunedi": {
+            "pranzo": "Riposo",
+            "sera": "Sera"
+          },
+          "martedi": {
+            "pranzo": "Riposo",
+            "sera": "Sera"
+          },
+          "mercoledi": {
+            "pranzo": "Riposo",
+            "sera": "Sera"
+          },
+          "giovedi": {
+            "pranzo": "Riposo",
+            "sera": "Sera"
+          },
+          "venerdi": {
+            "pranzo": "Riposo",
+            "sera": "15 30"
+          },
+          "sabato": {
+            "pranzo": "Riposo",
+            "sera": "Sera"
+          },
+          "domenica": {
+            "pranzo": "Apertura",
+            "sera": "Cena"
+          }
+        }
+      },
+      {
+        "nome": "Rosè",
+        "turni": {
+          "lunedi": {
+            "pranzo": "15 30",
+            "sera": "Riposo"
+          },
+          "martedi": {
+            "pranzo": "15:30",
+            "sera": "Riposo"
+          },
+          "mercoledi": {
+            "pranzo": "9",
+            "sera": "17"
+          },
+          "giovedi": {
+            "pranzo": "Riposo",
+            "sera": "Sera"
+          },
+          "venerdi": {
+            "pranzo": "Riposo",
+            "sera": "Sera"
+          },
+          "sabato": {
+            "pranzo": "Riposo",
+            "sera": "16"
+          },
+          "domenica": {
+            "pranzo": "Riposo",
+            "sera": "16"
+          }
+        }
+      },
+      {
+        "nome": "Shan",
+        "turni": {
+          "lunedi": {
+            "pranzo": "15:30",
+            "sera": "Riposo"
+          },
+          "martedi": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          },
+          "mercoledi": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          },
+          "giovedi": {
+            "pranzo": "Riposo",
+            "sera": "Riposo"
+          },
+          "venerdi": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          },
+          "sabato": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          },
+          "domenica": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          }
+        }
+      },
+      {
+        "nome": "Brendon",
+        "turni": {
+          "lunedi": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          },
+          "martedi": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          },
+          "mercoledi": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          },
+          "giovedi": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          },
+          "venerdi": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          },
+          "sabato": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          },
+          "domenica": {
+            "pranzo": "Riposo",
+            "sera": "Riposo"
+          }
+        }
+      },
+      {
+        "nome": "Vittorio",
+        "turni": {
+          "lunedi": {
+            "pranzo": "Riposo",
+            "sera": "Riposo"
+          },
+          "martedi": {
+            "pranzo": "Riposo",
+            "sera": "Riposo"
+          },
+          "mercoledi": {
+            "pranzo": "12",
+            "sera": "Cena"
+          },
+          "giovedi": {
+            "pranzo": "Pranzo",
+            "sera": "Cena"
+          },
+          "venerdi": {
+            "pranzo": "Pranzo",
+            "sera": "Cena"
+          },
+          "sabato": {
+            "pranzo": "Pranzo",
+            "sera": "Cena"
+          },
+          "domenica": {
+            "pranzo": "Pranzo",
+            "sera": "Cena"
+          }
+        }
+      },
+      {
+        "nome": "Dylan",
+        "turni": {
+          "lunedi": {
+            "pranzo": "Riposo",
+            "sera": "Riposo"
+          },
+          "martedi": {
+            "pranzo": "Riposo",
+            "sera": "15 30"
+          },
+          "mercoledi": {
+            "pranzo": "Riposo",
+            "sera": "15 30"
+          },
+          "giovedi": {
+            "pranzo": "Riposo",
+            "sera": "15 30"
+          },
+          "venerdi": {
+            "pranzo": "Riposo",
+            "sera": "15 30"
+          },
+          "sabato": {
+            "pranzo": "Riposo",
+            "sera": "16"
+          },
+          "domenica": {
+            "pranzo": "Riposo",
+            "sera": "16"
+          }
+        }
+      },
+      {
+        "nome": "Lorenzo",
+        "turni": {
+          "lunedi": {
+            "pranzo": "10 18",
+            "sera": "Riposo"
+          },
+          "martedi": {
+            "pranzo": "Riposo",
+            "sera": "16"
+          },
+          "mercoledi": {
+            "pranzo": "Riposo",
+            "sera": "Riposo"
+          },
+          "giovedi": {
+            "pranzo": "Riposo",
+            "sera": "16"
+          },
+          "venerdi": {
+            "pranzo": "Riposo",
+            "sera": "Riposo"
+          },
+          "sabato": {
+            "pranzo": "Riposo",
+            "sera": "16"
+          },
+          "domenica": {
+            "pranzo": "Riposo",
+            "sera": "16"
+          }
+        }
+      },
+      {
+        "nome": "Sabbit",
+        "turni": {
+          "lunedi": {
+            "pranzo": "Riposo",
+            "sera": "16"
+          },
+          "martedi": {
+            "pranzo": "Riposo",
+            "sera": "16"
+          },
+          "mercoledi": {
+            "pranzo": "Riposo",
+            "sera": "Riposo"
+          },
+          "giovedi": {
+            "pranzo": "Riposo",
+            "sera": "16"
+          },
+          "venerdi": {
+            "pranzo": "Pranzo",
+            "sera": "16"
+          },
+          "sabato": {
+            "pranzo": "Pranzo",
+            "sera": "Cena"
+          },
+          "domenica": {
+            "pranzo": "Riposo",
+            "sera": "16"
+          }
+        }
+      },
+      {
+        "nome": "Annachiara",
+        "turni": {
+          "lunedi": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          },
+          "martedi": {
+            "pranzo": "Riposo",
+            "sera": "Riposo"
+          },
+          "mercoledi": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          },
+          "giovedi": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          },
+          "venerdi": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          },
+          "sabato": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          },
+          "domenica": {
+            "pranzo": "Riposo",
+            "sera": "17"
+          }
+        }
+      },
+      {
+        "nome": "Natalia",
+        "turni": {
+          "lunedi": {
+            "pranzo": "9",
+            "sera": "17"
+          },
+          "martedi": {
+            "pranzo": "9",
+            "sera": "17"
+          },
+          "mercoledi": {
+            "pranzo": "9",
+            "sera": "17"
+          },
+          "giovedi": {
+            "pranzo": "Riposo",
+            "sera": "Riposo"
+          },
+          "venerdi": {
+            "pranzo": "9",
+            "sera": "17"
+          },
+          "sabato": {
+            "pranzo": "9",
+            "sera": "17"
+          },
+          "domenica": {
+            "pranzo": "9",
+            "sera": "17"
+          }
+        }
+      },
+      {
+        "nome": "Carmine",
+        "turni": {
+          "lunedi": {
+            "pranzo": "12",
+            "sera": "19"
+          },
+          "martedi": {
+            "pranzo": "Pranzo",
+            "sera": "Cena"
+          },
+          "mercoledi": {
+            "pranzo": "12 00-15",
+            "sera": "19 00"
+          },
+          "giovedi": {
+            "pranzo": "Pranzo",
+            "sera": "Cena"
+          },
+          "venerdi": {
+            "pranzo": "Pranzo",
+            "sera": "Cena"
+          },
+          "sabato": {
+            "pranzo": "12",
+            "sera": "19"
+          },
+          "domenica": {
+            "pranzo": "Riposo",
+            "sera": "Riposo"
+          }
+        }
+      }
+    ]
+  },
+  "monthlyPublished": {
     "2026-W28": [
       {
         "nome": "Pawel",
@@ -860,439 +1293,6 @@
           },
           "sabato": {
             "pranzo": "12",
-            "sera": "19"
-          },
-          "domenica": {
-            "pranzo": "Riposo",
-            "sera": "Riposo"
-          }
-        }
-      }
-    ]
-  },
-  "monthlyPublished": {
-    "2026-W28": [
-      {
-        "nome": "Pawel",
-        "turni": {
-          "lunedi": {
-            "pranzo": "Riposo",
-            "sera": "Sera"
-          },
-          "martedi": {
-            "pranzo": "Riposo",
-            "sera": "Sera"
-          },
-          "mercoledi": {
-            "pranzo": "Apertura",
-            "sera": "Cena"
-          },
-          "giovedi": {
-            "pranzo": "Riposo",
-            "sera": "Riposo"
-          },
-          "venerdi": {
-            "pranzo": "Apertura",
-            "sera": "Cena"
-          },
-          "sabato": {
-            "pranzo": "Apertura",
-            "sera": "Cena"
-          },
-          "domenica": {
-            "pranzo": "Riposo",
-            "sera": "Sera"
-          }
-        }
-      },
-      {
-        "nome": "Rafaele",
-        "turni": {
-          "lunedi": {
-            "pranzo": "Apertura",
-            "sera": "Cena"
-          },
-          "martedi": {
-            "pranzo": "Riposo",
-            "sera": "15 30"
-          },
-          "mercoledi": {
-            "pranzo": "Riposo",
-            "sera": "15 30"
-          },
-          "giovedi": {
-            "pranzo": "Apertura",
-            "sera": "Cena"
-          },
-          "venerdi": {
-            "pranzo": "Riposo",
-            "sera": "Riposo"
-          },
-          "sabato": {
-            "pranzo": "Riposo",
-            "sera": "15 30"
-          },
-          "domenica": {
-            "pranzo": "Riposo",
-            "sera": "15 30"
-          }
-        }
-      },
-      {
-        "nome": "Gaetano",
-        "turni": {
-          "lunedi": {
-            "pranzo": "Riposo",
-            "sera": "15 30"
-          },
-          "martedi": {
-            "pranzo": "Apertura",
-            "sera": "Cena"
-          },
-          "mercoledi": {
-            "pranzo": "Riposo",
-            "sera": "Riposo"
-          },
-          "giovedi": {
-            "pranzo": "Riposo",
-            "sera": "Sera"
-          },
-          "venerdi": {
-            "pranzo": "Riposo",
-            "sera": "15 30"
-          },
-          "sabato": {
-            "pranzo": "Riposo",
-            "sera": "Sera"
-          },
-          "domenica": {
-            "pranzo": "Apertura",
-            "sera": "Cena"
-          }
-        }
-      },
-      {
-        "nome": "Rosè",
-        "turni": {
-          "lunedi": {
-            "pranzo": "9 17",
-            "sera": "Riposo"
-          },
-          "martedi": {
-            "pranzo": "Riposo",
-            "sera": "Riposo"
-          },
-          "mercoledi": {
-            "pranzo": "9 17",
-            "sera": "Riposo"
-          },
-          "giovedi": {
-            "pranzo": "9 17",
-            "sera": "Riposo"
-          },
-          "venerdi": {
-            "pranzo": "9 17",
-            "sera": "Riposo"
-          },
-          "sabato": {
-            "pranzo": "Riposo",
-            "sera": "16"
-          },
-          "domenica": {
-            "pranzo": "Riposo",
-            "sera": "16"
-          }
-        }
-      },
-      {
-        "nome": "Shan",
-        "turni": {
-          "lunedi": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "martedi": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "mercoledi": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "giovedi": {
-            "pranzo": "Riposo",
-            "sera": "Riposo"
-          },
-          "venerdi": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "sabato": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "domenica": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          }
-        }
-      },
-      {
-        "nome": "Brendon",
-        "turni": {
-          "lunedi": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "martedi": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "mercoledi": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "giovedi": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "venerdi": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "sabato": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "domenica": {
-            "pranzo": "Riposo",
-            "sera": "Riposo"
-          }
-        }
-      },
-      {
-        "nome": "Vittorio",
-        "turni": {
-          "lunedi": {
-            "pranzo": "Riposo",
-            "sera": "Riposo"
-          },
-          "martedi": {
-            "pranzo": "10",
-            "sera": "Cena"
-          },
-          "mercoledi": {
-            "pranzo": "Pranzo",
-            "sera": "Cena"
-          },
-          "giovedi": {
-            "pranzo": "Pranzo",
-            "sera": "Cena"
-          },
-          "venerdi": {
-            "pranzo": "Pranzo",
-            "sera": "Cena"
-          },
-          "sabato": {
-            "pranzo": "Pranzo",
-            "sera": "Cena"
-          },
-          "domenica": {
-            "pranzo": "Pranzo",
-            "sera": "Cena"
-          }
-        }
-      },
-      {
-        "nome": "Dylan",
-        "turni": {
-          "lunedi": {
-            "pranzo": "Riposo",
-            "sera": "Riposo"
-          },
-          "martedi": {
-            "pranzo": "Riposo",
-            "sera": "15 30"
-          },
-          "mercoledi": {
-            "pranzo": "Riposo",
-            "sera": "15 30"
-          },
-          "giovedi": {
-            "pranzo": "Riposo",
-            "sera": "15 30"
-          },
-          "venerdi": {
-            "pranzo": "Riposo",
-            "sera": "15 30"
-          },
-          "sabato": {
-            "pranzo": "Riposo",
-            "sera": "16"
-          },
-          "domenica": {
-            "pranzo": "Riposo",
-            "sera": "16"
-          }
-        }
-      },
-      {
-        "nome": "Lorenzo",
-        "turni": {
-          "lunedi": {
-            "pranzo": "10 18",
-            "sera": "Riposo"
-          },
-          "martedi": {
-            "pranzo": "Riposo",
-            "sera": "16"
-          },
-          "mercoledi": {
-            "pranzo": "Riposo",
-            "sera": "16"
-          },
-          "giovedi": {
-            "pranzo": "Riposo",
-            "sera": "16"
-          },
-          "venerdi": {
-            "pranzo": "Riposo",
-            "sera": "Riposo"
-          },
-          "sabato": {
-            "pranzo": "Riposo",
-            "sera": "16"
-          },
-          "domenica": {
-            "pranzo": "Riposo",
-            "sera": "16"
-          }
-        }
-      },
-      {
-        "nome": "Sabbit",
-        "turni": {
-          "lunedi": {
-            "pranzo": "Riposo",
-            "sera": "16"
-          },
-          "martedi": {
-            "pranzo": "Riposo",
-            "sera": "16"
-          },
-          "mercoledi": {
-            "pranzo": "Riposo",
-            "sera": "Riposo"
-          },
-          "giovedi": {
-            "pranzo": "Riposo",
-            "sera": "16"
-          },
-          "venerdi": {
-            "pranzo": "Pranzo",
-            "sera": "16"
-          },
-          "sabato": {
-            "pranzo": "Pranzo",
-            "sera": "Cena"
-          },
-          "domenica": {
-            "pranzo": "Riposo",
-            "sera": "16"
-          }
-        }
-      },
-      {
-        "nome": "Annachiara",
-        "turni": {
-          "lunedi": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "martedi": {
-            "pranzo": "Riposo",
-            "sera": "Riposo"
-          },
-          "mercoledi": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "giovedi": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "venerdi": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "sabato": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          },
-          "domenica": {
-            "pranzo": "Riposo",
-            "sera": "17"
-          }
-        }
-      },
-      {
-        "nome": "Natalia",
-        "turni": {
-          "lunedi": {
-            "pranzo": "9 17",
-            "sera": "Riposo"
-          },
-          "martedi": {
-            "pranzo": "9 17",
-            "sera": "Riposo"
-          },
-          "mercoledi": {
-            "pranzo": "9 17",
-            "sera": "Riposo"
-          },
-          "giovedi": {
-            "pranzo": "Riposo",
-            "sera": "Riposo"
-          },
-          "venerdi": {
-            "pranzo": "9 17",
-            "sera": "Riposo"
-          },
-          "sabato": {
-            "pranzo": "9 17",
-            "sera": "Riposo"
-          },
-          "domenica": {
-            "pranzo": "9 17",
-            "sera": "Riposo"
-          }
-        }
-      },
-      {
-        "nome": "Carmine",
-        "turni": {
-          "lunedi": {
-            "pranzo": "Pranzo",
-            "sera": "Cena"
-          },
-          "martedi": {
-            "pranzo": "Pranzo",
-            "sera": "Cena"
-          },
-          "mercoledi": {
-            "pranzo": "12 00-15",
-            "sera": "19 00"
-          },
-          "giovedi": {
-            "pranzo": "Pranzo",
-            "sera": "Cena"
-          },
-          "venerdi": {
-            "pranzo": "Pranzo",
-            "sera": "Cena"
-          },
-          "sabato": {
-            "pranzo": "Pranzo",
             "sera": "19"
           },
           "domenica": {
