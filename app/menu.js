@@ -22,7 +22,8 @@ function downloadLocalBackup(){
     createdAt:new Date().toISOString(),
     turni:JSON.parse(localStorage.getItem('capriBluAppTurniByWeekV1')||'{}'),
     richieste:JSON.parse(localStorage.getItem('capriBluAppRequestsV1')||'[]'),
-    mensile:JSON.parse(localStorage.getItem('capriBluAppPublishedMonthlyWeeksV1')||'{}')
+    mensile:JSON.parse(localStorage.getItem('capriBluAppPublishedMonthlyWeeksV1')||'{}'),
+    archivio:JSON.parse(localStorage.getItem('capriBluAppArchiveSelectedMonthV1')||'null')
   };
   var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   var url=URL.createObjectURL(blob);
@@ -48,8 +49,6 @@ function setupMainMenu(){
   if(backup)backup.addEventListener('click',function(){hideMainMenu();downloadLocalBackup()});
   var print=document.getElementById('menuPrintBtn');
   if(print)print.addEventListener('click',function(){hideMainMenu();window.print()});
-  var archive=document.getElementById('menuArchiveBtn');
-  if(archive)archive.addEventListener('click',function(){hideMainMenu();alert('Archivio in preparazione')});
   var messages=document.getElementById('menuMessagesBtn');
   if(messages)messages.addEventListener('click',function(){hideMainMenu();alert('Messaggi personale in preparazione')});
   var week=document.getElementById('weekInput');
