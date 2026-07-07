@@ -1,4 +1,3 @@
-.request-badge,
 .request-pill {
   cursor: pointer;
 }
@@ -62,10 +61,6 @@
   transform: translateY(-50%);
   pointer-events: none;
   z-index: 2;
-}
-
-.request-inline {
-  display: none !important;
 }
 
 .request-pill.ferie {
