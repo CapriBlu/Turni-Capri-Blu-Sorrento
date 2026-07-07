@@ -4,13 +4,19 @@ var departments=[
   {key:'pizzeria',title:'Pizzeria',people:['LUCA','MARIO','IGOR','CRISTIAN','PIETRO'],values:['Riposo','M','S','M/S','12/chius']},
   {key:'cucina',title:'Cucina / Lavaggio',people:['ANTONINO','Lavapiatti','AJITH','DIEGO','Saja'],values:['Riposo','M','S','M/S','12/chius']}
 ];
-var storeName='capriBluAppTurniV1';
-var saved={};
-try{saved=JSON.parse(localStorage.getItem(storeName)||'{}')}catch(e){saved={}}
+var storeName='capriBluAppTurniByWeekV1';
+var weekStoreName='capriBluAppCurrentWeekV1';
+var allData={};
+try{allData=JSON.parse(localStorage.getItem(storeName)||'{}')}catch(e){allData={}}
+function currentWeek(){var input=document.getElementById('weekInput');return input&&input.value?input.value:'no-week'}
+function weekData(){var key=currentWeek();if(!allData[key])allData[key]={};return allData[key]}
 function cellKey(dep,person,day){return dep+'_'+person+'_'+day}
-function cellValue(dep,person,day){return saved[cellKey(dep,person,day)]||'Riposo'}
-function saveCell(dep,person,day,value){saved[cellKey(dep,person,day)]=value;localStorage.setItem(storeName,JSON.stringify(saved));var s=document.getElementById('saveStatus');if(s){s.textContent='Salvato'}}
+function cellValue(dep,person,day){return weekData()[cellKey(dep,person,day)]||'Riposo'}
+function saveCell(dep,person,day,value){weekData()[cellKey(dep,person,day)]=value;localStorage.setItem(storeName,JSON.stringify(allData));localStorage.setItem(weekStoreName,currentWeek());var s=document.getElementById('saveStatus');if(s){s.textContent='Salvato '+currentWeek()}}
 function depByKey(key){return departments.find(function(dep){return dep.key===key})}
+function thisWeek(){var d=new Date();var day=d.getDay()||7;d.setDate(d.getDate()+4-day);var y=new Date(d.getFullYear(),0,1);var w=Math.ceil((((d-y)/86400000)+1)/7);return d.getFullYear()+'-W'+String(w).padStart(2,'0')}
+function setupWeek(){var input=document.getElementById('weekInput');if(!input)return;input.value=localStorage.getItem(weekStoreName)||thisWeek();updateWeekLabel();input.addEventListener('change',function(){localStorage.setItem(weekStoreName,input.value);updateWeekLabel();renderSchedule()})}
+function updateWeekLabel(){var label=document.getElementById('weekRange');if(label)label.textContent='Settimana '+currentWeek()}
 
 function renderSchedule(){
   var root=document.getElementById('scheduleSections');
@@ -57,5 +63,6 @@ function setupCellTap(){
   });
 }
 setupTabs();
+setupWeek();
 renderSchedule();
 setupCellTap();
