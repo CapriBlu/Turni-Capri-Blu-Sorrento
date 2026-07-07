@@ -23,6 +23,23 @@ function thisWeek(){var d=new Date();var day=d.getDay()||7;d.setDate(d.getDate()
 function previousWeek(value){var parts=value.split('-W');var year=Number(parts[0]);var week=Number(parts[1]);week=week-1;if(week<1){year=year-1;week=52}return year+'-W'+String(week).padStart(2,'0')}
 function setupWeek(){var input=document.getElementById('weekInput');if(!input)return;input.value=localStorage.getItem(weekStoreName)||thisWeek();updateWeekLabel();input.addEventListener('change',function(){localStorage.setItem(weekStoreName,input.value);updateWeekLabel();renderSchedule()})}
 function updateWeekLabel(){var label=document.getElementById('weekRange');if(label)label.textContent='Settimana '+currentWeek()}
+function formatDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function dateForWeekDay(weekValue,dayKey){
+  var index=days.findIndex(function(day){return day[0]===dayKey});
+  if(index<0||weekValue==='no-week')return '';
+  var parts=weekValue.split('-W');
+  var year=Number(parts[0]);
+  var week=Number(parts[1]);
+  var jan4=new Date(year,0,4);
+  var jan4Day=jan4.getDay()||7;
+  var monday=new Date(year,0,4-jan4Day+1);
+  monday.setDate(monday.getDate()+(week-1)*7+index);
+  return formatDate(monday);
+}
+function approvedRequestFor(person,dayKey){
+  var date=dateForWeekDay(currentWeek(),dayKey);
+  return requests.find(function(item){return item.person===person&&item.date===date&&item.status==='approvata'});
+}
 
 function renderSchedule(){
   var root=document.getElementById('scheduleSections');
@@ -35,7 +52,9 @@ function renderSchedule(){
     dep.people.forEach(function(person){
       html+='<div class="employee-row"><div class="employee-name">'+person+'</div><div class="days-grid">';
       days.forEach(function(day){
-        html+='<button class="shift-btn" type="button" data-dep="'+dep.key+'" data-person="'+person+'" data-day="'+day[0]+'"><span class="shift-day">'+day[1]+'</span><span class="shift-value">'+cellValue(dep.key,person,day[0])+'</span></button>';
+        var request=approvedRequestFor(person,day[0]);
+        var badge=request?'<span class="request-badge">Richiesta: '+request.type+'</span>':'';
+        html+='<button class="shift-btn" type="button" data-dep="'+dep.key+'" data-person="'+person+'" data-day="'+day[0]+'"><span class="shift-day">'+day[1]+'</span><span class="shift-value">'+cellValue(dep.key,person,day[0])+'</span>'+badge+'</button>';
       });
       html+='</div></div>';
     });
@@ -132,8 +151,8 @@ function renderRequests(){
     list.appendChild(card);
   });
 }
-function updateRequestStatus(id,status){requests=requests.map(function(item){if(String(item.id)===String(id)){item.status=status}return item});saveRequests();renderRequests()}
-function removeRequest(id){requests=requests.filter(function(item){return String(item.id)!==String(id)});saveRequests();renderRequests()}
+function updateRequestStatus(id,status){requests=requests.map(function(item){if(String(item.id)===String(id)){item.status=status}return item});saveRequests();renderRequests();renderSchedule()}
+function removeRequest(id){requests=requests.filter(function(item){return String(item.id)!==String(id)});saveRequests();renderRequests();renderSchedule()}
 function setupRequests(){
   setupRequestPeople();
   renderRequests();
