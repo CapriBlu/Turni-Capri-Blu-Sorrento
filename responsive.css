@@ -50,31 +50,10 @@ canvas {
   max-width: 100%;
 }
 
-/* Migliora lo scroll tabella su touch */
 .table-scroll,
 .requests-list-wrap {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
-}
-
-.shift-cell,
-.shift-time,
-.shift-table th,
-.table-zoom-bar button {
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-  touch-action: manipulation;
-}
-
-.shift-table td:first-child,
-.request-form input,
-.request-form select,
-.fast-time-input,
-.week-box input {
-  -webkit-user-select: text;
-  user-select: text;
 }
 
 /* Barra zoom tabella */
@@ -301,7 +280,6 @@ canvas {
     overflow-x: auto !important;
     overflow-y: visible !important;
     border-radius: 8px !important;
-    touch-action: pan-x pan-y;
   }
 
   .shift-table {
