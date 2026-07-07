@@ -1,0 +1,158 @@
+/* =========================================================
+   Capri Blu Turni App - Responsive V1
+   Solo tablet e telefono. Il desktop resta in app.css.
+   ========================================================= */
+
+/* Tablet */
+@media (max-width: 900px) {
+  .app-shell {
+    padding: 8px;
+  }
+
+  .title-block {
+    text-align: left;
+    margin: 10px 0 0;
+  }
+
+  .title-block h1 {
+    font-size: 24px;
+  }
+
+  .employee-row {
+    grid-template-columns: 110px minmax(0, 1fr);
+  }
+
+  .employee-name {
+    font-size: 13px;
+  }
+
+  .days-grid {
+    grid-template-columns: repeat(7, 92px);
+  }
+
+  .shift-btn {
+    min-width: 88px;
+  }
+
+  .top-toolbar {
+    gap: 6px;
+  }
+
+  .toolbar-pill,
+  .status-pill {
+    font-size: 12px;
+    padding: 7px 10px;
+  }
+}
+
+/* Telefono */
+@media (max-width: 520px) {
+  .app-shell {
+    padding: 6px;
+  }
+
+  .app-header {
+    border-radius: 16px;
+    padding: 10px;
+  }
+
+  .top-toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .toolbar-pill,
+  .status-pill {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  .title-block h1 {
+    font-size: 22px;
+  }
+
+  .week-card {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .week-card input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .tabs {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(238, 246, 255, .95);
+    padding: 6px 0;
+  }
+
+  .tab-btn {
+    font-size: 13px;
+    padding: 10px 6px;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .employee-row {
+    grid-template-columns: 92px minmax(0, 1fr);
+  }
+
+  .employee-name {
+    font-size: 12px;
+    padding: 8px 6px;
+  }
+
+  .days-grid {
+    grid-template-columns: repeat(7, 82px);
+  }
+
+  .shift-btn {
+    min-width: 78px;
+    min-height: 50px;
+  }
+
+  .shift-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .monthly-grid {
+    grid-template-columns: 1.4fr .6fr .8fr;
+    font-size: 13px;
+  }
+
+  .main-menu-card {
+    width: 270px;
+    margin: 8px 0 0 3px;
+    border-radius: 16px;
+  }
+
+  .archive-header-card h2 {
+    font-size: 24px;
+  }
+}
+
+/* Telefono molto stretto */
+@media (max-width: 380px) {
+  .top-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .employee-row {
+    grid-template-columns: 82px minmax(0, 1fr);
+  }
+
+  .days-grid {
+    grid-template-columns: repeat(7, 76px);
+  }
+
+  .shift-btn {
+    min-width: 72px;
+  }
+}
