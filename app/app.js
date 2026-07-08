@@ -29,176 +29,26 @@ function previousWeek(value){var parts=value.split('-W');var year=Number(parts[0
 function setupWeek(){var input=document.getElementById('weekInput');if(!input)return;input.value=localStorage.getItem(weekStoreName)||thisWeek();updateWeekLabel();input.addEventListener('change',function(){localStorage.setItem(weekStoreName,input.value);updateWeekLabel();renderSchedule()})}
 function updateWeekLabel(){var label=document.getElementById('weekRange');if(label)label.textContent='Settimana '+currentWeek()}
 function formatDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function dateForWeekDay(weekValue,dayKey){
-  var index=days.findIndex(function(day){return day[0]===dayKey});
-  if(index<0||weekValue==='no-week')return '';
-  var parts=weekValue.split('-W');
-  var year=Number(parts[0]);
-  var week=Number(parts[1]);
-  var jan4=new Date(year,0,4);
-  var jan4Day=jan4.getDay()||7;
-  var monday=new Date(year,0,4-jan4Day+1);
-  monday.setDate(monday.getDate()+(week-1)*7+index);
-  return formatDate(monday);
-}
-function approvedRequestFor(person,dayKey){
-  var date=dateForWeekDay(currentWeek(),dayKey);
-  return requests.find(function(item){return item.person===person&&item.date===date&&item.status==='approvata'});
-}
-
-function renderSchedule(){
-  var root=document.getElementById('scheduleSections');
-  if(!root)return;
-  root.innerHTML='';
-  departments.forEach(function(dep){
-    var open=isDepartmentOpen(dep.key);
-    var card=document.createElement('div');
-    card.className='department-card'+(open?'':' is-collapsed');
-    var html='<button class="department-title" type="button" data-dep-toggle="'+dep.key+'" aria-expanded="'+open+'">'+dep.title+'</button>';
-    dep.people.forEach(function(person){
-      html+='<div class="employee-row"><div class="employee-name">'+person+'</div><div class="days-grid">';
-      days.forEach(function(day){
-        var request=approvedRequestFor(person,day[0]);
-        var badge=request?'<span class="request-badge">Richiesta: '+request.type+'</span>':'';
-        html+='<button class="shift-btn" type="button" data-dep="'+dep.key+'" data-person="'+person+'" data-day="'+day[0]+'"><span class="shift-day">'+day[1]+'</span><span class="shift-value">'+cellValue(dep.key,person,day[0])+'</span>'+badge+'</button>';
-      });
-      html+='</div></div>';
-    });
-    card.innerHTML=html;
-    root.appendChild(card);
-  });
-}
-function setupTabs(){
-  document.querySelectorAll('.tab-btn').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      document.querySelectorAll('.tab-btn').forEach(function(item){item.classList.remove('active')});
-      document.querySelectorAll('.view').forEach(function(view){view.classList.remove('active-view')});
-      btn.classList.add('active');
-      var view=document.getElementById(btn.dataset.view+'View');
-      if(view){view.classList.add('active-view')}
-    });
-  });
-}
-function setupDepartmentToggles(){
-  var root=document.getElementById('scheduleSections');
-  if(!root)return;
-  root.addEventListener('click',function(event){
-    var title=event.target.closest('.department-title');
-    if(!title)return;
-    var card=title.closest('.department-card');
-    var key=title.dataset.depToggle;
-    var collapsed=card.classList.toggle('is-collapsed');
-    title.setAttribute('aria-expanded',String(!collapsed));
-    departmentOpenState[key]=!collapsed;
-    saveDepartmentState();
-  });
-}
+function dateForWeekDay(weekValue,dayKey){var index=days.findIndex(function(day){return day[0]===dayKey});if(index<0||weekValue==='no-week')return '';var parts=weekValue.split('-W');var year=Number(parts[0]);var week=Number(parts[1]);var jan4=new Date(year,0,4);var jan4Day=jan4.getDay()||7;var monday=new Date(year,0,4-jan4Day+1);monday.setDate(monday.getDate()+(week-1)*7+index);return formatDate(monday)}
+function approvedRequestFor(person,dayKey){var date=dateForWeekDay(currentWeek(),dayKey);return requests.find(function(item){return item.person===person&&item.date===date&&item.status==='approvata'})}
+function renderSchedule(){var root=document.getElementById('scheduleSections');if(!root)return;root.innerHTML='';departments.forEach(function(dep){var open=isDepartmentOpen(dep.key);var card=document.createElement('div');card.className='department-card'+(open?'':' is-collapsed');var html='<button class="department-title" type="button" data-dep-toggle="'+dep.key+'" aria-expanded="'+open+'">'+dep.title+'</button>';dep.people.forEach(function(person){html+='<div class="employee-row"><div class="employee-name">'+person+'</div><div class="days-grid">';days.forEach(function(day){var request=approvedRequestFor(person,day[0]);var badge=request?'<span class="request-badge">Richiesta: '+request.type+'</span>':'';html+='<button class="shift-btn" type="button" data-dep="'+dep.key+'" data-person="'+person+'" data-day="'+day[0]+'"><span class="shift-day">'+day[1]+'</span><span class="shift-value">'+cellValue(dep.key,person,day[0])+'</span>'+badge+'</button>'});html+='</div></div>'});card.innerHTML=html;root.appendChild(card)})}
+function setupTabs(){document.querySelectorAll('.tab-btn').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('.tab-btn').forEach(function(item){item.classList.remove('active')});document.querySelectorAll('.view').forEach(function(view){view.classList.remove('active-view')});btn.classList.add('active');var view=document.getElementById(btn.dataset.view+'View');if(view){view.classList.add('active-view')}})})}
+function setupDepartmentToggles(){var root=document.getElementById('scheduleSections');if(!root)return;root.addEventListener('click',function(event){var title=event.target.closest('.department-title');if(!title)return;var card=title.closest('.department-card');var key=title.dataset.depToggle;var collapsed=card.classList.toggle('is-collapsed');title.setAttribute('aria-expanded',String(!collapsed));departmentOpenState[key]=!collapsed;saveDepartmentState()})}
 function shiftButtonClass(value){var v=String(value).toLowerCase();if(v==='riposo'||v==='off')return ' is-rest-option';if(v.indexOf('/')>-1||v.indexOf(':')>-1||v.indexOf('cena')>-1||v.indexOf('pranzo')>-1)return ' is-special-option';return ''}
-function applyShift(value){
-  if(!activeCell)return;
-  activeCell.querySelector('.shift-value').textContent=value;
-  saveCell(activeCell.dataset.dep,activeCell.dataset.person,activeCell.dataset.day,value);
-  closeShiftEditor();
-}
-function openShiftEditor(cell){
-  activeCell=cell;
-  var dep=depByKey(cell.dataset.dep);
-  if(!dep)return;
-  var editor=document.getElementById('shiftEditor');
-  var title=document.getElementById('shiftEditorTitle');
-  var options=document.getElementById('shiftOptions');
-  var custom=document.getElementById('customShiftInput');
-  title.textContent=dep.title+' · '+cell.dataset.person+' · '+cell.dataset.day;
-  options.innerHTML='';
-  dep.values.forEach(function(value){
-    var btn=document.createElement('button');
-    btn.className='shift-option-btn'+shiftButtonClass(value);
-    btn.type='button';
-    btn.textContent=value;
-    btn.addEventListener('click',function(){applyShift(value)});
-    options.appendChild(btn);
-  });
-  custom.value=cell.querySelector('.shift-value').textContent;
-  editor.classList.add('open');
-  editor.setAttribute('aria-hidden','false');
-}
-function closeShiftEditor(){
-  var editor=document.getElementById('shiftEditor');
-  editor.classList.remove('open');
-  editor.setAttribute('aria-hidden','true');
-  activeCell=null;
-}
-function setupShiftEditor(){
-  var close=document.getElementById('closeShiftEditorBtn');
-  var save=document.getElementById('saveCustomShiftBtn');
-  var clear=document.getElementById('clearShiftBtn');
-  var editor=document.getElementById('shiftEditor');
-  if(close)close.addEventListener('click',closeShiftEditor);
-  if(save)save.addEventListener('click',function(){var input=document.getElementById('customShiftInput');applyShift((input.value||'Riposo').trim()||'Riposo')});
-  if(clear)clear.addEventListener('click',function(){applyShift('Riposo')});
-  if(editor)editor.addEventListener('click',function(event){if(event.target===editor)closeShiftEditor()});
-}
-function setupCellTap(){
-  document.getElementById('scheduleSections').addEventListener('click',function(event){
-    var cell=event.target.closest('.shift-btn');
-    if(!cell)return;
-    openShiftEditor(cell);
-  });
-}
-function setupCopyPreviousWeek(){
-  var btn=document.getElementById('copyPreviousWeekBtn');
-  if(!btn)return;
-  btn.addEventListener('click',function(){
-    var current=currentWeek();
-    var previous=previousWeek(current);
-    if(!allData[previous]){alert('Nessun turno trovato nella settimana '+previous);return}
-    if(!confirm('Copiare i turni da '+previous+' a '+current+'?'))return;
-    allData[current]=JSON.parse(JSON.stringify(allData[previous]));
-    saveAll();
-    renderSchedule();
-    var s=document.getElementById('saveStatus');
-    if(s){s.textContent='Copiata '+previous}
-  });
-}
+function applyShift(value){if(!activeCell)return;activeCell.querySelector('.shift-value').textContent=value;saveCell(activeCell.dataset.dep,activeCell.dataset.person,activeCell.dataset.day,value);closeShiftEditor()}
+function openShiftEditor(cell){activeCell=cell;var dep=depByKey(cell.dataset.dep);if(!dep)return;var editor=document.getElementById('shiftEditor');var title=document.getElementById('shiftEditorTitle');var options=document.getElementById('shiftOptions');var custom=document.getElementById('customShiftInput');title.textContent=dep.title+' · '+cell.dataset.person+' · '+cell.dataset.day;options.innerHTML='';dep.values.forEach(function(value){var btn=document.createElement('button');btn.className='shift-option-btn'+shiftButtonClass(value);btn.type='button';btn.textContent=value;btn.addEventListener('click',function(){applyShift(value)});options.appendChild(btn)});custom.value=cell.querySelector('.shift-value').textContent;editor.classList.add('open');editor.setAttribute('aria-hidden','false')}
+function closeShiftEditor(){var editor=document.getElementById('shiftEditor');editor.classList.remove('open');editor.setAttribute('aria-hidden','true');activeCell=null}
+function setupShiftEditor(){var close=document.getElementById('closeShiftEditorBtn');var save=document.getElementById('saveCustomShiftBtn');var clear=document.getElementById('clearShiftBtn');var editor=document.getElementById('shiftEditor');if(close)close.addEventListener('click',closeShiftEditor);if(save)save.addEventListener('click',function(){var input=document.getElementById('customShiftInput');applyShift((input.value||'Riposo').trim()||'Riposo')});if(clear)clear.addEventListener('click',function(){applyShift('Riposo')});if(editor)editor.addEventListener('click',function(event){if(event.target===editor)closeShiftEditor()})}
+function setupCellTap(){var root=document.getElementById('scheduleSections');if(!root)return;root.addEventListener('click',function(event){var cell=event.target.closest('.shift-btn');if(!cell)return;openShiftEditor(cell)})}
+function copyPreviousWeekAction(){var current=currentWeek();var previous=previousWeek(current);if(!allData[previous]){alert('Nessun turno trovato nella settimana '+previous);return}if(!confirm('Copiare i turni da '+previous+' a '+current+'?'))return;allData[current]=JSON.parse(JSON.stringify(allData[previous]));saveAll();renderSchedule();var s=document.getElementById('saveStatus');if(s){s.textContent='Copiata '+previous}}
+function setupCopyPreviousWeek(){var btn=document.getElementById('copyPreviousWeekBtn');if(btn)btn.addEventListener('click',copyPreviousWeekAction)}
+window.copyPreviousWeekAction=copyPreviousWeekAction;
 function saveRequests(){localStorage.setItem(requestStoreName,JSON.stringify(requests));var s=document.getElementById('saveStatus');if(s){s.textContent='Richieste salvate'}}
 function setupRequestPeople(){var select=document.getElementById('requestPerson');if(!select)return;var names=[];departments.forEach(function(dep){dep.people.forEach(function(name){if(names.indexOf(name)<0)names.push(name)})});select.innerHTML=names.map(function(name){return '<option>'+name+'</option>'}).join('')}
-function renderRequests(){
-  var list=document.getElementById('requestsList');
-  if(!list)return;
-  if(!requests.length){list.innerHTML='<div class="panel-card">Nessuna richiesta salvata.</div>';return}
-  list.innerHTML='';
-  requests.slice().reverse().forEach(function(item){
-    var card=document.createElement('div');
-    card.className='request-card';
-    card.innerHTML='<strong>'+item.person+' - '+item.type+'</strong><div class="request-meta">'+item.date+' - '+item.status+'</div><p class="request-note">'+(item.note||'')+'</p><div class="request-actions"><button class="mini-btn" type="button" data-action="approve" data-id="'+item.id+'">Approva</button><button class="mini-btn" type="button" data-action="reject" data-id="'+item.id+'">Rifiuta</button><button class="mini-btn" type="button" data-action="remove" data-id="'+item.id+'">Rimuovi</button></div>';
-    list.appendChild(card);
-  });
-}
+function renderRequests(){var list=document.getElementById('requestsList');if(!list)return;if(!requests.length){list.innerHTML='<div class="panel-card">Nessuna richiesta salvata.</div>';return}list.innerHTML='';requests.slice().reverse().forEach(function(item){var card=document.createElement('div');card.className='request-card';card.innerHTML='<strong>'+item.person+' - '+item.type+'</strong><div class="request-meta">'+item.date+' - '+item.status+'</div><p class="request-note">'+(item.note||'')+'</p><div class="request-actions"><button class="mini-btn" type="button" data-action="approve" data-id="'+item.id+'">Approva</button><button class="mini-btn" type="button" data-action="reject" data-id="'+item.id+'">Rifiuta</button><button class="mini-btn" type="button" data-action="remove" data-id="'+item.id+'">Rimuovi</button></div>';list.appendChild(card)})}
 function updateRequestStatus(id,status){requests=requests.map(function(item){if(String(item.id)===String(id)){item.status=status}return item});saveRequests();renderRequests();renderSchedule()}
 function removeRequest(id){requests=requests.filter(function(item){return String(item.id)!==String(id)});saveRequests();renderRequests();renderSchedule()}
-function setupRequests(){
-  setupRequestPeople();
-  renderRequests();
-  var add=document.getElementById('addRequestBtn');
-  var list=document.getElementById('requestsList');
-  if(add)add.addEventListener('click',function(){
-    var person=document.getElementById('requestPerson').value;
-    var type=document.getElementById('requestType').value;
-    var date=document.getElementById('requestDate').value||'-';
-    var note=document.getElementById('requestNote').value.trim();
-    requests.push({id:Date.now(),person:person,type:type,date:date,note:note,status:'in attesa'});
-    document.getElementById('requestNote').value='';
-    saveRequests();
-    renderRequests();
-  });
-  if(list)list.addEventListener('click',function(event){
-    var btn=event.target.closest('.mini-btn');
-    if(!btn)return;
-    if(btn.dataset.action==='approve')updateRequestStatus(btn.dataset.id,'approvata');
-    if(btn.dataset.action==='reject')updateRequestStatus(btn.dataset.id,'rifiutata');
-    if(btn.dataset.action==='remove')removeRequest(btn.dataset.id);
-  });
-}
+function setupRequests(){setupRequestPeople();renderRequests();var add=document.getElementById('addRequestBtn');var list=document.getElementById('requestsList');if(add)add.addEventListener('click',function(){var person=document.getElementById('requestPerson').value;var type=document.getElementById('requestType').value;var date=document.getElementById('requestDate').value||'-';var note=document.getElementById('requestNote').value.trim();requests.push({id:Date.now(),person:person,type:type,date:date,note:note,status:'in attesa'});document.getElementById('requestNote').value='';saveRequests();renderRequests()});if(list)list.addEventListener('click',function(event){var btn=event.target.closest('.mini-btn');if(!btn)return;if(btn.dataset.action==='approve')updateRequestStatus(btn.dataset.id,'approvata');if(btn.dataset.action==='reject')updateRequestStatus(btn.dataset.id,'rifiutata');if(btn.dataset.action==='remove')removeRequest(btn.dataset.id)})}
 setupTabs();
 setupWeek();
 renderSchedule();
