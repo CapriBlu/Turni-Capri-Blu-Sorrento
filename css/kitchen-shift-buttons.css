@@ -1,0 +1,78 @@
+/* Menu rapido Pizzeria / Cucina */
+.kitchen-fast-editor {
+  width: min(560px, 100%);
+}
+
+.kitchen-editor-panel {
+  border: 1px solid rgba(6, 27, 58, 0.12);
+  border-radius: 18px;
+  padding: 14px;
+  background: #fffaf0;
+}
+
+.kitchen-code {
+  background: linear-gradient(135deg, #795200, #c18a12);
+  min-width: 42px;
+}
+
+.kitchen-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.kitchen-choice-btn {
+  min-height: 58px;
+  border: 1px solid rgba(121, 82, 0, 0.18);
+  border-radius: 14px;
+  background: white;
+  color: #795200;
+  font-weight: 900;
+  padding: 8px 6px;
+}
+
+.kitchen-choice-btn strong {
+  display: block;
+  font-size: 1.08rem;
+  line-height: 1;
+}
+
+.kitchen-choice-btn small {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.64rem;
+  line-height: 1.05;
+}
+
+.kitchen-choice-btn.active {
+  background: linear-gradient(135deg, #0b4ca2, #062e72);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 10px 20px rgba(6, 27, 58, 0.16);
+}
+
+.kitchen-editor-panel .fast-time-input {
+  font-weight: 900;
+  text-align: center;
+  color: #061b3a;
+}
+
+.kitchen-shift-cell .shift-time.spezzato {
+  background: #fff1bf;
+  color: #745000;
+}
+
+.kitchen-shift-cell .shift-time.sera {
+  background: #dfe6ff;
+}
+
+@media (max-width: 760px) {
+  .kitchen-choice-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .kitchen-choice-btn {
+    min-height: 54px;
+  }
+}
