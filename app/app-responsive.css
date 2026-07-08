@@ -3,6 +3,24 @@
    Solo tablet e telefono. Il desktop resta in app.css.
    ========================================================= */
 
+/* Stati barra alta */
+.monthly-toolbar-btn {
+  background: #fff4cf !important;
+  color: #775000 !important;
+}
+
+.status-pill.is-dirty {
+  background: #ffe1e1 !important;
+  border-color: #ff9a9a !important;
+  color: #970000 !important;
+  animation: dirtySavePulse 1.2s infinite;
+}
+
+@keyframes dirtySavePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(151,0,0,.22); }
+  50% { box-shadow: 0 0 0 6px rgba(151,0,0,.10); }
+}
+
 /* Calendario header */
 .header-week-card {
   position: absolute;
