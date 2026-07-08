@@ -6,17 +6,7 @@ Questo file serve per sapere cosa viene modificato, perché viene modificato e c
 
 Data log: 2026-07-08
 
-Il progetto è funzionante ma sta iniziando a stratificarsi.
-
-Parti stabili:
-
-- pagina admin `app/index.html`
-- pagina sola lettura `app/lettura.html`
-- turni settimanali in `app/app.js`
-- menu separato in `app/menu.js`
-- autosave locale in `app/github-sync.js`
-- settings reparto in `app/settings.js`
-- pagina sola lettura con richieste e reparti a tendina
+Il progetto è funzionante ma stava iniziando a stratificarsi. Il refactor è stato avviato in modo controllato.
 
 Token GitHub: disattivato temporaneamente.
 
@@ -53,9 +43,9 @@ data/mensile/current-month.json
 data/settings/admins.json
 ```
 
-Questi percorsi sono ancora da considerare compatibili finché il refactor non è completato.
+Questi percorsi NON vanno cancellati finché i nuovi percorsi non sono testati.
 
-## Percorsi dati nuovi previsti
+## Percorsi dati nuovi
 
 ```txt
 data/app/current-data.json
@@ -65,24 +55,44 @@ data/settings/admins.json
 data/requests/pending-requests.json
 ```
 
-## File già creati nella nuova struttura
+## Fase 1 - Registro dati
+
+### Fatto
 
 ```txt
 data/app/current-data.json
 data/registry/weekly/README.md
+data/registry/weekly/current-week.json
 data/registry/monthly/README.md
+data/registry/monthly/current-month.json
 data/requests/pending-requests.json
 ```
 
-Nota: `data/registry/weekly/current-week.json` e `data/registry/monthly/current-month.json` non sono ancora stati attivati come percorsi runtime principali.
+### Fatto anche
 
-## Percorsi runtime attualmente usati
+`app/lettura.js` ora legge così:
+
+```txt
+1. ../data/registry/weekly/current-week.json
+2. fallback ../data/settimanale/current-week.json
+```
+
+Quindi se il nuovo registro non funziona, la pagina può ancora recuperare il vecchio file.
+
+### Cache aggiornata
+
+```txt
+lettura.html → v=6
+```
+
+## Runtime attuale
 
 Pagina sola lettura:
 
 ```txt
 app/lettura.js
-→ legge ancora data/settimanale/current-week.json
+→ tenta data/registry/weekly/current-week.json
+→ fallback data/settimanale/current-week.json
 → legge data/settings/admins.json
 ```
 
@@ -95,43 +105,26 @@ app/github-sync.js
 → prepara/scarica current-month.json
 ```
 
-## Piano refactor controllato
+Admin non è ancora stato spostato sui nuovi percorsi runtime. Farlo nella fase successiva.
 
-### Fase 1 - Registro dati
+## Prossima fase consigliata
 
-Obiettivo: ordinare `data/` senza rompere lettura/admin.
+### Fase 1B - Aggiornare pubblicazione locale
 
-Nuovo schema:
+Aggiornare `app/github-sync.js` affinché i file scaricati siano coerenti con la nuova struttura:
 
 ```txt
-data/
-├── app/
-│   └── current-data.json
-├── registry/
-│   ├── weekly/
-│   │   └── current-week.json
-│   └── monthly/
-│       └── current-month.json
-├── settings/
-│   └── admins.json
-└── requests/
-    └── pending-requests.json
+current-data.json     → data/app/current-data.json
+current-week.json     → data/registry/weekly/current-week.json
+current-month.json    → data/registry/monthly/current-month.json
+pending-requests.json → data/requests/pending-requests.json
 ```
 
-Da fare con calma:
+Ma NON cancellare ancora i vecchi file.
 
-1. creare `data/registry/weekly/current-week.json`
-2. creare `data/registry/monthly/current-month.json`
-3. aggiornare `lettura.js` per leggere prima il nuovo percorso e usare il vecchio come fallback
-4. aggiornare `github-sync.js` per scaricare file coerenti con la nuova struttura
-5. testare sola lettura
-6. solo dopo eliminare i vecchi percorsi
+## Fase 2 futura - Separazione JS
 
-### Fase 2 - Separazione JS
-
-Obiettivo: ridurre `app.js` e `lettura.js`.
-
-Previsto:
+Da fare solo dopo test dati:
 
 ```txt
 app/requests-admin.js
@@ -139,11 +132,11 @@ app/requests-read.js
 app/read-schedule.js
 ```
 
-Non farlo prima di aver stabilizzato i dati.
+Obiettivo: alleggerire `app.js` e `lettura.js`.
 
-### Fase 3 - Separazione CSS
+## Fase 3 futura - Separazione CSS
 
-Obiettivo futuro:
+Da fare solo dopo JS stabile:
 
 ```txt
 app/css/app.css
@@ -151,17 +144,17 @@ app/css/app-responsive.css
 app/css/lettura.css
 ```
 
-Da fare solo dopo che il JS è stabile.
-
 ## Come tornare indietro se qualcosa si rompe
 
 ### Caso 1 - pagina sola lettura non carica turni
 
-Ripristinare in `app/lettura.js` il fetch verso:
+Ripristinare in `app/lettura.js` il fetch unico verso:
 
 ```txt
 ../data/settimanale/current-week.json
 ```
+
+Oppure lasciare attivo solo il fallback vecchio.
 
 ### Caso 2 - settings reparto non carica email
 
@@ -202,11 +195,13 @@ Prima di cancellare un file vecchio:
 
 ## Ultimo punto sicuro
 
-Commit logico sicuro prima del grande refactor:
+Punto sicuro attuale:
 
 - token disattivato
 - settings admin reparto aggiunti
-- pagina sola lettura funzionante con `data/settimanale/current-week.json`
-- admin funzionante in locale
+- pagina sola lettura con fallback doppio
+- registro nuovo creato
+- vecchio registro ancora presente
+- admin ancora funzionante in locale
 
-Se qualcosa si rompe, tornare a questa logica e non cancellare i file vecchi.
+Se qualcosa si rompe, tornare al vecchio percorso `data/settimanale/current-week.json`.
