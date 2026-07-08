@@ -2,7 +2,7 @@
   "app": "Capri Blu Turni",
   "saveType": "official",
   "version": 3,
-  "savedAt": "2026-07-07T14:04:57.411Z",
+  "savedAt": "2026-07-08T21:08:39.726Z",
   "currentWeek": "2026-W28",
   "kitchenCurrentWeek": "2026-W28",
   "lastPublishedWeek": "2026-W28",
@@ -1351,7 +1351,7 @@
         "domenica": ""
       },
       "ANTONINO": {
-        "lunedi": "M",
+        "lunedi": "m s",
         "martedi": "M",
         "mercoledi": "Off",
         "giovedi": "M",
