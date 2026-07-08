@@ -1,43 +1,29 @@
 var archiveSelectedMonthStoreName='capriBluAppArchiveSelectedMonthV1';
-var archiveMonths=[
-  ['01','Gennaio'],['02','Febbraio'],['03','Marzo'],['04','Aprile'],['05','Maggio'],['06','Giugno'],
-  ['07','Luglio'],['08','Agosto'],['09','Settembre'],['10','Ottobre'],['11','Novembre'],['12','Dicembre']
-];
+var archiveModeStoreName='capriBluAppArchiveModeV1';
+var archiveMonths=[['01','Gennaio'],['02','Febbraio'],['03','Marzo'],['04','Aprile'],['05','Maggio'],['06','Giugno'],['07','Luglio'],['08','Agosto'],['09','Settembre'],['10','Ottobre'],['11','Novembre'],['12','Dicembre']];
+var archiveClosedDepartments={};
 function archiveCurrentYear(){return new Date().getFullYear()}
 function archiveCurrentMonthKey(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
 function archiveSelectedMonth(){return localStorage.getItem(archiveSelectedMonthStoreName)||archiveCurrentMonthKey()}
+function archiveMode(){return localStorage.getItem(archiveModeStoreName)||'monthly'}
 function saveArchiveSelectedMonth(value){localStorage.setItem(archiveSelectedMonthStoreName,value)}
-function archiveSelectMonth(value,label){
-  saveArchiveSelectedMonth(value);
-  renderArchiveMonths();
-  var status=document.getElementById('archiveStatus');
-  if(status)status.textContent='Mese selezionato: '+label+' '+value.slice(0,4);
-}
-function renderArchiveMonths(){
-  var root=document.getElementById('archiveMonths');
-  if(!root)return;
-  var year=archiveCurrentYear();
-  var current=archiveCurrentMonthKey();
-  var selected=archiveSelectedMonth();
-  root.innerHTML='';
-  archiveMonths.forEach(function(month){
-    var value=year+'-'+month[0];
-    var btn=document.createElement('button');
-    btn.type='button';
-    btn.className='archive-month-btn';
-    if(value===current)btn.classList.add('is-current-month');
-    if(value===selected)btn.classList.add('is-selected-month');
-    btn.textContent=month[1];
-    btn.addEventListener('click',function(){archiveSelectMonth(value,month[1])});
-    root.appendChild(btn);
-  });
-}
-function setupArchivePage(){
-  renderArchiveMonths();
-  var open=document.getElementById('archiveOpenMonthlyBtn');
-  var back=document.getElementById('archiveBackToWeekBtn');
-  if(open)open.addEventListener('click',function(){var tab=document.querySelector('.tab-btn[data-view="mensile"]');if(tab)tab.click()});
-  if(back)back.addEventListener('click',function(){var tab=document.querySelector('.tab-btn[data-view="turni"]');if(tab)tab.click()});
-  document.querySelectorAll('[data-menu-view="archivio"]').forEach(function(btn){btn.addEventListener('click',renderArchiveMonths)});
-}
+function saveArchiveMode(value){localStorage.setItem(archiveModeStoreName,value)}
+function archiveDaysInMonth(monthKey){var p=monthKey.split('-');return new Date(Number(p[0]),Number(p[1]),0).getDate()}
+function archiveDateKey(monthKey,day){return monthKey+'-'+String(day).padStart(2,'0')}
+function archiveDayName(monthKey,day){var d=new Date(archiveDateKey(monthKey,day));return ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'][d.getDay()]}
+function archiveWeekForDate(dateValue){var d=new Date(dateValue);var day=d.getDay()||7;d.setDate(d.getDate()+4-day);var y=new Date(d.getFullYear(),0,1);var w=Math.ceil((((d-y)/86400000)+1)/7);return d.getFullYear()+'-W'+String(w).padStart(2,'0')}
+function archiveDayKey(dateValue){var d=new Date(dateValue);return days[(d.getDay()+6)%7][0]}
+function archiveShiftFor(person,depKey,dateValue){var week=archiveWeekForDate(dateValue);var day=archiveDayKey(dateValue);var data=(typeof allData==='object'&&allData[week])?allData[week]:{};return data[cellKey(depKey,person,day)]||''}
+function archivePresenceCode(value){var v=String(value||'').trim().toLowerCase();if(!v)return'';if(v==='riposo'||v==='festa'||v==='off')return'F';if(v==='fer'||v==='ferie')return'Fer';if(v==='mal'||v==='malattia')return'MAL';if(v==='ass'||v==='assenza')return'Ass';if(v.indexOf('rit')>-1)return'Rit';return'P'}
+function archiveCellClass(code){if(code==='P')return'archive-p';if(code==='F')return'archive-f';if(code==='Fer')return'archive-fer';if(code==='MAL')return'archive-mal';if(code==='Ass')return'archive-ass';if(code==='Rit')return'archive-rit';return'archive-empty'}
+function archiveSelectMonth(value,label){saveArchiveSelectedMonth(value);renderArchiveMonths();renderArchiveContent();var status=document.getElementById('archiveStatus');if(status)status.textContent='Mese selezionato: '+label+' '+value.slice(0,4)}
+function renderArchiveMonths(){var root=document.getElementById('archiveMonths');if(!root)return;var year=archiveCurrentYear();var current=archiveCurrentMonthKey();var selected=archiveSelectedMonth();root.innerHTML='';archiveMonths.forEach(function(month){var value=year+'-'+month[0];var btn=document.createElement('button');btn.type='button';btn.className='archive-month-btn';if(value===current)btn.classList.add('is-current-month');if(value===selected)btn.classList.add('is-selected-month');btn.textContent=month[1];btn.addEventListener('click',function(){archiveSelectMonth(value,month[1])});root.appendChild(btn)})}
+function renderArchiveLegend(){var root=document.getElementById('archiveLegend');if(!root)return;root.innerHTML='<span class="archive-legend-item archive-p">P Presenza</span><span class="archive-legend-item archive-f">F Festa</span><span class="archive-legend-item archive-fer">Fer Ferie</span><span class="archive-legend-item archive-mal">MAL Malattia</span><span class="archive-legend-item archive-ass">Ass Assenza</span><span class="archive-legend-item archive-rit">Rit Ritardo</span>'}
+function renderMonthlyArchive(){var root=document.getElementById('archiveGrid');if(!root)return;var month=archiveSelectedMonth();var total=archiveDaysInMonth(month);var html='<div class="archive-table-card"><div class="archive-table-title"><strong>Grafico mensile presenze staff</strong><span>'+month+'</span></div><div class="archive-scroll"><table class="archive-presence-table"><thead><tr><th class="archive-staff-head">Staff</th>';for(var d=1;d<=total;d++){html+='<th><strong>'+d+'</strong><small>'+archiveDayName(month,d)+'</small></th>'}html+='</tr></thead><tbody>';departments.forEach(function(dep){var closed=archiveClosedDepartments[dep.key];html+='<tr class="archive-section-row '+(closed?'is-closed':'')+'"><td colspan="'+(total+1)+'"><button class="archive-section-toggle" type="button" data-archive-dep="'+dep.key+'"><span>'+dep.title+'</span><small>'+dep.people.length+' persone</small></button></td></tr>';dep.people.forEach(function(person){html+='<tr class="archive-person-row '+(closed?'is-hidden':'')+'" data-archive-person-dep="'+dep.key+'"><th>'+person+'</th>';for(var d=1;d<=total;d++){var date=archiveDateKey(month,d);var code=archivePresenceCode(archiveShiftFor(person,dep.key,date));html+='<td class="'+archiveCellClass(code)+'">'+code+'</td>'}html+='</tr>'})});html+='</tbody></table></div></div>';root.innerHTML=html}
+function renderWeeklyArchive(){var root=document.getElementById('archiveGrid');if(!root)return;root.innerHTML='<div class="archive-weekly-box"><strong>Archivio settimanale</strong><p>Sezione separata in preparazione. Qui verranno elencate le settimane chiuse e inviate al mensile.</p></div>'}
+function renderArchiveContent(){renderArchiveLegend();var mode=archiveMode();var monthly=document.getElementById('archiveMonthlyModeBtn');var weekly=document.getElementById('archiveWeeklyModeBtn');if(monthly)monthly.classList.toggle('active',mode==='monthly');if(weekly)weekly.classList.toggle('active',mode==='weekly');if(mode==='weekly'){renderWeeklyArchive()}else{renderMonthlyArchive()}}
+function setArchiveMode(mode){saveArchiveMode(mode);renderArchiveContent()}
+function setupArchivePage(){renderArchiveMonths();renderArchiveContent();var monthly=document.getElementById('archiveMonthlyModeBtn');var weekly=document.getElementById('archiveWeeklyModeBtn');if(monthly)monthly.addEventListener('click',function(){setArchiveMode('monthly')});if(weekly)weekly.addEventListener('click',function(){setArchiveMode('weekly')});var grid=document.getElementById('archiveGrid');if(grid)grid.addEventListener('click',function(event){var btn=event.target.closest('.archive-section-toggle');if(!btn)return;var key=btn.dataset.archiveDep;archiveClosedDepartments[key]=!archiveClosedDepartments[key];renderArchiveContent()});document.querySelectorAll('[data-menu-view="archivio"]').forEach(function(btn){btn.addEventListener('click',function(){setArchiveMode('monthly')})})}
+window.openMonthlyArchive=function(){setArchiveMode('monthly');var btn=document.querySelector('[data-menu-view="archivio"]');if(btn)btn.click();else{document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active-view')});var view=document.getElementById('archivioView');if(view)view.classList.add('active-view')}};
+window.openWeeklyArchive=function(){setArchiveMode('weekly');var btn=document.querySelector('[data-menu-view="archivio"]');if(btn)btn.click();else{document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active-view')});var view=document.getElementById('archivioView');if(view)view.classList.add('active-view')}};
 setupArchivePage();
