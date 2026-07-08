@@ -1,0 +1,4 @@
+var publicReadLink='https://capriblu.github.io/Turni-Capri-Blu-Sorrento/app/lettura.html';
+function notificationText(type){var week=(document.getElementById('weekInput')||{}).value||localStorage.getItem('capriBluAppCurrentWeekV1')||'';var prefix=type==='modifica'?'Aggiornamento turni':'Turni pubblicati';return prefix+' Capri Blu Sorrento - '+week+'\nConsulta qui: '+publicReadLink}
+function notifyWhatsapp(type){var url='https://wa.me/'+'?text='+encodeURIComponent(notificationText(type||'pubblicazione'));window.open(url,'_blank')}
+function notifyEmail(type){var subject=(type==='modifica'?'Aggiornamento turni':'Turni pubblicati')+' Capri Blu Sorrento';var url='mailto:'+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(notificationText(type||'pubblicazione'));window.location.href=url}
