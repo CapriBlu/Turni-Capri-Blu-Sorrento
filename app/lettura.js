@@ -1,0 +1,14 @@
+var readDays=[['lunedi','Lun'],['martedi','Mar'],['mercoledi','Mer'],['giovedi','Gio'],['venerdi','Ven'],['sabato','Sab'],['domenica','Dom']];
+var readDepartments=[
+  {key:'sala',title:'Sala',people:['Pawel','Rafaele','Gaetano','Rose','Shan','Brendon','Vittorio','Dylan','Lorenzo','Sabbit','Annachiara','Natalia','Carmine']},
+  {key:'pizzeria',title:'Pizzeria',people:['LUCA','MARIO','IGOR','CRISTIAN','PIETRO']},
+  {key:'cucina',title:'Cucina / Lavaggio',people:['ANTONINO','Lavapiatti','AJITH','DIEGO','Saja']}
+];
+function readCellKey(dep,person,day){return dep+'_'+person+'_'+day}
+function readShiftClass(value){var v=String(value||'').toLowerCase();if(!v)return'';if(v==='riposo')return' is-rest';if(v.indexOf('/')>-1||v.indexOf(':')>-1)return' is-special';return' is-filled'}
+function showStatus(text,type){var box=document.getElementById('readStatus');if(!box)return;box.textContent=text;box.style.background=type==='error'?'#ffe1e1':'#fff4cf';box.style.color=type==='error'?'#970000':'#775000'}
+function renderReadOnly(data){var root=document.getElementById('readSchedule');var label=document.getElementById('readWeekLabel');if(!root)return;var week=data&&data.settimana?data.settimana:'';var turni=data&&data.turni?data.turni:{};var weekData=week&&turni[week]?turni[week]:{};if(label)label.textContent=week?'Settimana '+week:'Settimana non indicata';if(!week||!Object.keys(weekData).length){root.innerHTML='<div class="empty-box">Nessun turno pubblicato per la settimana corrente.</div>';return}var html='';readDepartments.forEach(function(dep){html+='<section class="department-card"><div class="department-title">'+dep.title+'</div>';dep.people.forEach(function(person){html+='<div class="employee-row"><div class="employee-name">'+person+'</div><div class="days-grid">';readDays.forEach(function(day){var value=weekData[readCellKey(dep.key,person,day[0])]||'';html+='<div class="shift-cell'+readShiftClass(value)+'"><span class="shift-day">'+day[1]+'</span><span class="shift-value">'+(value||'-')+'</span></div>'});html+='</div></div>'});html+='</section>'});root.innerHTML=html}
+function loadReadOnly(){showStatus('Lettura dati da GitHub...');fetch('../data/current-data.json?ts='+Date.now()).then(function(r){if(!r.ok)throw new Error('Dati non trovati');return r.json()}).then(function(data){renderReadOnly(data);showStatus('Dati aggiornati: '+new Date().toLocaleTimeString('it-IT'))}).catch(function(){showStatus('Non riesco a leggere data/current-data.json da GitHub.','error')})}
+var refresh=document.getElementById('refreshReadBtn');if(refresh)refresh.addEventListener('click',loadReadOnly);
+loadReadOnly();
+setInterval(loadReadOnly,180000);
