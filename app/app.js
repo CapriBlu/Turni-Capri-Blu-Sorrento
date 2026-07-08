@@ -4,14 +4,7 @@ var departments=[
   {key:'pizzeria',title:'Pizzeria',people:['LUCA','MARIO','IGOR','CRISTIAN','PIETRO'],values:['Riposo','M','S','M/S','12/chius']},
   {key:'cucina',title:'Cucina / Lavaggio',people:['ANTONINO','Lavapiatti','AJITH','DIEGO','Saja'],values:['Riposo','M','S','M/S','12/chius']}
 ];
-var storeName='capriBluAppTurniByWeekV1';
-var weekStoreName='capriBluAppCurrentWeekV1';
-var requestStoreName='capriBluAppRequestsV1';
-var departmentStateStoreName='capriBluAppDepartmentOpenV1';
-var allData={};
-var requests=[];
-var departmentOpenState={};
-var activeCell=null;
+var storeName='capriBluAppTurniByWeekV1';var weekStoreName='capriBluAppCurrentWeekV1';var requestStoreName='capriBluAppRequestsV1';var departmentStateStoreName='capriBluAppDepartmentOpenV1';var allData={};var requests=[];var departmentOpenState={};var activeCell=null;
 try{allData=JSON.parse(localStorage.getItem(storeName)||'{}')}catch(e){allData={}}
 try{requests=JSON.parse(localStorage.getItem(requestStoreName)||'[]')}catch(e){requests=[]}
 try{departmentOpenState=JSON.parse(localStorage.getItem(departmentStateStoreName)||'{}')}catch(e){departmentOpenState={}}
@@ -27,7 +20,8 @@ function saveDepartmentState(){localStorage.setItem(departmentStateStoreName,JSO
 function thisWeek(){var d=new Date();var day=d.getDay()||7;d.setDate(d.getDate()+4-day);var y=new Date(d.getFullYear(),0,1);var w=Math.ceil((((d-y)/86400000)+1)/7);return d.getFullYear()+'-W'+String(w).padStart(2,'0')}
 function previousWeek(value){var parts=value.split('-W');var year=Number(parts[0]);var week=Number(parts[1]);week=week-1;if(week<1){year=year-1;week=52}return year+'-W'+String(week).padStart(2,'0')}
 function setupWeek(){var input=document.getElementById('weekInput');if(!input)return;input.value=localStorage.getItem(weekStoreName)||thisWeek();updateWeekLabel();input.addEventListener('change',function(){localStorage.setItem(weekStoreName,input.value);updateWeekLabel();renderSchedule()})}
-function updateWeekLabel(){var label=document.getElementById('weekRange');if(label)label.textContent='Settimana '+currentWeek()}
+function shortItalianDate(value){if(!value)return'';var p=value.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
+function updateWeekLabel(){var label=document.getElementById('weekRange');if(!label)return;var week=currentWeek();if(!week||week==='no-week'){label.textContent='-';return}label.textContent=shortItalianDate(dateForWeekDay(week,'lunedi'))+' - '+shortItalianDate(dateForWeekDay(week,'domenica'))}
 function formatDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function dateForWeekDay(weekValue,dayKey){var index=days.findIndex(function(day){return day[0]===dayKey});if(index<0||weekValue==='no-week')return '';var parts=weekValue.split('-W');var year=Number(parts[0]);var week=Number(parts[1]);var jan4=new Date(year,0,4);var jan4Day=jan4.getDay()||7;var monday=new Date(year,0,4-jan4Day+1);monday.setDate(monday.getDate()+(week-1)*7+index);return formatDate(monday)}
 function approvedRequestFor(person,dayKey){var date=dateForWeekDay(currentWeek(),dayKey);return requests.find(function(item){return item.person===person&&item.date===date&&item.status==='approvata'})}
@@ -49,11 +43,4 @@ function renderRequests(){var list=document.getElementById('requestsList');if(!l
 function updateRequestStatus(id,status){requests=requests.map(function(item){if(String(item.id)===String(id)){item.status=status}return item});saveRequests();renderRequests();renderSchedule()}
 function removeRequest(id){requests=requests.filter(function(item){return String(item.id)!==String(id)});saveRequests();renderRequests();renderSchedule()}
 function setupRequests(){setupRequestPeople();renderRequests();var add=document.getElementById('addRequestBtn');var list=document.getElementById('requestsList');if(add)add.addEventListener('click',function(){var person=document.getElementById('requestPerson').value;var type=document.getElementById('requestType').value;var date=document.getElementById('requestDate').value||'-';var note=document.getElementById('requestNote').value.trim();requests.push({id:Date.now(),person:person,type:type,date:date,note:note,status:'in attesa'});document.getElementById('requestNote').value='';saveRequests();renderRequests()});if(list)list.addEventListener('click',function(event){var btn=event.target.closest('.mini-btn');if(!btn)return;if(btn.dataset.action==='approve')updateRequestStatus(btn.dataset.id,'approvata');if(btn.dataset.action==='reject')updateRequestStatus(btn.dataset.id,'rifiutata');if(btn.dataset.action==='remove')removeRequest(btn.dataset.id)})}
-setupTabs();
-setupWeek();
-renderSchedule();
-setupDepartmentToggles();
-setupCellTap();
-setupShiftEditor();
-setupCopyPreviousWeek();
-setupRequests();
+setupTabs();setupWeek();renderSchedule();setupDepartmentToggles();setupCellTap();setupShiftEditor();setupCopyPreviousWeek();setupRequests();
