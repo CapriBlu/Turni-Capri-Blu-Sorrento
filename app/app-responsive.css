@@ -3,6 +3,40 @@
    Solo tablet e telefono. Il desktop resta in app.css.
    ========================================================= */
 
+/* Menu gruppi a tendina */
+.menu-group {
+  border: 1px solid #d8e4f2;
+  border-radius: 14px;
+  background: #f7fbff;
+  margin: 8px 0;
+  padding: 6px;
+}
+
+.menu-group summary {
+  cursor: pointer;
+  color: #063f7a;
+  font-weight: 900;
+  padding: 8px 10px;
+  list-style: none;
+}
+
+.menu-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.menu-group summary::after {
+  content: '▸';
+  float: right;
+}
+
+.menu-group[open] summary::after {
+  content: '▾';
+}
+
+.menu-group .main-menu-item {
+  margin: 6px 0 0;
+}
+
 /* Tablet */
 @media (max-width: 900px) {
   .app-shell {
@@ -128,7 +162,9 @@
   }
 
   .main-menu-card {
-    width: 270px;
+    width: 286px;
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
     margin: 8px 0 0 3px;
     border-radius: 16px;
   }
