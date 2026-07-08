@@ -11,7 +11,7 @@ Valutazione aggiornata:
 ```txt
 Stabilità: buona
 Manutenibilità: buona
-Rischio stratificazione: medio-basso
+Rischio stratificazione: basso/medio-basso
 ```
 
 ## Struttura attuale
@@ -21,6 +21,7 @@ Rischio stratificazione: medio-basso
 ```txt
 app/index.html
 app/app.js
+app/requests-admin.js
 app/menu.js
 app/local-publish.js
 app/github-upload.js
@@ -129,6 +130,31 @@ archivio
 
 Le voci `Stampa` e `Messaggi personale` vengono ancora rimosse via JS perché restano dentro `index.html`.
 
+### 5. Richieste admin separate
+
+Prima le richieste admin erano dentro:
+
+```txt
+app/app.js
+```
+
+Ora sono in:
+
+```txt
+app/requests-admin.js
+```
+
+`app.js` gestisce soprattutto turni, calendario, celle ed editor turni.
+
+`requests-admin.js` gestisce:
+
+```txt
+richieste admin
+lista richieste
+approva/rifiuta/rimuovi
+email conferma approvazione
+```
+
 ## Residui rimasti
 
 ### 1. `index.html` ancora monolitico
@@ -142,23 +168,23 @@ Messaggi personale
 
 Non rompe perché `menu.js` li rimuove. Però in futuro va riscritto più pulito.
 
-### 2. `app.js` troppo grande
+### 2. `app.js` ancora migliorabile
 
-`app.js` contiene ancora troppe responsabilità:
+`app.js` ora è più leggero, ma contiene ancora:
 
 ```txt
-turni
-richieste admin
-approvazione/rifiuto richieste
-email conferma
-indicatori calendario
+config reparti
+calendario settimana
+render turni
+editor turni
+indicatori richieste sul calendario
 ```
 
-Da separare in futuro:
+Da separare in futuro solo se necessario:
 
 ```txt
 app/schedule-core.js
-app/requests-admin.js
+app/schedule-render.js
 ```
 
 ### 3. `lettura.js` troppo grande
@@ -193,10 +219,10 @@ app/read-requests.js
 Ordine consigliato:
 
 ```txt
-1. testare upload GitHub con token
-2. testare pagina sola lettura dopo upload
-3. pulire index.html eliminando markup vecchio
-4. separare richieste admin da app.js
+1. testare admin dopo separazione richieste
+2. testare upload GitHub con token
+3. testare pagina sola lettura dopo upload
+4. pulire index.html eliminando markup vecchio
 5. separare richieste sola lettura da lettura.js
 6. valutare rimozione vecchi dati fallback
 ```
