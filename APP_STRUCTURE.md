@@ -1,8 +1,8 @@
-# Struttura pulita app turni V1
+# Struttura pulita app turni V2
 
-Questa è la struttura ordinata della nuova app in `app/`.
+Questa è la struttura ordinata della web app turni Capri Blu.
 
-Obiettivo: mantenere il progetto pulito, leggibile e modificabile senza creare strati inutili.
+Obiettivo: mantenere il progetto leggibile, modificabile e senza strati inutili.
 
 ## Regola base
 
@@ -14,12 +14,33 @@ Ogni modifica deve seguire questo ordine:
 4. Test
 5. Pulizia finale
 
-Ogni aggiunta deve chiudersi con controllo residui: pulsanti vecchi, classi CSS non usate, script non più necessari.
+Ogni aggiunta deve chiudersi con controllo residui: pulsanti vecchi, classi CSS non usate, script non più necessari, funzioni duplicate.
+
+## Struttura app
+
+```txt
+app/
+├── index.html
+├── app.css
+├── app-responsive.css
+├── app.js
+├── weekly-monthly.js
+├── monthly.js
+├── archive.js
+├── github-sync.js
+├── notifications.js
+├── menu.js
+├── theme.js
+├── manifest.webmanifest
+├── lettura.html
+├── lettura.css
+└── lettura.js
+```
 
 ## File principali
 
 - `app/index.html`  
-  Struttura pagina, pannelli principali e ordine script.
+  Struttura admin, pannelli principali, menu e ordine script.
 
 - `app/app.css`  
   Grafica base desktop e componenti principali. Non deve contenere regole responsive.
@@ -28,74 +49,106 @@ Ogni aggiunta deve chiudersi con controllo residui: pulsanti vecchi, classi CSS 
   Solo tablet e telefono. Tutte le correzioni mobile/tablet vanno qui.
 
 - `app/app.js`  
-  Turni settimanali, richieste base, editor turno, salvataggio principale.
+  Turni settimanali, richieste, editor turno e salvataggio locale principale.
 
 - `app/weekly-monthly.js`  
-  Invio settimana al mensile, stato settimana pubblicata, tonalità settimana.
+  Registro mensile locale: prende la settimana corrente e la registra nel contenitore mensile.
 
 - `app/monthly.js`  
-  Riepilogo mensile dalle settimane inviate.
+  Riepilogo mensile dalle settimane registrate.
 
 - `app/archive.js`  
-  Pagina Archivio separata: lista mesi, mese corrente lampeggiante, selezione mese.
+  Archivio mensile e settimanale: grafico presenze, reparti, settimane registrate.
 
-- `app/theme.js`  
-  Colori automatici delle celle.
+- `app/github-sync.js`  
+  Per ora NON usa token. Gestisce autosave locale, preparazione backup admin, pubblicazione locale settimanale/mensile e download dei JSON.
+
+- `app/notifications.js`  
+  Prepara messaggi WhatsApp/email con link sola lettura.
 
 - `app/menu.js`  
-  Menu rapido alto, scorciatoie, backup JSON e stampa.
+  Solo menu, navigazione e collegamento pulsanti. Non deve contenere logica GitHub, notifiche o archivio.
 
-- `app/manifest.webmanifest`  
-  Configurazione PWA.
+- `app/theme.js`  
+  Colori automatici delle celle turno.
+
+- `app/lettura.html`, `app/lettura.css`, `app/lettura.js`  
+  Pagina collaboratori sola lettura. Legge solo il settimanale pubblicato.
+
+## Dati
+
+```txt
+data/
+├── current-data.json
+├── settimanale/
+│   └── current-week.json
+└── mensile/
+    └── current-month.json
+```
+
+- `data/current-data.json`  
+  Backup admin completo.
+
+- `data/settimanale/current-week.json`  
+  File pubblicato per la pagina sola lettura settimanale.
+
+- `data/mensile/current-month.json`  
+  File pubblicato per il mensile.
 
 ## Confini
 
 - `index.html`: solo struttura e script.
-- `app.css`: grafica base desktop, senza responsive.
+- `app.css`: grafica base desktop.
 - `app-responsive.css`: solo tablet e telefono.
 - `app.js`: cuore turni e richieste.
-- `weekly-monthly.js`: invio settimana al mensile.
+- `weekly-monthly.js`: registro mensile locale.
 - `monthly.js`: riepilogo mensile.
-- `archive.js`: archivio mensile separato.
-- `theme.js`: classi visive automatiche.
-- `menu.js`: menu rapido e azioni locali semplici.
+- `archive.js`: archivio mensile/settimanale.
+- `github-sync.js`: autosave locale e preparazione file dati.
+- `notifications.js`: WhatsApp/email.
+- `menu.js`: menu e navigazione.
+- `lettura.js`: sola lettura settimanale.
 
 ## LocalStorage
 
 - `capriBluAppTurniByWeekV1`: turni per settimana.
 - `capriBluAppCurrentWeekV1`: settimana selezionata.
 - `capriBluAppRequestsV1`: richieste staff.
-- `capriBluAppPublishedMonthlyWeeksV1`: settimane inviate al mensile.
+- `capriBluAppPublishedMonthlyWeeksV1`: settimane registrate nel mensile.
 - `capriBluAppDepartmentOpenV1`: reparti aperti/chiusi.
-- `capriBluAppArchiveSelectedMonthV1`: mese selezionato in Archivio.
+- `capriBluAppArchiveSelectedMonthV1`: mese selezionato in archivio.
+- `capriBluAppArchiveModeV1`: archivio mensile o settimanale.
+- `capriBluAppLastAutoSaveV1`: ultimo autosave locale.
+- `capriBluAppPublishedWeeklyCurrentV1`: ultimo settimanale preparato localmente.
+- `capriBluAppPublishedMonthlyCurrentV1`: ultimo mensile preparato localmente.
 
-## CSS caricati
+## Modalità attuale
 
-```html
-<link rel="stylesheet" href="app.css?v=1">
-<link rel="stylesheet" href="app-responsive.css?v=1">
+Token GitHub disattivato temporaneamente.
+
+Per ora:
+
+```txt
+Invia settimanale → prepara/scarica current-week.json
+Invia mese        → prepara/scarica current-month.json
+Backup admin      → prepara/scarica current-data.json
 ```
 
-## Script caricati
-
-```html
-<script src="app.js?v=1"></script>
-<script src="weekly-monthly.js?v=1"></script>
-<script src="monthly.js?v=1"></script>
-<script src="archive.js?v=1"></script>
-<script src="theme.js?v=1"></script>
-<script src="menu.js?v=1"></script>
-```
+La pubblicazione online vera verrà riattivata dopo, con flusso sicuro.
 
 ## Test minimo
 
-1. Aprire app.
+1. Aprire admin.
 2. Cambiare settimana.
 3. Modificare una cella turno.
-4. Aprire menu selezione turno.
-5. Aprire menu alto.
-6. Aprire Richieste.
-7. Aprire Mensile.
-8. Aprire Archivio.
-9. Provare tablet/telefono.
-10. Fare refresh e verificare che i dati restino salvati.
+4. Verificare autosave locale.
+5. Aprire menu.
+6. Provare Invia settimanale.
+7. Provare Invia mese.
+8. Aprire Richieste.
+9. Aprire Presenze mensili.
+10. Aprire Archivio mensile.
+11. Aprire Archivio settimanale.
+12. Aprire pagina sola lettura.
+13. Verificare telefono/tablet.
+14. Fare refresh e verificare che i dati restino salvati.
