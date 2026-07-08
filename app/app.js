@@ -8,12 +8,14 @@ var storeName='capriBluAppTurniByWeekV1';var weekStoreName='capriBluAppCurrentWe
 try{allData=JSON.parse(localStorage.getItem(storeName)||'{}')}catch(e){allData={}}
 try{requests=JSON.parse(localStorage.getItem(requestStoreName)||'[]')}catch(e){requests=[]}
 try{departmentOpenState=JSON.parse(localStorage.getItem(departmentStateStoreName)||'{}')}catch(e){departmentOpenState={}}
+function markLocalChanges(text){var official=document.getElementById('officialDataStatus');var save=document.getElementById('saveStatus');if(official){official.textContent='Modifiche da caricare';official.classList.add('is-dirty')}if(save){save.textContent=text||'Salvato locale';save.classList.add('is-dirty')}}
+window.markLocalChanges=markLocalChanges;
 function currentWeek(){var input=document.getElementById('weekInput');return input&&input.value?input.value:'no-week'}
 function weekData(){var key=currentWeek();if(!allData[key])allData[key]={};return allData[key]}
 function cellKey(dep,person,day){return dep+'_'+person+'_'+day}
 function cellValue(dep,person,day){return weekData()[cellKey(dep,person,day)]||'Riposo'}
 function saveAll(){localStorage.setItem(storeName,JSON.stringify(allData));localStorage.setItem(weekStoreName,currentWeek())}
-function saveCell(dep,person,day,value){weekData()[cellKey(dep,person,day)]=value;saveAll();var s=document.getElementById('saveStatus');if(s){s.textContent='Salvato '+currentWeek()}}
+function saveCell(dep,person,day,value){weekData()[cellKey(dep,person,day)]=value;saveAll();markLocalChanges('Salvato locale '+currentWeek())}
 function depByKey(key){return departments.find(function(dep){return dep.key===key})}
 function isDepartmentOpen(key){return departmentOpenState[key]!==false}
 function saveDepartmentState(){localStorage.setItem(departmentStateStoreName,JSON.stringify(departmentOpenState))}
@@ -34,10 +36,10 @@ function openShiftEditor(cell){activeCell=cell;var dep=depByKey(cell.dataset.dep
 function closeShiftEditor(){var editor=document.getElementById('shiftEditor');editor.classList.remove('open');editor.setAttribute('aria-hidden','true');activeCell=null}
 function setupShiftEditor(){var close=document.getElementById('closeShiftEditorBtn');var save=document.getElementById('saveCustomShiftBtn');var clear=document.getElementById('clearShiftBtn');var editor=document.getElementById('shiftEditor');if(close)close.addEventListener('click',closeShiftEditor);if(save)save.addEventListener('click',function(){var input=document.getElementById('customShiftInput');applyShift((input.value||'Riposo').trim()||'Riposo')});if(clear)clear.addEventListener('click',function(){applyShift('Riposo')});if(editor)editor.addEventListener('click',function(event){if(event.target===editor)closeShiftEditor()})}
 function setupCellTap(){var root=document.getElementById('scheduleSections');if(!root)return;root.addEventListener('click',function(event){var cell=event.target.closest('.shift-btn');if(!cell)return;openShiftEditor(cell)})}
-function copyPreviousWeekAction(){var current=currentWeek();var previous=previousWeek(current);if(!allData[previous]){alert('Nessun turno trovato nella settimana '+previous);return}if(!confirm('Copiare i turni da '+previous+' a '+current+'?'))return;allData[current]=JSON.parse(JSON.stringify(allData[previous]));saveAll();renderSchedule();var s=document.getElementById('saveStatus');if(s){s.textContent='Copiata '+previous}}
+function copyPreviousWeekAction(){var current=currentWeek();var previous=previousWeek(current);if(!allData[previous]){alert('Nessun turno trovato nella settimana '+previous);return}if(!confirm('Copiare i turni da '+previous+' a '+current+'?'))return;allData[current]=JSON.parse(JSON.stringify(allData[previous]));saveAll();renderSchedule();markLocalChanges('Copiata '+previous)}
 function setupCopyPreviousWeek(){var btn=document.getElementById('copyPreviousWeekBtn');if(btn)btn.addEventListener('click',copyPreviousWeekAction)}
 window.copyPreviousWeekAction=copyPreviousWeekAction;
-function saveRequests(){localStorage.setItem(requestStoreName,JSON.stringify(requests));var s=document.getElementById('saveStatus');if(s){s.textContent='Richieste salvate'}}
+function saveRequests(){localStorage.setItem(requestStoreName,JSON.stringify(requests));markLocalChanges('Richieste salvate')}
 function setupRequestPeople(){var select=document.getElementById('requestPerson');if(!select)return;var names=[];departments.forEach(function(dep){dep.people.forEach(function(name){if(names.indexOf(name)<0)names.push(name)})});select.innerHTML=names.map(function(name){return '<option>'+name+'</option>'}).join('')}
 function renderRequests(){var list=document.getElementById('requestsList');if(!list)return;if(!requests.length){list.innerHTML='<div class="panel-card">Nessuna richiesta salvata.</div>';return}list.innerHTML='';requests.slice().reverse().forEach(function(item){var card=document.createElement('div');card.className='request-card';card.innerHTML='<strong>'+item.person+' - '+item.type+'</strong><div class="request-meta">'+item.date+' - '+item.status+'</div><p class="request-note">'+(item.note||'')+'</p><div class="request-actions"><button class="mini-btn" type="button" data-action="approve" data-id="'+item.id+'">Approva</button><button class="mini-btn" type="button" data-action="reject" data-id="'+item.id+'">Rifiuta</button><button class="mini-btn" type="button" data-action="remove" data-id="'+item.id+'">Rimuovi</button></div>';list.appendChild(card)})}
 function updateRequestStatus(id,status){requests=requests.map(function(item){if(String(item.id)===String(id)){item.status=status}return item});saveRequests();renderRequests();renderSchedule()}
