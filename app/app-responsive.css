@@ -3,6 +3,48 @@
    Solo tablet e telefono. Il desktop resta in app.css.
    ========================================================= */
 
+/* Calendario header */
+.header-week-card {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 190px;
+  margin: 0;
+  padding: 10px;
+  display: grid;
+  gap: 6px;
+  background: #f6fbff;
+  border: 1px solid #c8d8ea;
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(6,63,122,.12);
+}
+
+.header-week-card input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #9eb9d5;
+  border-radius: 10px;
+  padding: 9px 10px;
+  font-size: 15px;
+  font-weight: 900;
+  color: #063f7a;
+  background: white;
+}
+
+.header-week-card .week-range {
+  margin: 0;
+  text-align: center;
+  color: #063f7a;
+  font-size: 12px;
+  font-weight: 900;
+  animation: softDatePulse 2.8s infinite;
+}
+
+@keyframes softDatePulse {
+  0%, 100% { opacity: .65; }
+  50% { opacity: 1; }
+}
+
 /* Menu gruppi a tendina */
 .menu-group {
   border: 1px solid #d8e4f2;
@@ -41,6 +83,10 @@
 @media (max-width: 900px) {
   .app-shell {
     padding: 8px;
+  }
+
+  .app-header {
+    padding-right: 220px;
   }
 
   .title-block {
@@ -88,6 +134,23 @@
   .app-header {
     border-radius: 16px;
     padding: 10px;
+    padding-top: 78px;
+  }
+
+  .header-week-card {
+    top: 10px;
+    right: 10px;
+    width: 170px;
+    padding: 8px;
+  }
+
+  .header-week-card input {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .header-week-card .week-range {
+    font-size: 11px;
   }
 
   .top-toolbar {
@@ -106,12 +169,12 @@
     font-size: 22px;
   }
 
-  .week-card {
+  .week-card:not(.header-week-card) {
     display: grid;
     grid-template-columns: 1fr;
   }
 
-  .week-card input {
+  .week-card:not(.header-week-card) input {
     width: 100%;
     box-sizing: border-box;
   }
@@ -200,6 +263,10 @@
 @media (max-width: 380px) {
   .top-toolbar {
     grid-template-columns: 1fr;
+  }
+
+  .header-week-card {
+    width: 150px;
   }
 
   .employee-row {
