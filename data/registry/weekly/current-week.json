@@ -1,32 +1,29 @@
 {
-  "createdAt": "2026-07-08T07:11:02.722Z",
+  "createdAt": "2026-07-08T10:36:32.656Z",
   "type": "settimanale",
   "settimana": "2026-W28",
   "turni": {
-    "cucina_Saja_lunedi": "M",
+    "sala_Pawel_lunedi": "A/S",
+    "sala_Pawel_martedi": "S",
+    "sala_Pawel_mercoledi": "A",
+    "sala_Pawel_giovedi": "P",
+    "sala_Pawel_venerdi": "19",
+    "sala_Pawel_sabato": "17",
+    "sala_Pawel_domenica": "S",
+    "cucina_ANTONINO_lunedi": "M/S",
+    "cucina_ANTONINO_martedi": "M/S",
+    "cucina_ANTONINO_mercoledi": "M/S",
+    "cucina_ANTONINO_giovedi": "Riposo",
+    "cucina_ANTONINO_venerdi": "M",
+    "cucina_ANTONINO_sabato": "S",
+    "cucina_ANTONINO_domenica": "M/S",
+    "cucina_Saja_lunedi": "12/chius",
     "cucina_Saja_martedi": "12/chius",
     "cucina_Saja_mercoledi": "12/chius",
     "cucina_Saja_giovedi": "12/chius",
     "cucina_Saja_venerdi": "12/chius",
     "cucina_Saja_sabato": "12/chius",
-    "cucina_Saja_domenica": "12/chius",
-    "sala_Pawel_lunedi": "A",
-    "pizzeria_PIETRO_mercoledi": "S",
-    "pizzeria_PIETRO_giovedi": "12/chius",
-    "sala_Dylan_mercoledi": "A",
-    "sala_Natalia_lunedi": "A",
-    "sala_Vittorio_martedi": "A",
-    "sala_Sabbit_mercoledi": "A",
-    "sala_Rose_martedi": "P/S"
+    "cucina_Saja_domenica": "12/chius"
   },
-  "richieste": [
-    {
-      "id": 1783490016879,
-      "person": "Pawel",
-      "type": "Riposo",
-      "date": "2026-07-16",
-      "note": "",
-      "status": "approvata"
-    }
-  ]
+  "richieste": []
 }
