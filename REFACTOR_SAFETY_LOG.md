@@ -6,7 +6,7 @@ Questo file serve per sapere cosa viene modificato, perché viene modificato e c
 
 Data log: 2026-07-08
 
-Il progetto è funzionante ma stava iniziando a stratificarsi. Il refactor è stato avviato in modo controllato.
+Il progetto è funzionante. Il refactor è stato avviato in modo controllato.
 
 Token GitHub: disattivato temporaneamente.
 
@@ -85,6 +85,63 @@ Quindi se il nuovo registro non funziona, la pagina può ancora recuperare il ve
 lettura.html → v=6
 ```
 
+## Fase 1B - Pubblicazione locale ordinata
+
+### Fatto
+
+Creato nuovo file:
+
+```txt
+app/local-publish.js
+```
+
+Collegato in:
+
+```txt
+app/index.html
+```
+
+`github-sync.js` non è più caricato in `index.html`, ma resta nel repo come vecchio punto di sicurezza.
+
+### Perché
+
+La riscrittura completa di `github-sync.js` è stata evitata. Meglio non toccare un file storico se possiamo sostituirlo con un modulo nuovo, più leggibile e sicuro.
+
+### Runtime admin attuale
+
+Admin ora usa:
+
+```txt
+app/local-publish.js
+```
+
+Funzioni principali mantenute per compatibilità con `menu.js`:
+
+```txt
+saveDataToGitHub()
+publishWeeklyOnline()
+publishMonthlyOnline()
+loadDataFromGitHub()
+publishWeeklyShifts()
+publishMonthlyData()
+```
+
+Nota: i nomi mantengono compatibilità ma la logica è solo locale, non usa token.
+
+### Percorsi operativi indicati all'utente
+
+```txt
+current-data.json  → data/app/current-data.json
+current-week.json  → data/registry/weekly/current-week.json
+current-month.json → data/registry/monthly/current-month.json
+```
+
+### Cache aggiornata
+
+```txt
+index.html → v=18
+```
+
 ## Runtime attuale
 
 Pagina sola lettura:
@@ -99,28 +156,12 @@ app/lettura.js
 Admin:
 
 ```txt
-app/github-sync.js
+app/local-publish.js
+→ autosave locale
 → prepara/scarica current-data.json
 → prepara/scarica current-week.json
 → prepara/scarica current-month.json
 ```
-
-Admin non è ancora stato spostato sui nuovi percorsi runtime. Farlo nella fase successiva.
-
-## Prossima fase consigliata
-
-### Fase 1B - Aggiornare pubblicazione locale
-
-Aggiornare `app/github-sync.js` affinché i file scaricati siano coerenti con la nuova struttura:
-
-```txt
-current-data.json     → data/app/current-data.json
-current-week.json     → data/registry/weekly/current-week.json
-current-month.json    → data/registry/monthly/current-month.json
-pending-requests.json → data/requests/pending-requests.json
-```
-
-Ma NON cancellare ancora i vecchi file.
 
 ## Fase 2 futura - Separazione JS
 
@@ -164,13 +205,21 @@ Ripristinare fallback fisso:
 Pawel.petruk@hotmail.com
 ```
 
-### Caso 3 - admin non salva più localmente
+### Caso 3 - admin non salva o non pubblica localmente
 
-Controllare `app/github-sync.js` e ripristinare solo autosave locale:
+In `app/index.html`, sostituire:
 
 ```txt
-localStorage capriBluAppLastAutoSaveV1
+local-publish.js?v=18
 ```
+
+con:
+
+```txt
+github-sync.js?v=17
+```
+
+Questo riattiva il vecchio modulo locale precedente.
 
 ### Caso 4 - menu non apre viste
 
@@ -202,6 +251,7 @@ Punto sicuro attuale:
 - pagina sola lettura con fallback doppio
 - registro nuovo creato
 - vecchio registro ancora presente
-- admin ancora funzionante in locale
+- admin usa `local-publish.js`
+- `github-sync.js` resta come fallback non caricato
 
-Se qualcosa si rompe, tornare al vecchio percorso `data/settimanale/current-week.json`.
+Se qualcosa si rompe, ricollegare `github-sync.js` o tornare al vecchio percorso `data/settimanale/current-week.json`.
