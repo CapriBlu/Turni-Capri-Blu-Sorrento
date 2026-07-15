@@ -1,0 +1,184 @@
+{
+  "app": "Capri Blu Turni",
+  "department": "Sala",
+  "week": "2026-W29",
+  "dateRange": {
+    "from": "2026-07-13",
+    "to": "2026-07-19"
+  },
+  "source": "Cartel.xlsx / Foglio1",
+  "notes": [
+    "La data numerica della domenica nel file originale era incoerente; interpretata come 2026-07-19 in base alla sequenza settimanale.",
+    "Le celle vuote sono state convertite in Riposo."
+  ],
+  "staff": [
+    {
+      "nome": "Pawel",
+      "turni": {
+        "lunedi": "A",
+        "martedi": "15:30-ch",
+        "mercoledi": "15:30-ch",
+        "giovedi": "S",
+        "venerdi": "A",
+        "sabato": "S",
+        "domenica": "Riposo"
+      }
+    },
+    {
+      "nome": "Raffaele",
+      "turni": {
+        "lunedi": "S",
+        "martedi": "15:30-ch",
+        "mercoledi": "A",
+        "giovedi": "A",
+        "venerdi": "Riposo",
+        "sabato": "A",
+        "domenica": "15:30 - ch"
+      }
+    },
+    {
+      "nome": "Gaetano",
+      "turni": {
+        "lunedi": "3 30",
+        "martedi": "A",
+        "mercoledi": "Riposo",
+        "giovedi": "15:30 - ch",
+        "venerdi": "S",
+        "sabato": "15:30 - ch",
+        "domenica": "A"
+      }
+    },
+    {
+      "nome": "Rosé",
+      "turni": {
+        "lunedi": "Riposo",
+        "martedi": "09:30 17:30",
+        "mercoledi": "09:30 17:30",
+        "giovedi": "09:30 17:30",
+        "venerdi": "09:30 17:30",
+        "sabato": "16-ch",
+        "domenica": "16-ch"
+      }
+    },
+    {
+      "nome": "Shan",
+      "turni": {
+        "lunedi": "17-ch",
+        "martedi": "Riposo",
+        "mercoledi": "17-ch",
+        "giovedi": "17-ch",
+        "venerdi": "17-ch",
+        "sabato": "17-ch",
+        "domenica": "17-ch"
+      }
+    },
+    {
+      "nome": "Brandon",
+      "turni": {
+        "lunedi": "17-ch",
+        "martedi": "17-ch",
+        "mercoledi": "17-ch",
+        "giovedi": "Riposo",
+        "venerdi": "17-ch",
+        "sabato": "17-ch",
+        "domenica": "17-ch"
+      }
+    },
+    {
+      "nome": "Vittorio",
+      "turni": {
+        "lunedi": "Riposo",
+        "martedi": "10-15 19-ch",
+        "mercoledi": "12-15 19-ch",
+        "giovedi": "12-15 19-ch",
+        "venerdi": "10-15 19-ch",
+        "sabato": "12-15 19-ch",
+        "domenica": "12-15 19-ch"
+      }
+    },
+    {
+      "nome": "Dylan",
+      "turni": {
+        "lunedi": "16-ch",
+        "martedi": "Riposo",
+        "mercoledi": "14:30",
+        "giovedi": "14:30",
+        "venerdi": "12-15 19-ch",
+        "sabato": "16-ch",
+        "domenica": "16-ch"
+      }
+    },
+    {
+      "nome": "Lorenzo",
+      "turni": {
+        "lunedi": "10:00-18:00",
+        "martedi": "16:ch",
+        "mercoledi": "16:ch",
+        "giovedi": "16:ch",
+        "venerdi": "Riposo",
+        "sabato": "16:ch",
+        "domenica": "16:ch"
+      }
+    },
+    {
+      "nome": "Sabbit",
+      "turni": {
+        "lunedi": "16:ch",
+        "martedi": "16:ch",
+        "mercoledi": "16:ch",
+        "giovedi": "Riposo",
+        "venerdi": "16:ch",
+        "sabato": "16:ch",
+        "domenica": "16:ch"
+      }
+    },
+    {
+      "nome": "Annachiara",
+      "turni": {
+        "lunedi": "17:00-ch",
+        "martedi": "17:00-ch",
+        "mercoledi": "17:00-ch",
+        "giovedi": "17:00-ch",
+        "venerdi": "17:00-ch",
+        "sabato": "17:00-ch",
+        "domenica": "Riposo"
+      }
+    },
+    {
+      "nome": "Carmine",
+      "turni": {
+        "lunedi": "Riposo",
+        "martedi": "10-15 19-ch",
+        "mercoledi": "12-15 19-ch",
+        "giovedi": "12-15 19-ch",
+        "venerdi": "10-15 19-ch",
+        "sabato": "12-15 19-ch",
+        "domenica": "12-15 19-ch"
+      }
+    },
+    {
+      "nome": "Natalia",
+      "turni": {
+        "lunedi": "09:00 17:00",
+        "martedi": "09:00 17:00",
+        "mercoledi": "Riposo",
+        "giovedi": "09:00 17:00",
+        "venerdi": "09:00 17:00",
+        "sabato": "09:00 17:00",
+        "domenica": "09:00 17:00"
+      }
+    },
+    {
+      "nome": "Tan",
+      "turni": {
+        "lunedi": "Riposo",
+        "martedi": "Riposo",
+        "mercoledi": "A / 19",
+        "giovedi": "A / 19",
+        "venerdi": "A / 19",
+        "sabato": "A / 19",
+        "domenica": "A / 19"
+      }
+    }
+  ]
+}
